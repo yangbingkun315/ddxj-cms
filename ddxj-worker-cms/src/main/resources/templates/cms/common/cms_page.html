@@ -1,0 +1,26 @@
+ <div class="page-class">
+ 	<div class="page-content pagination" id="cms-page-help"></div>
+ </div>
+<div class="pageNum-text">每页 <span class="font_red">20</span> 条，当前第<span id="currentPageNumber" class="font_red">1</span>页，总共<span id="currentTotalCount" class="font_red">0</span>条数据</div>
+<script>
+function initCmsPagehelp(total,callback)
+{
+	var container = $("#cms-page-help");
+	// 创建分页
+	container.pagination(total, {
+		num_edge_entries: 2, //边缘页数
+		num_display_entries: 4, //主体页数
+		items_per_page: 20, //每页显示1项
+		prev_text: "上一页",
+		next_text: "下一页",
+		callback:  function(response, pagination){
+        	//clickPage = true;
+        	var pagination = {};
+        	pagination.pageNumber = response+1;
+        	callback(null, pagination);
+        	$('[data-toggle="tooltip"]').tooltip();
+        }
+	});
+    isInitPage = true;
+}
+</script>

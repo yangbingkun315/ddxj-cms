@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.InformationMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Information" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="info_title" property="infoTitle" jdbcType="VARCHAR" />
+        <result column="info_type" property="infoType" jdbcType="INTEGER" />
+        <result column="stick" property="stick" jdbcType="INTEGER" />
+        <result column="info_summary" property="infoSummary" jdbcType="VARCHAR" />
+        <result column="string_content" property="stringContent" jdbcType="LONGVARBINARY" />
+        <result column="author" property="author" jdbcType="VARCHAR" />
+        <result column="image_one" property="imageOne" jdbcType="VARCHAR" />
+        <result column="image_two" property="imageTwo" jdbcType="VARCHAR" />
+        <result column="image_three" property="imageThree" jdbcType="VARCHAR" />
+        <result column="info_label" property="infoLabel" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!-- 一对一 阅读数量 -->
+        <association property="readPeople" column="id" select="net.zn.ddxj.mapper.InformationRecordIpMapper.getReadPeopleCount" javaType="java.lang.Integer"></association>
+        <!-- 一对多关系 -->
+        <collection property="categoryList" column="id" select="net.zn.ddxj.mapper.InformationTypeMapper.getCategoryByInfoId"></collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, info_title, info_type, stick, info_summary, string_content, author, image_one, 
+        image_two, image_three, info_label, start_time, end_time, create_time, update_time, 
+        flag
+    </sql>
+    
+    <!-- 查询资讯是否下架 -->
+    <select id="queryInformationLower" resultType="java.lang.Boolean" parameterType="java.lang.Integer" >
+        select count(i.id) from zn_information i where i.id = #{inforId} and i.flag = 1 and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt;= DATE_FORMAT(i.end_time , '%Y-%m-%d %H:%i:%S')
+    </select>
+    
+    <!-- 多条件查询资讯列表 -->
+    <select id="queryInformationList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo" >
+        select 
+         i.id, i.info_title, i.info_type, i.stick, i.info_summary, i.author, i.image_one, 
+        i.image_two, i.image_three, i.info_label, i.start_time, i.end_time, i.create_time, i.update_time, 
+        i.flag
+        from zn_information i
+        where i.flag = 1
+        <if test="infoTitle != null and infoTitle != '' ">
+        	and i.info_title like concat(concat('%',#{infoTitle}),'%')
+        </if>
+        <if test="typeId != null and typeId != '' and typeId > 0">
+    		and (select count(ic.id) from zn_information_category ic where i.id = ic.info_id and ic.category_id = #{typeId} and ic.flag = 1) > 0
+    	</if>
+        <if test="startTime !=null and startTime !=''">
+			and DATE_FORMAT(i.create_time, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startTime} , '%Y-%m-%d')
+		</if>
+        <if test="endTime !=null and endTime !=''">
+			and DATE_FORMAT(i.create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime} , '%Y-%m-%d')
+		</if>
+		order by i.create_time desc
+    </select>
+    
+    <!-- 删除资讯 -->
+    <update id="deleteInformation" parameterType="java.lang.Integer" >
+        update zn_information
+        <set >
+			flag = 2
+        </set>
+        where id = #{inforId}
+    </update>
+    
+    <select id="selectInformation" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+    select DISTINCT
+		t1.id, t1.info_title, t1.info_type, t1.stick, t1.info_summary,t1.author, t1.image_one, 
+         t1.image_two, t1.image_three, t1.info_label, t1.start_time, t1.end_time, t1.create_time, t1.update_time, t1.flag,count(ir.id) as readPeople
+		from (
+		select 
+		   i.id, i.info_title, i.info_type, i.stick, i.info_summary,i.author, i.image_one, 
+		         i.image_two, i.image_three, i.info_label, i.start_time, i.end_time, i.create_time, i.update_time, i.flag
+		        from zn_information i
+		        where i.flag = 1
+		         and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt;=  DATE_FORMAT(i.start_time, '%Y-%m-%d %H:%i:%S')
+    				and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt;=  DATE_FORMAT(i.end_time, '%Y-%m-%d %H:%i:%S')) t1 left join zn_information_record_ip ir on t1.id = ir.info_id where t1.flag = 1 
+    				<if test="typeId != null and typeId != '' and typeId > 0">
+			    		and (select count(ic.id) from zn_information_category ic where t1.id = ic.info_id and ic.category_id = #{typeId} and ic.flag = 1) > 0
+			    	</if>
+				group by t1.id, t1.info_title, t1.info_type, t1.stick, t1.info_summary,t1.author, t1.image_one, 
+		         t1.image_two, t1.image_three, t1.info_label, t1.start_time, t1.end_time, t1.create_time, t1.update_time, t1.flag
+	    	<if test="typeId != null and typeId != '' and typeId == -1">
+	    		order by readPeople desc,unix_timestamp(t1.start_time) desc,t1.id
+	    	</if>
+	    	<if test="typeId != null and typeId != '' and typeId == -2">
+	    		order by unix_timestamp(t1.start_time) desc,t1.id 
+	    	</if>
+	    	<if test="typeId == null or typeId > 0">
+		    	order by t1.stick, unix_timestamp(t1.start_time) desc,t1.id
+	    	</if>
+	</select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_information
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_information
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Information" >
+        insert into zn_information (id, info_title, info_type, 
+            stick, info_summary, string_content, 
+            author, image_one, image_two, 
+            image_three, info_label, start_time, 
+            end_time, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, #{infoType,jdbcType=INTEGER}, 
+            #{stick,jdbcType=INTEGER}, #{infoSummary,jdbcType=VARCHAR}, #{stringContent,jdbcType=LONGVARBINARY}, 
+            #{author,jdbcType=VARCHAR}, #{imageOne,jdbcType=VARCHAR}, #{imageTwo,jdbcType=VARCHAR}, 
+            #{imageThree,jdbcType=VARCHAR}, #{infoLabel,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+            #{endTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Information" useGeneratedKeys="true" keyProperty="id">
+        insert into zn_information
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="infoTitle != null" >
+                info_title,
+            </if>
+            <if test="infoType != null" >
+                info_type,
+            </if>
+            <if test="stick != null" >
+                stick,
+            </if>
+            <if test="infoSummary != null" >
+                info_summary,
+            </if>
+            <if test="stringContent != null" >
+                string_content,
+            </if>
+            <if test="author != null" >
+                author,
+            </if>
+            <if test="imageOne != null" >
+                image_one,
+            </if>
+            <if test="imageTwo != null" >
+                image_two,
+            </if>
+            <if test="imageThree != null" >
+                image_three,
+            </if>
+            <if test="infoLabel != null" >
+                info_label,
+            </if>
+            <if test="startTime != null" >
+                start_time,
+            </if>
+            <if test="endTime != null" >
+                end_time,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="infoTitle != null" >
+                #{infoTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="infoType != null" >
+                #{infoType,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="infoSummary != null" >
+                #{infoSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="stringContent != null" >
+                #{stringContent,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="author != null" >
+                #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="imageOne != null" >
+                #{imageOne,jdbcType=VARCHAR},
+            </if>
+            <if test="imageTwo != null" >
+                #{imageTwo,jdbcType=VARCHAR},
+            </if>
+            <if test="imageThree != null" >
+                #{imageThree,jdbcType=VARCHAR},
+            </if>
+            <if test="infoLabel != null" >
+                #{infoLabel,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null" >
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Information" >
+        update zn_information
+        <set >
+            <if test="infoTitle != null" >
+                info_title = #{infoTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="infoType != null" >
+                info_type = #{infoType,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                stick = #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="infoSummary != null" >
+                info_summary = #{infoSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="stringContent != null" >
+                string_content = #{stringContent,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="author != null" >
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="imageOne != null" >
+                image_one = #{imageOne,jdbcType=VARCHAR},
+            </if>
+            <if test="imageTwo != null" >
+                image_two = #{imageTwo,jdbcType=VARCHAR},
+            </if>
+            <if test="imageThree != null" >
+                image_three = #{imageThree,jdbcType=VARCHAR},
+            </if>
+            <if test="infoLabel != null" >
+                info_label = #{infoLabel,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null" >
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Information" >
+        update zn_information
+        set info_title = #{infoTitle,jdbcType=VARCHAR},
+            info_type = #{infoType,jdbcType=INTEGER},
+            stick = #{stick,jdbcType=INTEGER},
+            info_summary = #{infoSummary,jdbcType=VARCHAR},
+            string_content = #{stringContent,jdbcType=LONGVARBINARY},
+            author = #{author,jdbcType=VARCHAR},
+            image_one = #{imageOne,jdbcType=VARCHAR},
+            image_two = #{imageTwo,jdbcType=VARCHAR},
+            image_three = #{imageThree,jdbcType=VARCHAR},
+            info_label = #{infoLabel,jdbcType=VARCHAR},
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            end_time = #{endTime,jdbcType=TIMESTAMP},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+     <!-- 资讯置顶 -->
+    <update id="changeInfoStick" >
+        update zn_information set stick = #{type} ,update_time=NOW()  where id = #{id}
+    </update>
+</mapper>

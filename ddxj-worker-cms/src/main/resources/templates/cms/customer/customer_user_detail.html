@@ -1,0 +1,188 @@
+<style>
+	#TB_ajaxContent
+	{
+		padding:0;
+	}
+</style>
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/star/star-rating.css?[@cmsVersion /]">
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/js/common/star/star-rating.min.js"></script>
+<div class="user-title box-making">
+	<div class="making-item">
+		<img src="${userDetail.userPortrait!"${base}/assets/cms/images/login/login_logo.png"}">
+	</div>
+	<div class="making-item">
+		<div class="user-item" style="margin-top:10px;">
+			<label class="user-label"><i class="iconfont">&#xe70c;</i> 姓名：</label>
+			<div class="user-content">${userDetail.realName!"暂无"}</div>
+		</div>
+		<div class="user-item">
+			<label class="user-label"><i class="iconfont">&#xe69e;</i> 账户余额：</label>
+			<div class="user-content" style="font-size: 16px;font-weight: bold;">${userDetail.remainderMoney?string('currency')}元</div>
+		</div>
+		<div class="user-item">
+			<label class="user-label"><i class="iconfont">&#xe654;</i> 评分：</label>
+			<div class="user-content"> <input id="rating-input"  type="text"  name="problemDifficulty" value="${userDetail.score!5}" disabled="disabled"/></div>
+		</div>
+	</div>
+</div>
+<div class="user-detail-content">
+	<div class="user-item" >
+		<label class="user-label"><i class="iconfont">&#xe617;</i> 手机号码：</label>
+		<div class="user-content">${userDetail.phone!""}</div>
+	</div>
+	<div class="user-item" >
+		<label class="user-label"><i class="iconfont">&#xe606;</i> 工种：</label>
+		<div class="user-content">
+			[#if userDetail.categoryList??]
+				[#list userDetail.categoryList as category]
+					<span class="label label-primary">${category.categoryName}</span>
+				[/#list]
+			[/#if]
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe62b;</i> 性别：</label>
+		<div class="user-content">
+		[#if userDetail.sex??]
+			[#if userDetail.sex == 'M']
+				男
+			[#else]
+				女
+			[/#if]
+		[#else]
+		[/#if]
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe637;</i> 出生日期：</label>
+		<div class="user-content">
+			${(userDetail.birthDate?string("yyyy-MM-dd"))!""}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe61a;</i> 微信昵称：</label>
+		<div class="user-content">
+			${(userDetail.wxName)!"暂无"}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe65b;</i> 工龄：</label>
+		<div class="user-content">
+	   			${(userDetail.standing)!"0"}年	
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe679;</i> 工作所在地：</label>
+		<div class="user-content">
+			${(userDetail.workProvince+" "+userDetail.workCity+" "+userDetail.workArea)!"暂无"}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe60e;</i> 详细地址：</label>
+		<div class="user-content">
+	   			${(userDetail.workAddress)!"暂无"}	
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe679;</i> 户籍所在地：</label>
+		<div class="user-content">
+			${(userDetail.registeredProvince+" "+userDetail.registeredCity+" "+userDetail.registeredArea)!"暂无"}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe60e;</i> 详细地址：</label>
+		<div class="user-content">
+	   			${(userDetail.registeredAddress)!"暂无"}	
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe623;</i> 注册渠道：</label>
+		<div class="user-content">
+			[#if userDetail.registerChannel == '1']
+   				<button type="button" class="btn btn-default btn-xs">公众号</button>
+   			[#elseif userDetail.registerChannel == '2']
+   				<button type="button" class="btn btn-default btn-xs">APP</button>
+   			[#elseif userDetail.registerChannel == '3']
+   				<button type="button" class="btn btn-default btn-xs">小程序</button>
+	   		[/#if]
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe73e;</i> 账号状态：</label>
+		<div class="user-content">
+			[#if userDetail.loginStatus == '1']
+   				<button type="button" class="btn btn-success btn-xs">正常</button>
+   			[#elseif userDetail.loginStatus == '2']
+   				<button type="button" class="btn btn-danger btn-xs">禁用</button>
+   			[#elseif userDetail.loginStatus == '3']
+   				<button type="button" class="btn btn-info btn-xs">冻结</button>
+	   		[/#if]
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe603;</i> 是否认证：</label>
+		<div class="user-content">
+			[#if userDetail.isAttestation == '0']
+   				<button type="button" class="btn btn-danger btn-xs">未认证</button>
+   			[#elseif userDetail.isAttestation == '1']
+   				<button type="button" class="btn btn-success btn-xs">已认证</button>
+	   		[/#if]
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe634;</i> 上次登录IP：</label>
+		<div class="user-content">
+			${(userDetail.lastIp)!"暂无"}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe634;</i> 最后一次登录IP：</label>
+		<div class="user-content">
+			 ${(userDetail.currentIp)!"暂无"}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe637;</i> 上次登录时间：</label>
+		<div class="user-content">
+			${(userDetail.lastTime?string("yyyy-MM-dd"))!""}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe637;</i> 最后一次登录时间：</label>
+		<div class="user-content">
+			${(userDetail.currentDateTime?string("yyyy-MM-dd"))!""}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe637;</i> 注册时间：</label>
+		<div class="user-content">
+			${(userDetail.createTime?string("yyyy-MM-dd"))!""}
+		</div>
+	</div>
+	<div class="user-item">
+		<label class="user-label"><i class="iconfont">&#xe685;</i> 最后一次登录设备：</label>
+		<div class="user-content">
+			[#if userDetail.lastDevice??]
+	   			<button type="button" class="btn btn-danger btn-xs">${(userDetail.lastDevice)}</button>
+	   		[#else]
+	   			未知设备
+	   		[/#if]
+		</div>
+	</div>		
+</div>
+<script>
+jQuery(document).ready(function () {
+    var $inp = $('#rating-input');
+    $inp.rating({
+        min: 0,
+        max: 5,
+        step: 1,
+        size: 'xs',
+        showClear: false,
+        showCaption:false,
+        theme: 'krajee-fa',
+        filledStar: '<i class="fa fa-star"></i>',
+        emptyStar: '<i class="fa fa-star-o"></i>'
+    });
+});
+</script>

@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/chosen.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/city_data.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/echarts-all.js"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<title>用户资金变动</title>
+</head>
+<body ng-app="transfer" ng-controller="userTransfer">
+	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+ <div id="main" style="height:300px;"></div>
+	<div class="margin Competence_style">
+	<div class="operation clearfix same_module mb15">
+		<div class="order-search-item">
+		  <span class="search_title">支付方式：</span>
+		  <select class="width160"  id="status" ng-model="status" ng-init="status = statusList[0].value" ng-options="status.value as status.name for status in statusList">
+		 </select>
+	  	</div>
+		<div class="order-search-item">
+		  <span class="search_title">支付类型：</span>
+			<select class="width160"   size="1" ng-model="transferWay">
+					<option value="">请选择支付方式</option>
+					<option value="1">授信支付</option>
+					<option value="2">余额支付</option>
+					<option value="3">银行卡支付</option>
+			 </select>		 
+	  	</div>
+		<div class="order-search-item">
+		  <span class="search_title">转账类型：</span>
+		  <select class="width160"   size="1" ng-model="transferType">
+				<option value="">请选择转账类型</option>
+				<option value="1">转账</option>
+				<option value="2">结算</option>
+				<option value="3">充值</option>
+				<option value="4">提现</option>
+				<option value="5">发放</option>
+		  </select>
+	  	</div>
+		<div class="order-search-item clear" style="width: 430px">
+		  <span class="search_title">交易时间：</span>
+			  <input type="text" name="startTime" id="startTime" class="input textinput-main laydate-icon width160" placeholder="开始时间"> 至
+			  <input type="text" name="endTime" id="endTime" class="input textinput-main laydate-icon width160" placeholder="结束时间"> 
+	  	</div>
+		<div class="order-search-item">
+			 <button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryUserTransferDetails()"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+	  	</div>
+		</div>
+	<div class="datalist_show">
+		<div class="bkg_List clearfix datatable_height confirm">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th>收款人姓名</th>
+						<th>收款人电话</th>
+						<th>订单号</th>
+						<th>转账方式</th>
+						<th>转账描述</th>
+						<th>转账类型</th>
+						<th>单位</th>
+						<th>数量</th>
+						<th>单价</th>
+						<th>金额</th>
+						<th>创建时间</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="userTransferList.length > 0 " ng-repeat="transfer in userTransferList track by $index">
+						<td ng-bind="transfer.toUser.realName"></td>
+						<td ng-bind="transfer.toUser.phone"></td>
+						<td ng-bind="transfer.orderNo"></td>
+						<td class="td-transferWay">
+							<span class="label label-success radius" ng-if="transfer.transferWay == 1">授信支付</span>
+							<span class="label label-success radius" ng-if="transfer.transferWay == 2">余额支付</span>
+							<span class="label label-success radius" ng-if="transfer.transferWay == 3">银行卡支付</span>
+						</td>
+						<td ng-bind="transfer.transferDesc"></td>
+						<td class="td-transferType">
+							<span class="label label-success radius" ng-if="transfer.transferType == 1">转账</span>
+							<span class="label label-success radius" ng-if="transfer.transferType == 2">结算</span>
+							<span class="label label-success radius" ng-if="transfer.transferType == 3">充值</span>
+							<span class="label label-success radius" ng-if="transfer.transferType == 4">提现</span>
+							<span class="label label-success radius" ng-if="transfer.transferType == 5">系统发放</span>
+						</td>
+						<td ng-bind="transfer.unit"></td>
+						<td ng-bind="transfer.count"></td>
+						<td ng-bind="transfer.price"></td>
+						<td ng-bind="transfer.money"></td>
+						<td ng-bind="transfer.createTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+					</tr>
+					<tr ng-if="userTransferList == null || userTransferList.length <= 0 ">
+						<td class="center" colspan="18">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix align"></div>
+</div>
+</body>
+</html>
+<script>
+var start = {
+  elem: '#startTime',
+  format: 'YYYY-MM-DD',
+ // min: laydate.now(), //设定最小日期为当前日期
+  max: '2099-06-16', //最大日期
+  istime: true,
+  istoday: false,
+  choose: function(datas){
+       end.min = datas; //开始日选好后，重置结束日的最小日期
+       end.start = datas //将结束日的初始值设定为开始日
+  }
+};
+var end = {
+  elem: '#endTime',
+  format: 'YYYY-MM-DD',
+  //min: laydate.now(),
+  max: '2099-06-16',
+  istime: true,
+  istoday: false,
+  choose: function(datas){
+      start.max = datas; //结束日选好后，重置开始日的最大日期
+  }
+};
+
+laydate(start);
+laydate(end);
+
+// 基于准备好的dom，初始化echarts图表
+var myChart = echarts.init(document.getElementById('main')); 
+var userManager = angular.module('transfer', []);
+userManager.controller('userTransfer', function($scope,$timeout) {
+	
+	$scope.statusList = [  
+	    {name : "支出", value : 1},
+	    {name : "收入", value : 2}
+	]; 
+	
+	$scope.userId = urlParam("userId");
+	$scope.transferWay="";
+	$scope.transferType="";
+	$scope.status = 1;
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryUserTransfer = function()//查询用户资金变动
+	{
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/user/transfer/detail.ddxj',
+				data: {userId:$scope.userId},
+				async: true,
+				success: function(data)
+				{
+					layer.close(index);
+					if(data.response == true)
+					{
+						var dataMap = data.data.moneyData;
+						var option = {
+						        tooltip: {
+						            show: true
+						        },
+						        legend: {
+						            data:['今日','本周','本月','总计']
+						        },
+						        xAxis : [
+						            {
+						                type : 'category',
+						                data : ["转账支出金额","转账收入金额","结算金额","充值金额","提现金额","系统发放金额"]
+						            }
+						        ],
+						        yAxis : [
+						            {
+						                type : 'value'
+						            }
+						        ],
+						        series : [
+						            {
+						                "name":"今日",
+						                "type":"bar",
+						                "data":[dataMap.todayZZ, dataMap.todaySR, dataMap.todayJS, dataMap.todayCZ,dataMap.todayTX, dataMap.todayFF]
+						            },
+						            {
+						                "name":"本周",
+						                "type":"bar",
+						                "data":[ dataMap.weekZZ, dataMap.weekSR, dataMap.weekJS,dataMap.weekCZ,dataMap.weekTX, dataMap.weekFF]
+						            },
+						            {
+						                "name":"本月",
+						                "type":"bar",
+						                "data":[ dataMap.monthZZ, dataMap.monthSR, dataMap.monthJS,dataMap.monthCZ,dataMap.monthTX,dataMap.monthFF]
+						            },
+						            {
+						                "name":"总计",
+						                "type":"bar",
+						                "data":[dataMap.zongjiZZ, dataMap.zongjiSR, dataMap.zongjiJS, dataMap.zongjiCZ, dataMap.zongjiTX,dataMap.zongjiFF]
+						            }
+						            
+						        ]
+						    };
+							// 为echarts对象加载数据 
+						    myChart.setOption(option); 
+						    
+					}
+				}
+			}); 
+		})
+	}
+	$scope.queryUserTransfer();
+	
+	$scope.queryUserTransferDetails = function()
+	{
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/query/user/transfer/list.ddxj',
+				data: {status:$scope.status,userId:$scope.userId,startTime:$("#startTime").val(),endTime:$("#endTime").val(),transferWay:$scope.transferWay,transferType:$scope.transferType,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{	
+						console.log(data);
+						$scope.total = data.data.userTransferList.total;
+						$scope.userTransferList = data.data.userTransferList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		});
+	}
+	$scope.queryUserTransferDetails();
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.queryUserTransferDetails();
+                    }
+	      	    }
+			});
+		});
+	}
+	
+});
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+</script>

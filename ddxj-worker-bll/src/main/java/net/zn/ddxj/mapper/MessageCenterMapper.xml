@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.MessageCenterMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.MessageCenter" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="message_type_id" property="messageTypeId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="is_read" property="isRead" jdbcType="INTEGER" />
+        <result column="param" property="param" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="type_id" property="typeId" jdbcType="INTEGER" />
+        <result column="filed2" property="filed2" jdbcType="VARCHAR" />
+        <result column="filed3" property="filed3" jdbcType="VARCHAR" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, message_type_id, title, content, is_read, param, create_time, update_time, 
+        type_id, filed2, filed3, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_message_center
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_message_center
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.MessageCenter" >
+        insert into zn_message_center (id, user_id, message_type_id, 
+            title, content, is_read, 
+            param, create_time, update_time, 
+            type_id, filed2, filed3, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{messageTypeId,jdbcType=INTEGER}, 
+            #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{isRead,jdbcType=INTEGER}, 
+            #{param,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{typeId,jdbcType=INTEGER}, #{filed2,jdbcType=VARCHAR}, #{filed3,jdbcType=VARCHAR}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+   <insert id="insertSelective" parameterType="net.zn.ddxj.entity.MessageCenter" >
+        insert into zn_message_center
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="messageTypeId != null" >
+                message_type_id,
+            </if>
+            <if test="title != null" >
+                title,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="isRead != null" >
+                is_read,
+            </if>
+            <if test="param != null" >
+                param,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="typeId != null" >
+                type_id,
+            </if>
+            <if test="filed2 != null" >
+                filed2,
+            </if>
+            <if test="filed3 != null" >
+                filed3,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="messageTypeId != null" >
+                #{messageTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="isRead != null" >
+                #{isRead,jdbcType=INTEGER},
+            </if>
+            <if test="param != null" >
+                #{param,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="typeId != null" >
+                #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="filed2 != null" >
+                #{filed2,jdbcType=VARCHAR},
+            </if>
+            <if test="filed3 != null" >
+                #{filed3,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.MessageCenter" >
+        update zn_message_center
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="messageTypeId != null" >
+                message_type_id = #{messageTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="isRead != null" >
+                is_read = #{isRead,jdbcType=INTEGER},
+            </if>
+            <if test="param != null" >
+                param = #{param,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="typeId != null" >
+                type_id = #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="filed2 != null" >
+                filed2 = #{filed2,jdbcType=VARCHAR},
+            </if>
+            <if test="filed3 != null" >
+                filed3 = #{filed3,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+	
+	<update id="updateByIdAndUserIdSelective" parameterType="net.zn.ddxj.entity.MessageCenter" >
+	       update zn_message_center
+	       <set >
+	           <if test="userId != null" >
+	               user_id = #{userId,jdbcType=INTEGER},
+	           </if>
+	           <if test="title != null" >
+	               title = #{title,jdbcType=VARCHAR},
+	           </if>
+	           <if test="content != null" >
+	               content = #{content,jdbcType=VARCHAR},
+	           </if>
+	           <if test="param != null" >
+	               param = #{param,jdbcType=VARCHAR},
+	           </if>
+	           <if test="messageTypeId != null" >
+	               message_type_id = #{messageTypeId,jdbcType=INTEGER},
+	           </if>
+	           <if test="createTime != null" >
+	               create_time = #{createTime,jdbcType=TIMESTAMP},
+	           </if>
+	           <if test="updateTime != null" >
+	               update_time = #{updateTime,jdbcType=TIMESTAMP},
+	           </if>
+	           <if test="isRead != null" >
+	               is_read = #{isRead,jdbcType=INTEGER},
+	           </if>
+	           <if test="typeId != null" >
+                   type_id = #{typeId,jdbcType=INTEGER},
+           	   </if>
+	           <if test="filed2 != null" >
+	               filed2 = #{filed2,jdbcType=VARCHAR},
+	           </if>
+	           <if test="filed3 != null" >
+	               filed3 = #{filed3,jdbcType=VARCHAR},
+	           </if>
+	           <if test="flag != null" >
+	               flag = #{flag,jdbcType=INTEGER},
+	           </if>
+	       </set>
+	       where id = #{id,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+	   </update>
+	
+    <update id="updateByUserIdKey" parameterType="net.zn.ddxj.entity.MessageCenter" >
+        update zn_message_center 
+        set update_time = #{updateTime,jdbcType=TIMESTAMP},
+            is_read = #{isRead,jdbcType=INTEGER} 
+        where user_id = #{userId,jdbcType=INTEGER} and flag = 1
+    </update>
+    
+    <select id="findByUserIdAndFlag" resultType="int">
+    	select count(1) 
+    	 from zn_message_center where user_id = #{userId,jdbcType=INTEGER} 
+    	 and is_read = #{isRead,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <select id="queryMessage" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_message_center
+        where user_id = #{userId,jdbcType=INTEGER} and message_type_id = #{messageTypeId,jdbcType=INTEGER} 
+    </select>
+    
+    <select id="selectByIdAndUserId" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_message_center
+        where user_id = #{userId,jdbcType=INTEGER} and id = #{id,jdbcType=INTEGER} 
+    </select>
+    <!-- 查询信息中心 -->
+    <select id="queryMessageCenter" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId,jdbcType=INTEGER} and mc.flag = 1 AND mc.message_type_id =#{typeId} order by create_time desc
+    </select>
+    
+    <select id="queryNewMessageCenter" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId} and mc.flag = 1 AND mc.message_type_id =#{typeId} order by create_time desc limit 0,1
+    </select>
+    <!-- 按类型查询 通知-->
+    <select id="queryInformIsRead" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId,jdbcType=INTEGER} and mc.flag = 1 and mc.is_read = #{isRead} AND mc.message_type_id =#{typeId}
+    </select>
+     <!-- 按类型查询 活动-->
+    <select id="queryActivityIsRead" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId,jdbcType=INTEGER} and mc.flag = 1 and mc.is_read = #{isRead} AND mc.message_type_id =#{typeId}
+    </select>
+     <!-- 按类型查询 通知-->
+    <select id="queryEvaluateIsRead" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId,jdbcType=INTEGER} and mc.flag = 1 and mc.is_read = #{isRead} AND mc.message_type_id =#{typeId}
+    </select>
+     <!-- 按类型查询 通知-->
+    <select id="queryTransactionIsRead" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT
+		mc.*,mt.name
+		FROM
+		zn_message_center AS mc
+		INNER JOIN zn_message_type AS mt ON mt.id = mc.message_type_id
+        where mc.user_id = #{userId,jdbcType=INTEGER} and mc.flag = 1 and mc.is_read = #{isRead} AND mc.message_type_id =#{typeId}
+    </select>
+    <!-- 根据typeId 查询是否有未读消息 -->
+    <select id="selectIsRead" resultType="java.util.LinkedHashMap" parameterType="java.lang.Integer">
+    	<!-- select message_type_id as type,count(id) as count from zn_message_center where is_read=#{isRead} AND user_id=#{userId} and flag = 1   GROUP BY 1 -->
+    	select t.id as type,count(m.id) as count from zn_message_type t LEFT JOIN zn_message_center m ON m.message_type_id = t.id and m.user_id=#{userId} and is_read=#{isRead} and m.flag = 1 group by 1
+    </select>
+    <!-- 删除消息记录 -->
+    <update id="updateMessageFlag" parameterType="net.zn.ddxj.entity.MessageCenter" >
+        update zn_message_center 
+        set flag = 2
+        where user_id = #{userId,jdbcType=INTEGER} 
+    </update>
+</mapper>

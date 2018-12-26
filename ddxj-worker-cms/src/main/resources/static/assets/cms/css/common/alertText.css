@@ -1,0 +1,146 @@
+.bigBorder {
+	border: 8px lightsalmon solid;
+	position: absolute;
+    background:#ffffcc;
+}
+
+.smallBlock1 {
+	position: relative;
+	top: 10px;
+	left: 5px;
+	font-size: 14px;
+}
+
+.smallBlock2 {
+	position: relative;
+	top: 10px;
+	left: 5px;
+}
+
+.checkButton {
+	border: 1px #ff9966 solid;
+	cursor: pointer;
+}
+#errorMessageContentDivTemplate
+{
+	display:none;
+}
+.poup_rightMessage_Left
+{
+	height: 37px;
+	padding: 0 0 0 20px;
+	float: left;
+	line-height: 35px;
+	background-image: url(../../images/common/alltips.png);
+	background-repeat: no-repeat;
+	display: block;
+}
+.poup_rightMessage_Right
+{
+	height: 37px;
+	padding: 0 0 0 20px;
+	float: left;
+	line-height: 35px;
+	background-image: url(../../images/common/alltips.png);
+	background-repeat: no-repeat;
+	background-position:-354px 0px;
+	display: block;
+}
+.poup_errorLeft
+{
+	background:url(../../images/common/error_new.png);
+	height:36px;
+	float:left;
+	font-size:13px;
+	line-height:30px;
+	padding-left:10px;
+}
+.poup_errorRight
+{
+	background:url(../../images/common/error_new.png);
+	height:36px;
+	width:10px;
+	background-position:-286px 0px;
+	float:left;
+}
+/*poup errer message*/
+.error_mgs_littlepop {
+	position: absolute;
+	top: 35px;
+	/* right: 48px; */
+	display: inline-block;
+	_display: inline;
+	text-align:left;
+}
+.error_mgs_icontwo {
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	display: inline-block;
+	background: url(../../images/common/error_icos.png) 0 -85px no-repeat;
+}
+.error_mgs_popmessage {
+	border: 1px solid #E8D76B;
+	padding: 10px;
+	padding: 9px\0;
+	padding/*\**/:9px\9;/*All IE*/
+	height: 18px;
+	color: red;
+	line-height: 1.1;
+	box-shadow: 0 1px 3px #E9E9E9;
+	border-radius: 3px;
+	background: url(../../images/common/s_bgs.png) 0 -252px repeat-x;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0){ .error_mgs_popmessage {padding: 9px;} }  /*chrome*/
+.error_mgs_little_corner {
+	display: block;
+	width: 12px;
+	height: 11px;
+	background: url(../../images/common/error_icos.png) 0 -74px no-repeat;
+	margin-left: 13px;
+	margin-top: -2px;
+	+margin-top: -4px;
+	-margin-top: -6px;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+	top:9px;
+	top/*\**/:2px\9;/*All IE*/
+	top:10px\0;
+	+top:10px;
+	font-style: italic;
+}
+.error_mgs_empty
+{
+	display: block;
+	width: 12px;
+	height: 11px;
+}
+.succ_msg_tips {
+	float:left;
+	background: url(../../images/common/error_icos.png) 0 -16px no-repeat;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	margin-top:9px;
+	margin-right:5px;
+}
+.alertTextCommonTipBg
+{
+	background: url(../../images/common/gb_tip_layer.png) 0 -16px repeat-x;
+}
+.alertText_Right_Msg_tips
+{
+	z-index:1001;
+	display:none;
+}
+.error_input_border
+{
+	border:2px solid #F18447 !important;
+}
+.Dshow{
+	display:block;
+}
+.Dhide{
+	display:none;
+}

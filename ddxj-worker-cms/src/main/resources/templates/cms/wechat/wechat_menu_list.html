@@ -1,0 +1,127 @@
+[#assign title="点点小匠-自定义菜单列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<style>
+#replyText
+{
+	width:250px;
+	height:100px!important;
+}
+.textinput-main
+{
+	width:250px!important;
+}
+</style>
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >1、管理者可以通过此功能进行管理公众号的自定义菜单，自定义菜单是用户关注成功后，展示在手机的底部的。<br /> 2、一级菜单最多设置3个，二级菜单最多能设置5个<br />3、数据确认无误后可以通过“发布到公众号”同步到公众号，同步后由于微信的缓存，大概要一天才能更新，新关注的用户能马上体验到，或者取消关注后在关注。</div>
+	[#assign wechatTabActive = 4]
+	[#include "/wechat/wechat_tab.html"]
+	<form method="post" id="cms_wechat_menu_form" action="${base}/query/wechatMenu/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+	</form>
+	<div class="operate-btn">
+		[@shiro.hasPermission name="system:wechat:menu:add"]
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="wechatMenuEdit()">添加菜单</button>
+		</div>
+		[/@shiro.hasPermission]
+		[@shiro.hasPermission name="system:wechat:menu:release"]
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="pushWechatMenu()">发布到公众号</button>
+		</div>
+		[/@shiro.hasPermission]
+	</div>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_menu_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_wechat_menu_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryWechatMenuList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_wechat_menu_form').submit();
+}
+
+queryWechatMenuList(1);
+
+function wechatMenuEdit(id)
+{
+	var url = "${base}/update/wechatMenu/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改菜单" : "新增菜单","width":500,"height":600});
+}
+function confirmWechatMenu(id)
+{
+	showConfirmDialog({message : "确认要删除该菜单吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/delete/wechatMenu/record.htm",{menuId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryWechatMenuList();
+			}
+			else
+			{
+				alertTip(data.responseMsg,3);
+			}
+		});
+	});
+}
+function pushWechatMenu()
+{
+	showConfirmDialog({message : "确定要发布到公众号吗？",height:100},function(){
+		alertTip("正在发布，请稍后...",4);
+		doPost("${base}/wechat/menu/push.htm",function(data){
+			if(data.response)
+            {
+				var s = JSON.parse(data.data);
+        		if(s.status == 1)
+        		{
+        			alertTip("发布失败,一级菜单不能超过3个！",3);
+        		}
+        		else if(s.status == 5)
+        		{
+        			alertTip("发布自定义菜单失败,请重试或者检查菜单信息是否正确！",3);
+        		}
+        		else if(s.status == 7)
+        		{
+        			alertTip("发布失败,一级菜单最多包含5个二级菜单！",3);
+        		}
+        		else if(s.status == 0)
+        		{
+        			alertTip("发布成功！<br><b style='color:red;'>因微信客户端缓存原因，您可以尝试重新关注公众号，以便快速清除菜单缓存。</b>",1);
+        		}
+            }
+			else
+			{
+				alertTip(data.responseMsg,3);
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

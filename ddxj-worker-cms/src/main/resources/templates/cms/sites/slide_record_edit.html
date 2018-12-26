@@ -1,0 +1,122 @@
+<div class="cms-edit">
+	<form action="${base}/sites/slide/edit.htm"  method="post" id="slide_edit_form">
+		<input type="hidden" name="siteSlide.id" value="${(siteSlide.id)!""}" />
+		<div class="item clear" >
+			<div class="title">
+			官网图片：
+			</div>
+			<div class="content">
+				<input type="hidden" id="imgUrl" name="siteSlide.imgUrl"value="${siteSlide.imgUrl!''}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=creditLogoUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${siteSlide.imgUrl!""}">
+					<img  src="${siteSlide.imgUrl!""}" width="100%" id="creditLogo_preview" height="100%"  [#if !siteSlide?? || !siteSlide.imgUrl] style="display:none;"[/#if]/>
+				</a>
+				
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				图片名称：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="siteSlideImgName" name="siteSlide.imgName" isRequired="true" placeholder="必填，最大12个字符" value="${(siteSlide.imgName)!""}" maxLength="12">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				图片简介：
+			</div>
+			<div class="content">
+				<input type="text"  class="input textinput-main" id="siteSlideImgDesc"  placeholder="必填，最大12个字符" isRequired="true" name="siteSlide.imgDesc"   value="${(siteSlide.imgDesc)!""}" maxLength="12">
+			</div>
+		</div>
+
+		<div  class="item clear" >
+			<div class="title">
+				上架时间：
+			</div>
+			<div class="content">
+				<input type="text" name="startTime" id="siteSlideStartTime"  isRequired="true" value="${(siteSlide.startTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" 
+								placeholder="上架时间" autocomplete="off" > 			
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				下架时间：
+			</div>
+			<div class="content">
+				<input type="text" name="endTime" id="siteSlideEndTime" isRequired="true"  value="${(siteSlide.endTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" 
+								placeholder="下架时间" autocomplete="off" >
+			</div> 		
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#slide_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#slide_edit_form').validate())
+		{
+			if(!isNotNull($("#imgUrl").val()))
+			{
+				alertTip("请上传图片",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 querySlideList(1);
+		 }
+	}
+});
+function creditLogoUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#imgUrl").val("${storageUrl}" + data);
+		$("#creditLogo_preview").attr("src","${storageUrl}" + data).show();
+		$("#creditLogo_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#slide_edit_form').configValidate();
+});
+</script>

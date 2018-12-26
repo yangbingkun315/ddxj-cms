@@ -1,0 +1,473 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/common/tools.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<script type="text/javascript" src="../../js/proTree.js" ></script>
+<title>闪屏列表</title>
+</head>
+<style>
+#content_detail img
+{
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
+<body ng-app="advert" ng-controller="screenAdvert">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+	  <div>
+	  </div>
+	  <div class="order-search-item">
+	  <span class="search_title">推送平台：</span>
+	      <select name="pushPlatform" ng-model="pushPlatform" class="width160">
+	        <option value="">请选择平台</option>
+			<option value="1">IOS</option>
+			<option value="2">Android</option>
+			<option value="">全部</option>
+	      </select>
+   	 	</div>
+		<div class="order-search-item" style="width: 430px">
+			<span class="search_title">上架时间：</span>
+			<input type="text"	name="putAway" id="putAway"	class="input textinput-main laydate-icon width160"	placeholder="开始时间"> 至
+			<input type="text" name="soldOut" id="soldOut" class="input textinput-main laydate-icon width160" 	placeholder="结束时间">
+		</div>
+	 <div class="order-search-item clear" >
+	  	<button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryScreenAdvertList ('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+	  	<button ng-click="openSiteSlide()" id="administrator_add" type="button" class="btn button_btn bg-deep-blue "><i class="fa  fa-edit"></i>&nbsp;新增闪屏</button>
+  	 </div>
+	</div>
+	</div>
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+		    <table id="sample_table" class="table table_list table_striped table-bordered dataTable no-footer">
+				<thead>
+					<tr>
+						<th  width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>缩略图</th>
+						<th>链接</th>
+						<th>定时</th>
+						<th>上架时间</th>
+						<th>下架时间</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>状态</th>
+						<th>推送平台</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="advertList.length > 0 " ng-repeat="advert in advertList track by $index">
+				     	<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td><img ng-src="{{advert.bannerUrl}}" width="100px;" height="100px;" ng-click="showBigImage(advert.bannerUrl)"/></td>
+						<td ng-bind="advert.bannerLink ? advert.bannerLink : '暂无'"></td>
+						<td ng-bind="advert.timer ? advert.timer : '0'"></td>
+						<td ng-bind="advert.startTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td ng-bind="advert.endTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td ng-bind="advert.createTime.time | date:'yyyy-MM-dd HH:mm:ss '"></td>
+						<td ng-bind="advert.updateTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td ng-bind="advert.status==1?'开启':'关闭'"></td>
+						<td class="td-status">
+					      <span class="layui-btn layui-btn-normal layui-btn-xs" ng-if="advert.pushPlatform == '1'">IOS</span>
+					      <span class="layui-btn layui-btn-warm layui-btn-xs" ng-if="advert.pushPlatform == '2'">Android</span>
+					      <span class="layui-btn layui-btn-danger layui-btn-xs" ng-if="advert.pushPlatform == '1,2'">全部</span>
+				        </td>
+						<td class="td-manage">
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="编辑" ng-click="openSiteSlide(advert.id)" href="javascript:;" >编辑</a> </li>
+							<li><a title="删除" ng-click="deleteScreenAdvert(advert.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="advertList == null || advertList.length <= 0 ">
+						<td class="center" colspan="11">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<!--添加闪屏-->
+	<div id="add_siteSlide" class="add_siteSlide" style="display:none">
+		<form ng-submit="updateSiteSlide()" >
+			<div class="add_style add_administrator_style">
+				<ul>
+				<li class="clearfix">
+					<label class="label_name col-xs-2 col-lg-2"><i>*</i>推送平台：</label>
+					<div class="layui-input-block">
+						<span class="add_name">
+							<label>
+								<input type="radio" name="form-field-radio" class="ace1" ng-value="3" ng-model="screenAdvert.pushPlatform" id="sex1" ng-checked="true"><span class="lbl">&nbsp;&nbsp;全部</span>
+							</label>
+							&nbsp;&nbsp;&nbsp;
+							<label>
+								<input type="radio" name="form-field-radio" class="ace1" ng-value="1" ng-model="screenAdvert.pushPlatform" id="sex2" ><span class="lbl">&nbsp;&nbsp;IOS</span>
+							</label>
+							&nbsp;&nbsp;&nbsp;
+							<label>
+								<input type="radio" name="form-field-radio" class="ace1" ng-value="2" ng-model="screenAdvert.pushPlatform" id="sex3" ><span class="lbl">&nbsp;&nbsp;Android</span>
+							</label>
+						</span>
+					</div>
+				</li>
+				<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>上传图片：</label>
+						<div class="formControls col-xs-6">
+							<div class="preview_img" style="max-width: 250px;">
+								<img style="max-width: 100%;max-height: 100%;" ng-src="{{screenAdvert.bannerUrl ? screenAdvert.bannerUrl : '../../images/image.png'}}" id="slideImg" border="0" />
+							</div>
+							<div class="fileInput ">
+								<input type="file" onchange="imageChanges(this,'slideImg')" class="upFileBtn" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" />
+					        </div>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>图片链接：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" class="input-text col-xs-12" value="" placeholder="请输入图片跳转链接" ng-model="screenAdvert.bannerLink" >
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>上架时间：</label>
+						<div class="formControls col-xs-6">
+							<input class="laydate-icon col-xs-4 col-lg-3" id="start" ng-model="screenAdvert.startTime" style="min-width: 170px;margin-right:10px; height:28px; line-height:28px; float:left" autocomplete="off">
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>下架时间：</label>
+						<div class="formControls col-xs-6">
+							<input class="laydate-icon col-xs-4 col-lg-3" id="end" ng-model="screenAdvert.endTime" style="min-width: 170px;margin-right:10px;height:28px; line-height:28px; float:left" autocomplete="off">
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>闪屏设置：</label>
+						<div class="layui-input-block">
+							<span class="add_name">
+								<label>
+									<input type="radio" name="status" class="ace1" id="status1" ng-value="2" ng-model="screenAdvert.status"  ng-checked="true"><span class="lbl">&nbsp;&nbsp;关闭</span>
+								</label>
+								&nbsp;&nbsp;&nbsp;
+								<label>
+									<input type="radio" name="status" class="ace1" id="status2" ng-value="1" ng-model="screenAdvert.status" ><span class="lbl">&nbsp;&nbsp;开启</span>
+									<span style="width:80px;margin-left: 10px;" ng-show="screenAdvert.status == 1">
+									     <select ng-model="screenAdvert.timer" ng-init="screenAdvert.timer=timer[0].value" ng-options="role.value as role.name for role in timer">
+										 </select>
+									</span>
+								</label>
+							</span>
+						</div>
+					</li>
+			        <li class="clearfix col-xs-12 col-lg-12 align">
+						<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="保存" ng-click="updateSiteSlide()">
+					</li>
+			    </ul>
+			</div>
+		</form>
+	</div>
+	<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+		<a class="close" ng-click="hideBigImage()"></a>
+		<div class="hide-layer" ng-click="hideBigImage()"></div>
+		<div class="add_style add_administrator_style">
+			<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+		</div>
+	</div>
+
+</body>
+</html>
+<script>
+
+function imageDataUrl()
+{
+	$("img").each(function(){
+		var dataSrc = $(this).attr("data-src")
+		if(isNotNull(dataSrc))
+		{
+			$(this).attr("src",dataSrc);
+		}
+	});
+}
+
+
+var start =
+{
+	elem: '#start',
+	format: 'YYYY-MM-DD hh:mm:ss',
+	min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16 23:59:59', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas)
+	{
+		end.min = datas; //开始日选好后，重置结束日的最小日期
+		end.start = datas //将结束日的初始值设定为开始日
+	}
+};
+var end =
+{
+	elem: '#end',
+	format: 'YYYY-MM-DD hh:mm:ss',
+    min: laydate.now(),
+    max: '2099-06-16 23:59:59',
+    istime: true,
+    istoday: false,
+    choose: function(datas)
+    {
+		start.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+};
+laydate(start);
+laydate(end);
+
+var putAway = {
+	  elem: '#putAway',
+	  format: 'YYYY-MM-DD',
+	 // min: laydate.now(), //设定最小日期为当前日期
+	  max: '2099-06-16', //最大日期
+	  istime: true,
+	  istoday: false,
+	  choose: function(datas){
+	       end.min = datas; //开始日选好后，重置结束日的最小日期
+	       end.start = datas //将结束日的初始值设定为开始日
+	  }
+	};
+var soldOut = {
+	  elem: '#soldOut',
+	  format: 'YYYY-MM-DD',
+	  //min: laydate.now(),
+	  max: '2099-06-16',
+	  istime: true,
+	  istoday: false,
+	  choose: function(datas){
+	      start.max = datas; //结束日选好后，重置开始日的最大日期
+	  }
+	};
+laydate(putAway);
+laydate(soldOut);
+var screenAdvert = angular.module('advert',[]);
+screenAdvert.controller('screenAdvert',function($scope,$timeout)
+{
+	$scope.timer = [{name:'3秒',value:'3'},{name:'4秒',value:'4'},{name:'5秒',value:'5'}]
+	$scope.pushPlatform="";
+	$scope.pageNum=1;
+	$scope.pageSize=20;
+
+	$scope.queryScreenAdvertList = function(type)//查询列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			});
+			Ajax.post({
+				url: getRoot + '/manager/screen/list.ddxj',
+				data: {pushPlatform:$scope.pushPlatform,startTime:$("#putAway").val(),endTime:$("#soldOut").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.advertList.total;
+						$scope.advertList = data.data.advertList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			});
+		});
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first)
+				{
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+					{
+						$scope.queryScreenAdvertList();
+					}
+	      	    }
+			});
+		});
+	}
+	$scope.queryScreenAdvertList();
+	$scope.deleteScreenAdvert = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/screen/delete.ddxj',
+				data: {advertId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryScreenAdvertList();
+					}
+				}
+			});
+		});
+	}
+	$scope.openSiteSlide = function(id)//打开添加窗口
+	{
+		$scope.screenAdvert = {
+			pushPlatform:3,
+			status:2
+		};
+		if(isNotNull(id))
+		{
+			Ajax.post({
+				url: getRoot+'/manager/screen/detail.ddxj',
+				data: {advertId:id},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.screenAdvert = data.data.screenAdvert;
+						$scope.screenAdvert.startTime = timeInMillisToformat(data.data.screenAdvert.startTime.time);
+	               		$scope.screenAdvert.endTime = timeInMillisToformat(data.data.screenAdvert.endTime.time);
+	               		$scope.$apply();
+	         		}
+         		}
+			});
+		}
+		layer.open({
+			type: 1,
+			title:id?'修改闪屏':'添加闪屏',
+			area: ['50%','80%'],
+			shadeClose: false,
+			content: $('#add_siteSlide'),
+		});
+	}
+
+	$scope.updateSiteSlide = function()//更新
+	{
+		$scope.screenAdvert.bannerUrl = $("#slideImg").attr("src");
+		if(!isNotNull($scope.screenAdvert.pushPlatform))
+		{
+			layer.msg("请选择推送平台!");
+			return false;
+		}
+		if($scope.screenAdvert.bannerUrl == "../../images/image.png")
+		{
+			layer.msg("请上传图片!");
+			return false;
+		}
+		if(!isNotNull($scope.screenAdvert.bannerLink))
+		{
+			layer.msg("请输入图片跳转链接!");
+			return false;
+		}
+		if(!isNotNull($("#start").val()))
+		{
+			layer.msg("请选择上架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.screenAdvert.startTime = $("#start").val();
+		}
+
+		if(!isNotNull($("#end").val()))
+		{
+			layer.msg("请选择下架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.screenAdvert.endTime = $("#end").val();
+		}
+		if(!isNotNull($scope.screenAdvert.status) && $scope.screenAdvert.status == 1)
+		{
+			if(!isNotNull($scope.screenAdvert.timer))
+			{
+				layer.msg("请选择闪屏模式!");
+				return false;
+			}
+		}
+		Ajax.post({
+			url: getRoot+'/manager/screen/update.ddxj',
+			data: $scope.screenAdvert,
+			async: true,
+			success: function(data) {
+				if(data.response == true)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					$scope.queryScreenAdvertList();
+				}
+				else
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					$scope.queryScreenAdvertList();
+				}
+			}
+		});
+
+	}
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({
+	cursorcolor:"#888888",
+	cursoropacitymax:1,
+	touchbehavior:false,
+	cursorwidth:"5px",
+	cursorborder:"0",
+	cursorborderradius:"5px"
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+
+});
+</script>

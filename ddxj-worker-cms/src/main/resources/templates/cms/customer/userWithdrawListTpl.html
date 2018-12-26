@@ -1,0 +1,201 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('withdrawListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>提现编号</td>
+		<td>提现人姓名</td>
+		[@shiro.lacksPermission name="system:examine:ct"]
+			<td>提现人电话</td>
+   		[/@shiro.lacksPermission]
+		<td>提现金额</td>
+		[@shiro.lacksPermission name="system:examine:ct"]
+		<td>账户余额</td>
+		<td>账户资金来源</td>
+		[/@shiro.lacksPermission]
+		<td>银行卡号</td>
+		<td>银行名称</td>
+		<td>银行卡类型</td>
+		<td>创建时间</td>
+		<td>更新时间</td>
+		<td>审核流程</td>
+		<td>审核状态</td>
+		[@shiro.hasPermission name="system:withdraw:manager:group"]
+		<td>操作</td>
+		[/@shiro.hasPermission]
+   	</tr>
+   	[#if userWithdrawList?? && userWithdrawList?size > 0]
+	   	[#list userWithdrawList as withdraw]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="withdrawListId" id="${withdraw.id}" >
+					<label class="el-checkbox-style" for="${withdraw.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${withdraw.id!""}</td>
+	   		<td>${(withdraw.user.realName)!""}</td>
+	   		[@shiro.lacksPermission name="system:examine:ct"]
+		   		<td>${(withdraw.user.phone)!""}</td>
+   			[/@shiro.lacksPermission]
+	   		<td>${withdraw.money?string('currency')!""}</td>
+	   		[@shiro.lacksPermission name="system:examine:ct"]
+	   		<td>${(withdraw.user.remainderMoney?string('currency'))!"0.00"}</td>
+	   		<td><a href="${base}/customer/user/transfer/list.htm?userId=${withdraw.user.id}" >点击跳转</a></td>
+	   		[/@shiro.lacksPermission]
+	   		<td>${(withdraw.bankOn)!""}</td>
+	   		<td>${(withdraw.bankName)!""}</td>
+	   		<td>${(withdraw.bankType)!""}</td>
+	   		<td>${withdraw.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+	   		<td>${withdraw.updateTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+	   		<td>
+	   			[#if withdraw.withdrawProcess?? && withdraw.withdrawProcess == 1]
+	   				<span>客服审核</span>
+	   			[#elseif withdraw.withdrawProcess?? && withdraw.withdrawProcess == 2]
+	   				<span>财务审核</span>
+	   			[#elseif withdraw.withdrawProcess?? && withdraw.withdrawProcess == 3]
+	   				<span>财经审核</span>
+	   			[#elseif withdraw.withdrawProcess?? && withdraw.withdrawProcess == 4]
+	   				<span>boss审核</span>
+	   			[#elseif withdraw.withdrawProcess?? && withdraw.withdrawProcess == 5]
+	   				<span>出纳打款</span>
+	   			[#elseif withdraw.withdrawProcess?? && withdraw.withdrawProcess == 6]
+	   				<span>打款成功</span>
+	   			[/#if]
+	   		</td>
+   			<td>
+				[#if withdraw.withdrawStatus?? && withdraw.withdrawStatus == 0]
+	   				<span>审核中</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 1]
+	   				<span>客服审核成功</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 2]
+	   				<span>客服审核失败</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 3]
+	   				<span>财务审核成功</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 4]
+	   				<span>财务审核失败</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 5]
+	   				<span>财经审核成功</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 6]
+	   				<span>财经审核失败</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 7]
+	   				<span>boss审核成功</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 8]
+	   				<span>boss审核失败</span>
+	   			[#elseif withdraw.withdrawStatus?? && withdraw.withdrawStatus == 9]
+	   				<span>出纳打款</span>
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   		[@shiro.hasPermission name="system:withdraw:manager:group"]
+		   		<div class="btn-group" id="item_group_${withdraw.id}"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" >
+						<!-- 客服审核 -->
+						[@shiro.hasPermission name="system:examine:cs"]
+							[#if withdraw.withdrawProcess == 1 && withdraw.withdrawStatus == 0]
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},1,2);">客服审核成功</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},2,1);">客服审核失败</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- 财务审核 -->
+						[@shiro.hasPermission name="system:examine:fd"]
+				   			[#if withdraw.withdrawProcess == 2 && withdraw.withdrawStatus == 1]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},3,3);">财务审核成功</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},4,2);">财务审核失败</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- 财经审核(小于1W的) -->
+						[@shiro.hasPermission name="system:examine:fe"]
+				   			[#if withdraw.withdrawProcess == 3 && withdraw.withdrawStatus == 3 && withdraw.money <= 10000]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},5,5);">财经审核成功</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},6,3);">财经审核失败</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- 财经审核(大于1W的) -->
+				   		[@shiro.hasPermission name="system:examine:fe"]
+				   			[#if withdraw.withdrawProcess == 3 && withdraw.withdrawStatus == 3 && withdraw.money > 10000]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},5,4);">财经审核成功</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},6,3);">财经审核失败</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- boss审核(金额大于1W的) -->
+						[@shiro.hasPermission name="system:examine:ceo"]
+				   			[#if withdraw.withdrawProcess == 4 && withdraw.withdrawStatus == 5 && withdraw.money > 10000]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},7,5);">boss审核成功</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   			<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},8,4);">boss审核失败</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- 出纳打款(小于1W的) -->
+						[@shiro.hasPermission name="system:examine:ct"]
+				   			[#if withdraw.withdrawProcess == 5 && withdraw.withdrawStatus == 5 && withdraw.money <= 10000]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},9,6);">确认打款</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+				   		<!-- 出纳打款(大于1W的) -->
+						[@shiro.hasPermission name="system:examine:ct"]
+				   			[#if withdraw.withdrawProcess == 5 && withdraw.withdrawStatus == 7 && withdraw.money > 10000]
+					   		<li>
+				   				<a onclick="updateWithdrawStatus(${withdraw.id},9,6);">确认打款</a>
+				   			</li>
+					   		[/#if]
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+		  		<script type="text/javascript">if($("#item_group_${withdraw.id} li").length == 0){$("#item_group_${withdraw.id}").addClass("cms-hide");$("#item_group_${withdraw.id}").parent("td").html("<button class='btn btn-default' disabled='disabled'>已操作</button>")}</script>
+		   	[/@shiro.hasPermission]
+		  	</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="15" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserWithdrawList(pagination.pageNumber);
+		}
+	});
+}
+</script>

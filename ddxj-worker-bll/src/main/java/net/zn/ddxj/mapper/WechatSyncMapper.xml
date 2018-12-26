@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.WechatSyncMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.WechatSync" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="thumb_media_id" property="thumbMediaId" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, thumb_media_id, create_time
+    </sql>
+
+	<!-- 根据素材id查询是否有同步记录 -->
+    <select id="queryWechatSyncById" resultType="java.lang.Integer">
+        select count(id) from zn_wechat_sync where thumb_media_id = #{wechatId}
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_wechat_sync
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_wechat_sync
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.WechatSync" >
+        insert into zn_wechat_sync (id, thumb_media_id, create_time
+            )
+        values (#{id,jdbcType=INTEGER}, #{thumbMediaId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.WechatSync" >
+        insert into zn_wechat_sync
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="thumbMediaId != null" >
+                thumb_media_id,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="thumbMediaId != null" >
+                #{thumbMediaId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.WechatSync" >
+        update zn_wechat_sync
+        <set >
+            <if test="thumbMediaId != null" >
+                thumb_media_id = #{thumbMediaId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.WechatSync" >
+        update zn_wechat_sync
+        set thumb_media_id = #{thumbMediaId,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

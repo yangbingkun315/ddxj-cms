@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.ProblemLibMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.ProblemLib" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="problem_title" property="problemTitle" jdbcType="VARCHAR" />
+        <result column="problem_content" property="problemContent" jdbcType="LONGVARBINARY" />
+        <result column="problem_difficulty" property="problemDifficulty" jdbcType="INTEGER" />
+        <result column="author" property="author" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, problem_title, problem_content, problem_difficulty, author, create_time, update_time, 
+        flag
+    </sql>
+
+	<!-- 多条件查询问题库 -->
+    <select id="findProblemLibList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+       	id, problem_title, problem_difficulty, author, create_time, update_time, 
+        flag
+        from zn_problem_lib
+        where flag = 1
+        <if test="problemTitle != null and problemTitle != ''">
+        	and problem_title like concat(concat('%',#{problemTitle}),'%')
+        </if>
+        <if test="createTime !=null and createTime !=''">
+			and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(#{createTime} , '%Y-%m-%d')
+		</if>
+		<if test="startTime !=null and startTime !=''">
+			and DATE_FORMAT(create_time, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startTime} , '%Y-%m-%d')
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			and DATE_FORMAT(create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime} , '%Y-%m-%d')
+		</if>
+        order by create_time DESC,problem_difficulty
+    </select>
+    
+    <!-- 删除问题 -->
+    <update id="deleteProblemLib" parameterType="java.lang.Integer" >
+        update zn_problem_lib
+        <set >
+			flag = 2
+        </set>
+        where id = #{id}
+    </update>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_problem_lib
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_problem_lib
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.ProblemLib" >
+        insert into zn_problem_lib (id, problem_title, problem_content, 
+            problem_difficulty, author, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{problemTitle,jdbcType=VARCHAR}, #{problemContent,jdbcType=LONGVARBINARY}, 
+            #{problemDifficulty,jdbcType=INTEGER}, #{author,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.ProblemLib" >
+        insert into zn_problem_lib
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="problemTitle != null" >
+                problem_title,
+            </if>
+            <if test="problemContent != null" >
+                problem_content,
+            </if>
+            <if test="problemDifficulty != null" >
+                problem_difficulty,
+            </if>
+            <if test="author != null" >
+                author,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="problemTitle != null" >
+                #{problemTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="problemContent != null" >
+                #{problemContent,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="problemDifficulty != null" >
+                #{problemDifficulty,jdbcType=INTEGER},
+            </if>
+            <if test="author != null" >
+                #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.ProblemLib" >
+        update zn_problem_lib
+        <set >
+            <if test="problemTitle != null" >
+                problem_title = #{problemTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="problemContent != null" >
+                problem_content = #{problemContent,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="problemDifficulty != null" >
+                problem_difficulty = #{problemDifficulty,jdbcType=INTEGER},
+            </if>
+            <if test="author != null" >
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.ProblemLib" >
+        update zn_problem_lib
+        set problem_title = #{problemTitle,jdbcType=VARCHAR},
+            problem_content = #{problemContent,jdbcType=LONGVARBINARY},
+            problem_difficulty = #{problemDifficulty,jdbcType=INTEGER},
+            author = #{author,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 根据关键字查询问题列表 -->
+    <select id="queryProblemLibList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+		SELECT
+			  id, problem_title,problem_difficulty, author, create_time, update_time, flag
+		FROM
+			zn_problem_lib
+		WHERE
+			flag = 1 
+    	<if test="keywords !=null and keywords !=''">
+    		and problem_title LIKE CONCAT(CONCAT('%', #{keywords}), '%')
+    	</if>
+    </select>
+    <!-- 根据关键字查询问题详情 -->
+    <select id="queryProblemLibDetails" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		SELECT  id, problem_title, problem_content,problem_difficulty, author, create_time, update_time, flag FROM zn_problem_lib WHERE id = #{keywordsId} and  flag = 1 
+    </select>
+</mapper>

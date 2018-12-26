@@ -1,0 +1,101 @@
+[#assign title="点点小匠-文件管理"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/normalize.css?[@cmsVersion /]">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/video.css?[@cmsVersion /]">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/storage/skin.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/clipboard.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="cmsStorage">
+	<div class="alert alert-warning" >注：平台所有图片、视频、文件等 </div>
+	<form method="post" id="cms_storage_form" action="${base}/cms/storage/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage" value="1"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">文件名称：</label>
+		    	<input type="text" id="storageKey" name="storageKey" class="form-control search-input" placeholder="文件关键字">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">文件类型：</label>
+			    <select class="form-control" id="storageType" name="storageType" >
+					<option value="image/">图片</option>
+					<option value="video">影音</option>
+				</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">上传时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+			<div class="search-button">
+				<button type="button" class="btn btn-warning" onclick="queryStorageList(1)">查询</button>
+			</div>
+		
+		</div>
+		
+	</form>
+	<div class="cms-table-tpl">
+		<div class="cms-storage-content">
+	    <div class="row">
+		[#include "/admin/cms_storage_tpl.html"]
+	     </div>
+	     <div class="loading-more"><a href="javascript:;" onclick='nextPage()'>加载更多</a></div>
+	 </div>
+	</div>
+</div>
+<script type="text/javascript">
+$('#cms_storage_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		var currentPage = $("#currentPage").val();
+		if(currentPage == 1)
+		{
+			 $(".cms-table-tpl .row").html(data);
+		}
+		else
+		{
+			 $(".cms-table-tpl .row").append(data);
+		}
+	}
+});
+
+function queryStorageList(page)
+{
+	$("#currentPage").val(page);
+	$('#cms_storage_form').submit();
+}
+
+queryStorageList(1);
+
+var clipboard = new ClipboardJS('.cms-storage-link');
+clipboard.on('success', function(e) {
+ minAlert("复制成功",1)
+});
+clipboard.on('error', function(e) {
+    console.log(e);
+});
+
+function confirmDeleteStorage(id,key)
+{
+	showConfirmDialog({message : "确认要删除此文件吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/cms/storage/delete.htm?id=" + id+"&storageKey="+key,function(data){
+			alertTip("删除成功！",1);
+			$('#cms_storage_form').submit();
+			
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

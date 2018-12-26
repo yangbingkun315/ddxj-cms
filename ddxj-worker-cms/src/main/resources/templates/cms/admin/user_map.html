@@ -1,0 +1,97 @@
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+ <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=cAug9KFXQeIkRM3v77Mb30l1OiRYw8PN"></script>
+<div id="userMap"  style="width:100%; height: 800px;"></div>
+<script type="text/javascript">
+//初始化echarts实例
+var app = {};
+option = null;
+function initUserChartData()
+{
+	var myChart = echarts.init(document.getElementById('userMap'));
+	 doPost("${base}/cms/user/count.htm",{},function(data){
+		if(data.response == true)
+		{
+			initUserChart(JSON.parse(data.data),myChart)
+		}
+	})
+}
+function initUserChart(dataMap,myChart)
+{
+	option = {
+		    title : {
+		        text: '点点小匠《用户分布图》',
+		        subtext: '记录点点小匠所有已填写信息用户',
+		        left: 'center'
+		    },
+		    tooltip : {
+		        trigger: 'item'
+		    },
+		    legend: {
+		        orient: 'vertical',
+		        left: 'left',
+		        data:['真实用户']
+		    },
+		    visualMap: {
+		        min: 0,
+		        max: 2500,
+		        left: 'left',
+		        top: 'bottom',
+		        text:['高','低'],           // 文本，默认为数值文本
+		        calculable : true
+		    },
+		    toolbox: {
+		        show: true,
+		        orient : 'vertical',
+		        left: 'right',
+		        top: 'center',
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    series : [
+		        {
+		            name: '真实用户',
+		            type: 'map',
+		            mapType: 'china',
+		            roam: false,
+		            label: {
+		                normal: {
+		                    show: false
+		                },
+		                emphasis: {
+		                    show: true
+		                }
+		            },
+		            data:userData(dataMap.userList)
+		        }
+		    ]
+		};;
+	if (option && typeof option === "object") {
+	    myChart.setOption(option, true);
+	}
+	
+	//使用制定的配置项和数据显示图表
+	myChart.setOption(option); 
+}
+initUserChartData();
+var userData = function (data) {
+    var res = [];
+    for (var i = 0; i < data.length; i++) {
+    		var name = data[i].name;
+    		if(name.substring(name.length-1,name.length) == "市" || name.substring(name.length-1,name.length) == "省")
+    		{
+    			name = name.substring(0,data[i].name.length -1);
+    		}
+            res.push({
+                name: name,
+                value: data[i].value
+            });
+    }
+    return res;
+};
+
+</script>
+[#include "/common/cms_footer.html"]

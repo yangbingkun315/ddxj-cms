@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.RecruitRecordMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.RecruitRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="recruit_id" property="recruitId" jdbcType="INTEGER" />
+        <result column="enlist_status" property="enlistStatus" jdbcType="INTEGER" />
+        <result column="foreman_status" property="foremanStatus" jdbcType="INTEGER" />
+        <result column="worker_status" property="workerStatus" jdbcType="INTEGER" />
+        <result column="worker_comment_status" property="workerCommentStatus" jdbcType="INTEGER" />
+        <result column="foreman_comment_status" property="foremanCommentStatus" jdbcType="INTEGER" />
+        <result column="balance_status" property="balanceStatus" jdbcType="INTEGER" />
+        <result column="refuse_cause" property="refuseCause" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryUserDetail" ></association>
+         <association property="recruit" column="recruit_id" select="net.zn.ddxj.mapper.RecruitMapper.selectByPrimaryKey" ></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, recruit_id, enlist_status, foreman_status, worker_status, worker_comment_status, 
+        foreman_comment_status, balance_status, refuse_cause, create_time, update_time, flag
+    </sql>
+    
+    <!-- 更新审核状态 -->
+	<update id="updateByRecordId">
+		update zn_recruit_record   
+		<set >
+	   	 	<if test="enlistStatus != null" >
+				enlist_status = #{enlistStatus},
+	        </if>
+	        <if test="refuseCause != null" >
+				refuse_cause = #{refuseCause},
+	        </if>
+   	 	</set>
+   	 	where id = #{recordId} 
+   	 </update>
+
+    <select id="queryRecruitUserList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select *
+        from zn_recruit_record
+        where recruit_id = #{recruitId} and flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_recruit_record
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_recruit_record
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.RecruitRecord" >
+        insert into zn_recruit_record (id, user_id, recruit_id, 
+            enlist_status, foreman_status, worker_status, 
+            worker_comment_status, foreman_comment_status, 
+            balance_status, refuse_cause, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{recruitId,jdbcType=INTEGER}, 
+            #{enlistStatus,jdbcType=INTEGER}, #{foremanStatus,jdbcType=INTEGER}, #{workerStatus,jdbcType=INTEGER}, 
+            #{workerCommentStatus,jdbcType=INTEGER}, #{foremanCommentStatus,jdbcType=INTEGER}, 
+            #{balanceStatus,jdbcType=INTEGER}, #{refuseCause,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.RecruitRecord" >
+        insert into zn_recruit_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="enlistStatus != null" >
+                enlist_status,
+            </if>
+            <if test="foremanStatus != null" >
+                foreman_status,
+            </if>
+            <if test="workerStatus != null" >
+                worker_status,
+            </if>
+            <if test="workerCommentStatus != null" >
+                worker_comment_status,
+            </if>
+            <if test="foremanCommentStatus != null" >
+                foreman_comment_status,
+            </if>
+            <if test="balanceStatus != null" >
+                balance_status,
+            </if>
+            <if test="refuseCause != null" >
+                refuse_cause,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="enlistStatus != null" >
+                #{enlistStatus,jdbcType=INTEGER},
+            </if>
+            <if test="foremanStatus != null" >
+                #{foremanStatus,jdbcType=INTEGER},
+            </if>
+            <if test="workerStatus != null" >
+                #{workerStatus,jdbcType=INTEGER},
+            </if>
+            <if test="workerCommentStatus != null" >
+                #{workerCommentStatus,jdbcType=INTEGER},
+            </if>
+            <if test="foremanCommentStatus != null" >
+                #{foremanCommentStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceStatus != null" >
+                #{balanceStatus,jdbcType=INTEGER},
+            </if>
+            <if test="refuseCause != null" >
+                #{refuseCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.RecruitRecord" >
+        update zn_recruit_record
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                recruit_id = #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="enlistStatus != null" >
+                enlist_status = #{enlistStatus,jdbcType=INTEGER},
+            </if>
+            <if test="foremanStatus != null" >
+                foreman_status = #{foremanStatus,jdbcType=INTEGER},
+            </if>
+            <if test="workerStatus != null" >
+                worker_status = #{workerStatus,jdbcType=INTEGER},
+            </if>
+            <if test="workerCommentStatus != null" >
+                worker_comment_status = #{workerCommentStatus,jdbcType=INTEGER},
+            </if>
+            <if test="foremanCommentStatus != null" >
+                foreman_comment_status = #{foremanCommentStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceStatus != null" >
+                balance_status = #{balanceStatus,jdbcType=INTEGER},
+            </if>
+            <if test="refuseCause != null" >
+                refuse_cause = #{refuseCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.RecruitRecord" >
+        update zn_recruit_record
+        set user_id = #{userId,jdbcType=INTEGER},
+            recruit_id = #{recruitId,jdbcType=INTEGER},
+            enlist_status = #{enlistStatus,jdbcType=INTEGER},
+            foreman_status = #{foremanStatus,jdbcType=INTEGER},
+            worker_status = #{workerStatus,jdbcType=INTEGER},
+            worker_comment_status = #{workerCommentStatus,jdbcType=INTEGER},
+            foreman_comment_status = #{foremanCommentStatus,jdbcType=INTEGER},
+            balance_status = #{balanceStatus,jdbcType=INTEGER},
+            refuse_cause = #{refuseCause,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 根据活动ID,用户ID查询活动报名状态 -->
+    <select id="queryWorkerDeliver" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			zn_recruit_record
+		WHERE
+		zn_recruit_record.user_id = #{userId} AND
+		zn_recruit_record.recruit_id = #{recruitId} and flag = 1   	
+    </select>
+    
+    <select id="queryAllWorkerDeliver" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			zn_recruit_record
+		WHERE
+		zn_recruit_record.user_id = #{userId} AND
+		zn_recruit_record.recruit_id = #{recruitId}   	
+    </select>
+    
+    <select id="queryWorker" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			zn_recruit_record
+		WHERE
+		zn_recruit_record.user_id = #{userId} AND
+		zn_recruit_record.recruit_id = #{recruitId}
+    </select>
+    
+    <select id="selectByUserIdAndRecruitId" resultType="java.lang.Integer">
+    	SELECT count(rr.id) FROM zn_recruit_record rr WHERE rr.recruit_id = #{recruitId}
+    	and rr.enlist_status != 3
+		AND (rr.worker_status = 2 or rr.worker_status = 3) AND (rr.foreman_status = 2 or rr.foreman_status = 3)
+		AND rr.flag = 1
+    </select>
+    
+    <!-- 更新报名报名状态 -->
+    <update id="updateWorkerStatus">
+    	update zn_recruit_record set worker_status = #{enlistStatus} where user_id = #{userId} and recruit_id = #{recruitId} and flag = 1
+    </update>
+
+    <!-- 更新结算状态 -->
+    <update id="updateBlanceStatus">
+    	UPDATE zn_recruit_record SET balance_status=1 WHERE user_id = #{userId} and recruit_id = #{recruitId} and flag = 1
+    </update>
+    
+    <!-- 取消报名 -->
+    <update id="updateRecordFlag">
+    	UPDATE zn_recruit_record SET flag = 2 WHERE id = #{recordId}
+    </update>
+    
+    <!-- 查询报名数量 -->
+    <select id="selectByUserId" resultType="java.lang.Integer">
+    	SELECT COUNT(1) FROM zn_recruit_record AS record 
+		INNER JOIN zn_recruit AS recruit ON record.recruit_id = recruit.id
+		WHERE recruit.recruit_status = 1 AND recruit.validate_status = 3 AND record.user_id = #{userId} AND recruit.flag = 1 and record.flag = 1
+    </select>
+    
+    <!-- 查询已经报名数量(已经结束的项目不算) -->
+    <select id="selectByUserFlag" resultType="java.lang.Integer">
+    	SELECT COUNT(1) FROM zn_recruit_record AS record 
+		INNER JOIN zn_recruit AS recruit ON record.recruit_id = recruit.id
+		WHERE recruit.recruit_status = 1 AND recruit.validate_status = 3 AND record.user_id = #{userId} AND record.enlist_status != 3 AND record.worker_status != 3 AND record.worker_status != 4 AND recruit.flag = 1 AND record.flag = 1
+    </select>
+    <!-- 查询在职状态 -->
+    <select id="queryUserJobStatusCount" resultType="java.lang.Integer">
+    	SELECT count(1) FROM zn_recruit INNER JOIN zn_recruit_record ON zn_recruit_record.recruit_id = zn_recruit.id WHERE
+		zn_recruit_record.user_id = #{userId} AND zn_recruit_record.worker_status = 2 AND zn_recruit_record.flag = 1 AND zn_recruit.flag = 1
+    </select>
+    <!-- 查询报名工人详情 -->
+     <select id="queryEnlistUserDetails" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			zn_recruit_record
+		WHERE
+		zn_recruit_record.user_id = #{userId} AND
+		zn_recruit_record.recruit_id = #{recruitId} and flag = 1   
+    </select>
+    <!-- 统计报名通过的人数 -->
+    <select id="countSingUp" resultType="java.lang.Integer">
+    	<!-- SELECT count(1) from zn_recruit_record WHERE recruit_id=#{recruitId} AND enlist_status=2 and flag=1 -->
+    	SELECT count(1) from zn_recruit_record WHERE recruit_id=#{recruitId} AND enlist_status=2 AND foreman_status=2  AND worker_status=2 and flag=1
+    	
+    </select>
+    <!-- 删除申请成为工头的报名记录 -->
+    <delete id="updateUserSignStatus"  parameterType="java.lang.Integer">
+    	delete from zn_recruit_record
+        where user_id = #{userId} 
+    </delete>
+    <!-- 删除报名记录 -->
+    <delete id="delRecruitRecord" parameterType="java.lang.Integer" >
+        delete from zn_recruit_record
+        where user_id = #{userId} 
+    </delete>
+    <!-- 查询进行中的活动 -->
+    <select id="queryWorkerConduct" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT * from zn_recruit_record WHERE user_id=#{userId} AND worker_status =2 AND flag=1
+    </select>
+</mapper>

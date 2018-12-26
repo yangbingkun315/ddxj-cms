@@ -1,0 +1,250 @@
+[#assign title="点点小匠-编辑用户信息"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link href="${base!}/assets/cms/css/user/skin.css?[@cmsVersion /]" rel="stylesheet">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/city_data.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=customerUserList>
+	<div class="alert alert-warning" > 注：联系电话、用户角色不能擅自修改 </div>
+	<form method="post" id="cms_user_edit_form" action="${base}/customer/user/edit.htm" enctype="multipart/form-data">
+		<input id="userId" type="hidden" name="user.id" value="${user.id}"/>
+		<div class="bootstrap-widget-content">
+			<div class="order-search-item">
+				<label>用户头像</label>
+				<div class="input-field clearfix">
+					<input type="hidden" id="userPortrait" name="user.userPortrait"/>
+					<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=userPortraitUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+					<a class="galpop-single upload-image" href="${user.userPortrait!""}">
+						<img  src="${user.userPortrait!""}" width="100%" id="userPortrait_preview" height="100%"  [#if !user?? || !user.userPortrait] style="display:none;"[/#if]/>
+					</a>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>用户名</label>
+				<div class="input-field clearfix">
+					<input type="text" id="userName" name="user.userName" value="${(user.userName)!''}" class="input textinput-main" showrightmsg="false" placeholder="用户名，非必填" id="userName">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>真实姓名</label>
+				<div class="input-field clearfix">
+					<input type="text" id="realName" name="user.realName" value="${(user.realName)!''}" class="input textinput-main" maxValue="5" isRequired="true" placeholder="必填，最大5个字符">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>出生日期</label>
+				<div class="input-field clearfix">
+					<input type="text" id="birthDate" name="birthDate" class="input textinput-main" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" showRightMsg="false"
+							placeholder="出生日期，必填" autocomplete="off" value="${(user.birthDate?string('yyyy-MM-dd'))!""}">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>联系电话</label>
+				<div class="input-field clearfix">
+					<input type="text" id="phone" value="${(user.phone)!''}" class="input textinput-main" readonly="readonly">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>性别</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="sex" name="user.sex">
+						<option value="">请选择性别</option>
+						<option value="M" [#if user?? && user.sex == 'M']selected="selected"[/#if]>男</option>
+						<option value="F" [#if user?? && user.sex == 'F']selected="selected"[/#if]>女</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>用户角色</label>
+				<div class="input-field clearfix">
+					<input type="text" id="role" value="[#if (user.role)?? && user.role == 1]工人[#else]工头[/#if]" class="input textinput-main" readonly="readonly">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工龄</label>
+				<div class="input-field clearfix">
+					<input type="text" id="standing" name="user.standing" value="${(user.standing)!''}" class="input textinput-main" placeholder="工龄，必填" fieldType="number" isRequired="true" maxValue="50">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>推广人编号</label>
+				<div class="input-field clearfix">
+					<input type="text" id="staffNum" name="user.staffNum" value="${(user.staffNum)!''}" class="input textinput-main" maxValue="99" placeholder="最大32个字符" fieldType="number">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工种</label>
+				<div class="input-field clearfix" style="min-height:40px;">
+					<select class="form-control textinput-main" id="categoryId" style="height:40px;" data-placeholder="请选择工种" multiple="multiple">
+						[#if categoryUserList?? && categoryUserList?size > 0]
+							[#list categoryUserList as category]
+								<option value="${category.id}">${category.categoryName}</option>
+							[/#list]
+						[/#if]
+					</select>
+					<div id="categoryIdList_ctx">
+						[#if user.categoryList?? && user.categoryList?size > 0]
+							[#list user.categoryList as category]
+								<input name="categoryIdList" type="hidden" value="${category.id}"/>
+							[/#list]
+						[/#if]
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>户口所在地</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main provinceText" id="registeredProvince" name="user.registeredProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main cityText" id="registeredCity" name="user.registeredCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control textinput-main areaText" id="registeredArea" name="user.registeredArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工作所在地</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main provinceText" id="workProvince" name="user.workProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main cityText" id="workCity" name="user.workCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control textinput-main areaText" id="workArea" name="user.workArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>详细地址（户口所在地）</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="32"  id="registeredAddress" name="user.registeredAddress" placeholder="详细地址（户口所在地），必填">${(user.registeredAddress)!""}</textarea>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>详细地址（工作所在地）</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="32" id="workAddress" name="user.workAddress" placeholder="详细地址（工作所在地），必填">${(user.workAddress)!""}</textarea>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>个人描述</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" rows="3" maxLength="32" id="personDesc" name="user.personDesc" maxLength="512" placeholder="最大512个字符">${(user.personDesc)!""}</textarea>
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="submit"  name="yt0">保存信息</button> </div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#cms_user_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#cms_user_edit_form').validate())
+		{
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+
+$('#cms_user_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#cms_user_edit_form').validate())
+		{
+			if($("#categoryId").val() == null)
+			{
+				alertTip("请选择工种！",2);
+				return false;
+			}
+			removeAllRightMessage();
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			setTimeout(function(){
+				window.location.href="${base}/customer/user/list.htm"
+			},1000)
+		}
+	}
+});
+
+changeProvinceText("#registeredProvince","${(user.registeredProvince)!'null'}","${(user.registeredCity)!'null'}","${(user.registeredArea)!'null'}");
+changeProvinceText("#workProvince","${(user.workProvince)!'null'}","${(user.workCity)!'null'}","${(user.workArea)!'null'}");
+
+$("#categoryId").chosen({allow_single_deselect:true,max_selected_options:3,disable_search:true}).change(function(){
+	$("#categoryIdList_ctx").html("");
+		var selectedValue = $("#categoryId").val();
+		if(selectedValue)
+		{
+			for(var i = 0;i < selectedValue.length;i++)
+			{
+				$("#categoryIdList_ctx").append('<input name="categoryIdList" type="hidden" value="' + selectedValue[i] + '"/>');
+			}
+		}
+});
+
+setTimeout(function(){
+	$('#cms_user_edit_form').configValidate();
+	$("#categoryIdList_ctx").find("input[name='categoryIdList']").each(function(){
+		$("#categoryId option[value='" + $(this).val() + "']").attr("selected",true);
+	});
+	$("#categoryId").trigger("chosen:updated");
+	$('a.upload-image').galpop();
+},100);
+function userPortraitUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#userPortrait").val(data);
+		$("#userPortrait_preview").attr("src",data).show();
+		$("#userPortrait_preview").parent().attr("href",+ data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+</script>
+[#include "/common/cms_footer.html"]

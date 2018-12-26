@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<script type="text/javascript" src="../../js/proTree.js" ></script>
+
+<title>授信列表</title>
+</head>
+<body ng-app="credit" ng-controller="creditManager">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+	  <div class="order-search-item">
+		  <span class="search_title">机构名字：</span>
+		  <input type="text" name="creditName" id="creditName" ng-model="creditName"   class="input textinput-main width160" placeholder="请输入机构名字"> 
+	  </div>
+	  <div class="order-search-item">
+		  <span class="search_title">机构代码：</span>
+		  <input type="text" name="creditCode" id="creditCode" ng-model="creditCode"   class="input textinput-main width160" placeholder="请输入机构代码"> 
+	  </div>
+	  	  <div class="order-search-item">
+		  <span class="search_title">机构地址：</span>
+		  <input type="text" name="creditAddress" id="creditAddress" ng-model="creditAddress"   class="input textinput-main width160" placeholder="请输入机构地址"> 
+	  </div>
+	 <div class="order-search-item clear" >
+	  	<button class="btn button_btn bg-deep-blue "  type="button" ng-click="queryCreditList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+	 <button  ng-click="openCredit()"  id="administrator_add"  type="button" class="btn button_btn bg-deep-blue"><i class="fa  fa-edit"></i>&nbsp;添加授信机构</button>
+  	 </div>
+	</div>
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th  width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>机构名字</th>
+						<th>机构代码</th>
+						<th>机构logo</th>
+						<th style="width:400px">机构简介</th>
+						<th>机构地址</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="creditList.length > 0 " ng-repeat="credit in creditList track by $index">
+						<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td ng-bind="credit.creditName"></td>
+						<td ng-bind="credit.creditCode" style="max-width:200px;"></td>
+						<td><img ng-src="{{credit.creditLogo}}" width="100px;" height="100px;" ng-click="showBigImage(credit.creditLogo)"/></td>
+						<td ng-bind="credit.creditDesc"></td>
+						<td ng-bind="credit.creditAddress"></td>
+						<td ng-bind="credit.createTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="credit.updateTime.time | date:'yyyy-MM-dd'"></td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="credit.flag == 1">有效</span>
+							<span class="label label-success radius" ng-if="credit.flag == 2">无效</span>
+						</td>
+						<td class="td-manage"> 
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="编辑" ng-click="openCredit(credit.id)"   href="javascript:;" >编辑</a></li> 
+							<li><a title="删除" ng-click="deleteCredit(credit.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="creditList == null || creditList.length <= 0 ">
+						<td class="center" colspan="10">暂无数据<b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+	<div id="addOrUpdate_credit" class="addOrUpdate_credit layui-form-item" style="display:none">
+		<form ng-submit="updateCredit()" >
+			<div class="add_style add_administrator_style">
+				<ul class=" page-content">
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>机构名称：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" placeholder="请输入机构名称" class="text_add" style="width:300px;" ng-model="credit.creditName"/>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>机构代码：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" placeholder="请输入机构代码" class="text_add" style="width:300px;" ng-model="credit.creditCode"/>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>机构Logo：</label>
+						<div class="formControls col-xs-6">
+							<span class="cont_style col-xs-9">
+								<div id="preview" class="preview_img">
+									<img ng-src="{{credit.creditLogo}}" ng-model="credit.creditLogo" style="width:100px;height:100px" id="imageFile" border="0" src="../../images/image.png" />
+								</div>
+								<div class="fileInput ">
+									<input type="file" onchange="uploadImg(this)" name="upfile" id="upfile" class="upFileBtn"/>
+						        </div>
+							</span>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>机构简介：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" placeholder="请输入机构简介" class="text_add" style="width:300px;" ng-model="credit.creditDesc"/>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>详细地址：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" placeholder="请输入机构详细地址" class="text_add" style="width:300px;" ng-model="credit.creditAddress"/>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</form>
+	</div>
+	
+	<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+		<a class="close" ng-click="hideBigImage()"></a>
+		<div class="hide-layer" ng-click="hideBigImage()"></div>
+		<div class="add_style add_administrator_style">
+			<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+		</div>
+	</div>
+	
+</body>
+</html>
+<script>
+var creditManager = angular.module('credit', []);
+creditManager.controller('creditManager', function($scope,$timeout) {
+	$scope.creditName="";
+	$scope.creditCode="";
+	$scope.creditAddress = "";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryCreditList = function(type)//查询列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/credit/list.ddxj',
+				data: {creditName:$scope.creditName,creditCode:$scope.creditCode,creditAddress:$scope.creditAddress,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.creditList.total;
+						$scope.creditList = data.data.creditList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+		               	 {
+		               		$scope.initPage();
+		               	 }
+					}
+				}
+			}); 
+		}); 
+	}
+	 $scope.initPage = function()
+	 {
+		 $scope.initPageFlag = true;
+		 layui.use(['laypage', 'layer'], function(){
+			  var laypage = layui.laypage
+			  ,layer = layui.layer;
+			  laypage.render({
+		      	    elem: 'list-page'
+		      	    ,count: $scope.total //数据总数
+		      	  	,limit:	20
+		      	    ,jump: function(obj,first){
+		      			$scope.pageNum = obj.curr;
+		      			$scope.pageSize = obj.limit;
+			      		if(!first)//一定要加此判断，否则初始时会无限刷新
+			      		{
+			      			$scope.queryCreditList();
+	                    }
+		      	    }
+		      	  });
+		 });
+	 }
+	 $scope.queryCreditList();
+	$scope.deleteCredit = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/credit/delete.ddxj',
+				data: {creditId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryCreditList();
+					}
+				}
+			}); 
+		});
+	}
+
+	$scope.openCredit = function(creditId)//打开添加窗口
+	{
+		$scope.credit = "";
+		if(isNotNull(creditId))
+		{
+			Ajax.post({
+				url: getRoot+'/manager/credit/details.ddxj',
+				data: {creditId:creditId},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.credit = data.data.credit;
+						$scope.$apply();
+	         		}
+         		}
+			}); 
+		}
+		layer.open({
+			type: 1,
+			title:creditId?'修改授信机构':'添加授信机构',
+			area : ['75%' , '90%'],
+			shadeClose: false,
+			content: $('#addOrUpdate_credit'),
+			btn:['提交','取消'],
+			yes:function(index,layero){
+				$scope.credit.creditLogo = $("#imageFile").prop("src");
+				Ajax.post({
+			    	url: getRoot+'/manager/credit/update.ddxj',
+					data: $scope.credit,
+					async: true,
+					success: function(data) {
+						if(data.response)
+						{
+							layer.closeAll();
+							layer.msg(data.responseMsg);
+							$scope.queryCreditList();
+						}
+					}
+				})
+			}
+		});
+	}
+	
+	$scope.updateCredit = function()//更新菜单
+	{
+		if(!isNotNull($scope.credit.creditName))
+		{
+			layer.msg("请输入工种名称");
+			return false;
+		}
+		if(!isNotNull($scope.credit.creditCode))
+		{
+			layer.msg("请选择包工类型");
+			return false;
+		}
+		if(!isNotNull($scope.credit.creditDesc))
+		{
+			layer.msg("请选择包工类型");
+			return false;
+		}
+		if(!isNotNull($scope.credit.creditAddress))
+		{
+			layer.msg("请选择包工类型");
+			return false;
+		}
+		Ajax.post({
+			url: getRoot+'/manager/credit/update.ddxj',
+			data: $scope.credit,
+			async: true,
+			success: function(data) 
+			{
+				if(data.response == true)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					$scope.queryCreditList();
+				}
+			}
+		}); 
+	}
+	
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+	
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+});
+
+function uploadImg(event)
+{
+	var img = uploadImageTOQN(event);
+	$("#imageFile").attr("src",img);
+}
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+						
+});
+</script>

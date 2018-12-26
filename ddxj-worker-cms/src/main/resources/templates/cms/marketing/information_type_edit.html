@@ -1,0 +1,60 @@
+<div class="cms-edit">
+<div class="alert alert-warning" >注：资讯类型添加! </div>
+	<form action="${base}/information/type/edit.htm"  method="post" id="info_type_edit_form">
+		<input type="hidden" name="informationType.id" value="${(informationType.id)!''}" />
+		<div  class="item clear" >
+			<div class="title">
+				分类排序：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="informationTypeSort" name="informationType.sort" isRequired="true" placeholder="请输入排序" value="${(informationType.sort)!''}" >
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				分类名称：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="informationTypeName" name="informationType.name" isRequired="true" placeholder="请输入分类名称" value="${(informationType.name)!''}" >
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+$('#info_type_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#info_type_edit_form').validate())
+		{
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.response)
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryInfoTypeList(1);
+		 }
+		 else
+		 {
+			alertTip(data.responseMsg,3);
+		 }
+	}
+});
+
+$(function(){
+	$('#info_type_edit_form').configValidate();
+});
+</script>

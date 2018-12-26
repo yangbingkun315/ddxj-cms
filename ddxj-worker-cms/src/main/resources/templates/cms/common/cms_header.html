@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	 <meta name="viewport" content="target-densitydpi=device-dpi" />
+   <meta name="viewport" content="target-densitydpi=high-dpi" />
+   <meta name="viewport" content="target-densitydpi=medium-dpi" />
+   <meta name="viewport" content="target-densitydpi=low-dpi" />
+  <meta name="viewport" content="target-densitydpi=200" />
+	<!-- 避免IE使用兼容模式 -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<!-- windows phone 点击无高光 -->
+	<meta name="msapplication-tap-highlight" content="no" />
+	<!-- 启用360浏览器的极速模式(webkit) -->
+	<meta name="renderer" content="webkit" />
+	<meta name="MobileOptimized" content="320" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<meta content="telephone=no" name="format-detection" />
+	<meta name="keywords" content="点点小匠,点点小匠官网,小匠,工人在线找工作,上海众宁网络科技有限公司,工匠,工人,工头,匠工,包工头,总包,分包,碧桂园,diandxj" /> 
+	<meta name="description" content="点点小匠是上海众宁网络科技有限公司开发、运营及维护的一款互联网首家搭建、解决及促进施工单位及工人之间关系的平台。" /> 
+	<meta property='og:type' content='website'/> 
+	<meta property='og:title' content='点点小匠-点点小匠_点点小匠官网_小匠_工人在线找工作_上海众宁网络科技有限公司_工匠_工人_工头_匠工_包工头_总包_分包_碧桂园'/> 
+	<meta property='og:description' content='点点小匠是上海众宁网络科技有限公司开发、运营及维护的一款互联网首家搭建、解决及促进施工单位及工人之间关系的平台。'/> 
+	<meta property='og:site_name' content='点点小匠'/>
+	<meta property='article:author' content='diandxj'/> 
+	<meta name="author" content="点点小匠" />
+	<input type="hidden" id="siteContextPath" value="${base!""}"/>
+	<input type="hidden" id="siteResPath" value="[@resUrl /]"/>
+    <title>${title!"无标题"}</title>	
+    <link rel="shortcut icon" href="[@resUrl /]/assets/cms/favicon.ico" > 
+    
+    	<link href="[@resUrl /]/assets/cms/favicon.ico" mce_href="[@resUrl /]/assets/cms/favicon.ico" rel="bookmark" type="image/x-icon" /> 
+	<link href="[@resUrl /]/assets/cms/favicon.ico" mce_href="[@resUrl /]/assets/cms/favicon.ico" rel="icon" type="image/x-icon" /> 
+	<link href="[@resUrl /]/assets/cms/favicon.ico" mce_href="[@resUrl /]/assets/cms/favicon.ico" rel="shortcut icon" type="image/x-icon" /> 
+	
+    <link href="[@resUrl /]/assets/cms/css/common/bootstrap.min.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/font-awesome.min.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/animation.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/frame.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/jquery.form.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/tip.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/checkbox.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/iconfont/iconfont.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/nav.css?v=[@cmsVersion /]" rel="stylesheet">
+    <link href="[@resUrl /]/assets/cms/css/common/pagination.css?v=[@cmsVersion /]" rel="stylesheet">
+  [#include "/common/cms_libs.html"]
+</head>
+<body>
+<div class="cms-loading-top"></div>
+<script type="text/javascript">$('.cms-loading-top').animate({'width':'33%'},200);</script>
+[#if !isHeader]
+[#include "/common/cms_left.html"]
+<div class="cms-header">
+	<div class="notic-operate">
+		<span class="margin-r">是否开启通知：</span>
+		<label class="el-switch el-switch-lg">
+			<input type="checkbox" name="switch" id="operateNoticId" checked onchange="changeNoticWarn(this)">
+			<span class="el-switch-style"></span>
+		</label>
+	</div>
+	<div class="cms-top-right">
+		<div class="box-making">
+			<div class="making-item"  id="cms-screen">
+				000-00-00 00:00:00
+			</div>
+			[@shiro.hasPermission name="system:message"]
+			<div class="making-item" id="cms-message-method">
+				<i class="iconfont">&#xe620;</i>
+				<span class="badge">0</span>
+				<div class="cms-message-tip a-bounceinR">
+					<div class="message-all"><a href="${base}/cms/message/list.htm">所有消息 >></a></div>
+					<div class="message-content">
+						<ul>
+							<li><a href="javascript:;">暂无消息</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			[/@shiro.hasPermission]
+			<div class="making-item">
+				<div class="welcome_user">欢迎您，[@shiro.principal type="net.zn.ddxj.entity.CmsUser" property="nickName"/]</div>
+				<div class="cms-user-operate a-fadeinR">
+					<ul>
+						<li onclick="cmsUpdateCmsUser([@shiro.principal type="net.zn.ddxj.entity.CmsUser" property="id"/])">修改信息</li>
+						<li onclick="cmsChangeUserPassword([@shiro.principal type="net.zn.ddxj.entity.CmsUser" property="id"/])">重置密码</li>
+					</ul>
+				</div>
+			</div>
+			<div class="making-item"><a href="#" onclick="loginOut()"><i class="glyphicon glyphicon-off"></i></a></div>
+		</div>
+	</div>
+	[#include "/common/cms_shortcut.html"]
+</div>
+[@shiro.hasPermission name="system:message"]
+<script type="text/javascript"> setTimeout(function(){cms.user.initServiceSchedule();},200)</script>
+<div id="notic-message-mp3">
+
+</div>
+[/@shiro.hasPermission]
+<script type="text/javascript">searchMyResource();
+</script>
+[/#if]

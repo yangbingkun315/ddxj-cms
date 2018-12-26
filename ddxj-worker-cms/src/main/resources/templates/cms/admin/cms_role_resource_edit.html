@@ -1,0 +1,83 @@
+<link href="[@resUrl /]/assets/cms/css/common/zTreeStyle.css?[@cmsVersion /]" rel="stylesheet">
+<script src="[@resUrl /]/assets/cms/js/common/jquery.ztree.all.js?[@cmsVersion /]"></script>
+<div class="cms-edit">
+	<form action="${base}/cms/role/resource/edit.htm" method="post" id="role_resource_edit">
+		<input type="hidden" name="roleId" value="${(roleId)!""}">
+		<input type="hidden" name="resourceIds" >
+		<div  class="item clear">
+			<div class="title">
+				资源权限：
+			</div>
+			<div class="content">
+				<div id="roleTree" class="ztree"></div>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="button" value="保存" onclick="submitRoleResource()" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+var setting = {
+		check : {
+			enable : true
+		},
+		data : {
+			simpleData : {
+				enable : true
+			}
+		}
+	};
+	setting.check.chkboxType = {
+		"Y" : "ps",
+		"N" : "s"
+	};
+$.ajax({
+	type : "POST",
+	url : "${base}/cms/role/resource/list.htm?roleId=${roleId}",
+	dataType : 'json',
+	success : function(msg) {
+		$.fn.zTree.init($("#roleTree"), setting,JSON.parse(msg.data).roleResourceList);
+	}
+});
+function submitRoleResource()
+{
+	var treeObj = $.fn.zTree.getZTreeObj("roleTree");
+	var nodes = treeObj.getCheckedNodes(true);
+	var resourceIds= "";
+	for(var index in nodes){
+		console.log(item);
+		var item=nodes[index];
+		resourceIds+=item.id+",";
+	} 
+	$("input[name=resourceIds]").val(resourceIds.substring(0,resourceIds.length - 1));
+	$('#role_resource_edit').submit();
+	
+}
+$('#role_resource_edit').ajaxForm({
+	beforeSubmit:function(){
+		
+		return true;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+ 			 $('#cms_role_form').submit();
+		 }
+	}
+});
+</script>

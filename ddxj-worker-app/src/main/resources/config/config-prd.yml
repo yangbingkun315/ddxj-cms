@@ -1,0 +1,71 @@
+##################七牛##########################
+access_key: LsPoDI1AUG5qygyzfRDiQT5tROKbL92WTlrEwdTn
+secret_key: 3hVA-r5-Gf1_-AbFPBAxd4YoGtewiTtF-GXn_RLo
+bucket_name: ddxj-prd
+bucket_host_name: res.diandxj.com
+###################友盟推送KEY################
+##安卓
+u_push_android_app_key: 5aead042b27b0a38da000232
+u_push_android_app_message_secret: 21f36603c1894ac888ac88eeab0104a4
+u_push_android_app_master_secret: x9ztd2fje1meoq8ujpzyxpgols26fbjn
+##IOS
+u_push_ios_app_key: 5aead35df43e487b84000072
+u_push_ios_app_master_secret: fyorqlp4pab1jexcl4vmznwjupm1lu2a
+###############图片视频服务器域名###############
+##生产环境
+static_url: http://res.diandxj.com
+################微信公众号##################
+##微信公众号appid####正式环境
+wx_app_id: wx183170965aafbd8a
+##微信公众号appsecret####正式环境
+wx_app_secret: 70be09b3e812dae18a1bd25c59aa7109
+##微信公众号token####正式环境
+token_key: kzCVfZTBUTVKRWPIqRnUlDQ6DsJNbO
+################微信开放平台###############
+##微信开放平台APPID
+kf_app_id: wx86a5e745c2e61d60
+kf_app_secret: dfea6020b7c6a0c83612a61806140678
+###################微信公众号（微信商户平台）##################
+##微信公众号（微信支付商户ID）
+wechat_mach_id: 1489809392
+##微信公众号（微信支付KEY）
+wechat_key: iYrBlWOfjsxhCHKrGnXlxwBtNmG9pe8V
+###################APP微信支付（商户平台）#####################
+##APP微信支付商户ID
+app_mach_id: 1503953011
+##APP微信支付商户KEY
+app_key: gUMb2zR6Mr8ocxnIjYiTa4BZL4TAqvDF
+#######################################
+wechat_notify_url : http://app.diandxj.com/worker-app/wechat/notifyUrl.ddxj
+app_notify_url: http://app.diandxj.com/worker-app/app/notifyUrl.ddxj
+jscode2session_url : https://api.weixin.qq.com/sns/jscode2session?
+unifiedorder_url : https://api.mch.weixin.qq.com/pay/unifiedorder
+orderquery_url : https://api.mch.weixin.qq.com/pay/orderquery
+#####################################阿里云-云市场###############################################
+##银行卡验证url
+bank_validate_url: http://yhsys.market.alicloudapi.com
+##银行卡验证path
+bank_validate_path: /bank4
+##云市场APPCODE
+validate_appcode: 2f001ac0de6b44038d9a735e91c69dd2
+##实名认证url
+realName_validate_url: https://1.api.apistore.cn/idcard3
+##云通信
+ytx_access_key_id: LTAIyBC2j7jKrl4J
+ytx_access_key_secret: F4qBqI4k59OByqI9ksH22Marpn87yF
+##语音服务
+yyfw_access_key_id: LTAIAzKgwaTFlmUD
+yyfw_access_key_secret: 45OpSQRdLjjSMFZ85N7xstNYL6l9HE
+######################################云片短信服务#############################################
+yunpian_api_key: 30b7989dbe8fbd4b16a4ada432f943a6
+yunpian_api_key_martketing : 7dc47efb99a1b2db024fc890e4de6de8
+###############友盟推送生产开关##############
+production_mode: true
+###############云片短信推送开关##############
+yunpian_sms_push: true
+###############即时通讯##############
+ORG_NAME: 1117180829099758
+APP_NAME: diandxj
+GRANT_TYPE: client_credentials
+CLIENT_ID: YXA6Zp63YNKjEeiLlmsmqZeDXA
+CLIENT_SECRET: YXA6jIxDIAs5UVu4NAfzIgSeb0urxwE

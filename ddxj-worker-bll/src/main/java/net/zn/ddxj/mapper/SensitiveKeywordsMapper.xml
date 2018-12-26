@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.SensitiveKeywordsMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.SensitiveKeywords" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="keywords_type" property="keywordsType" jdbcType="VARCHAR" />
+        <result column="keywords_content" property="keywordsContent" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, keywords_type, keywords_content, create_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_sensitive_keywords
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_sensitive_keywords
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.SensitiveKeywords" >
+        insert into zn_sensitive_keywords (id, keywords_type, keywords_content, 
+            create_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{keywordsType,jdbcType=VARCHAR}, #{keywordsContent,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.SensitiveKeywords" >
+        insert into zn_sensitive_keywords
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="keywordsType != null" >
+                keywords_type,
+            </if>
+            <if test="keywordsContent != null" >
+                keywords_content,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="keywordsType != null" >
+                #{keywordsType,jdbcType=VARCHAR},
+            </if>
+            <if test="keywordsContent != null" >
+                #{keywordsContent,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.SensitiveKeywords" >
+        update zn_sensitive_keywords
+        <set >
+            <if test="keywordsType != null" >
+                keywords_type = #{keywordsType,jdbcType=VARCHAR},
+            </if>
+            <if test="keywordsContent != null" >
+                keywords_content = #{keywordsContent,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.SensitiveKeywords" >
+        update zn_sensitive_keywords
+        set keywords_type = #{keywordsType,jdbcType=VARCHAR},
+            keywords_content = #{keywordsContent,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="querySensitiveKeywordsList" resultMap="BaseResultMap" >
+    	select * from zn_sensitive_keywords where flag = 1
+    </select>
+</mapper>

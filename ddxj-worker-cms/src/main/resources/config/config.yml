@@ -1,0 +1,49 @@
+cmsVersion: 1.2.0
+res_url: http://localhost:8986/worker-cms
+img_res_url: http://localhost:8986/worker-cms
+base_url: http://localhost:8986/worker-cms
+
+jdbc.className: com.mysql.jdbc.Driver
+jdbc.url: jdbc:mysql://47.97.215.128:3306/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+jdbc.username: root
+jdbc.password: wad371890
+###############图片视频服务器域名###############
+static_url: http://res-test.diandxj.com
+##################七牛##########################
+access_key: LsPoDI1AUG5qygyzfRDiQT5tROKbL92WTlrEwdTn
+secret_key: 3hVA-r5-Gf1_-AbFPBAxd4YoGtewiTtF-GXn_RLo
+bucket_name: ddxj
+bucket_host_name: res-test.diandxj.com
+###################友盟推送KEY################
+##安卓
+u_push_android_app_key: 5aead042b27b0a38da000232
+u_push_android_app_message_secret: 21f36603c1894ac888ac88eeab0104a4
+u_push_android_app_master_secret: x9ztd2fje1meoq8ujpzyxpgols26fbjn
+##IOS
+u_push_ios_app_key: 5aead35df43e487b84000072
+u_push_ios_app_master_secret: fyorqlp4pab1jexcl4vmznwjupm1lu2a
+##云通信
+ytx_access_key_id: LTAIyBC2j7jKrl4J
+ytx_access_key_secret: F4qBqI4k59OByqI9ksH22Marpn87yF
+################微信公众号##################
+##微信公众号appid####测试环境
+##wx_app_id: wx92bc6d8e71af8231
+##微信公众号appsecret####测试环境
+##wx_app_secret: e5df0b3acc8ade9900d52fd42e10d89a
+##微信公众号token####测试环境
+##token_key: hejunhui
+##微信公众号appid####测试环境-上海众宁网络科技有限公司
+wx_app_id: wxccdbeb5d4b3e0d29
+##微信公众号appsecret####测试环境-上海众宁网络科技有限公司
+wx_app_secret: 116cf84d5860f1b0c50f8d5cbe7260a5
+##微信公众号token####测试环境-上海众宁网络科技有限公司
+token_key: Rpy2mqmUiP7q2aL86RT7H1Klpzy9cbWq
+####EncodingAESKey 消息加密密钥由43位字符组成，可随机修改，字符范围为A-Z，a-z，0-9。-上海众宁网络科技有限公司
+EncodingAESKey: eFO2zWiqmZGXNPgTsbA6jLSodC5eL0p2s7CjCT93IqI
+######################################云片短信服务#############################################
+yunpian_api_key: 30b7989dbe8fbd4b16a4ada432f943a6
+yunpian_api_key_martketing : 7dc47efb99a1b2db024fc890e4de6de8
+###############友盟推送生产开关##############
+production_mode: false
+###############云片短信推送开关##############
+yunpian_sms_push: false

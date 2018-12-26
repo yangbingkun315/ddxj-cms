@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../skin/blue/skin.css" rel="stylesheet" type="text/css" id="skin" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/bkg_ui.css" type="text/css" rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/layer/layer.js" type="text/javascript"></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script> 
+<script src="../../js/common/initUtils.js" type="text/javascript"></script>
+<title>首页</title>
+</head>
+<style>
+	span:hover{
+		text-decoration: none!important;
+	}
+</style>
+<!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <script type="text/javascript" src="js/PIE/PIE_IE678.js"></script>
+ <![endif]-->
+<body>
+ <div class="Sellerber" id="Sellerber">
+ <!--顶部-->
+  <div class="Sellerber_header apex clearfix" id="Sellerber_header">
+   <div class="l_f logo header"><img src="../../images/index_logo.png" /></div>
+   <div class="r_f Columns_top clearfix header">
+   <!--<div class="time_style l_f"><i class="fa  fa-clock-o"></i><span id="time"></span></div>-->
+      <div class="search_style l_f">
+        <form action="#" method="get" class="sidebar_form">
+		 <div class="input-group">
+			<input type="text" name="q" class="form-control"><span class="input-group-btn"><a class="btn_flat" href="javascript:" onclick=""><i class="fa fa-search"></i></a></span>
+		 </div>
+        </form>
+     </div>
+   <div class="news l_f "><a href="#" class="fa fa-bell Notice prompt" id="promptbtn"></a><em>0</em></div>
+     <div class="administrator l_f">
+       <img src="http://res.diandxj.com/Fgz_XN_PfpcoLflGWJFY475Dqwcm"  width="36px"/><span class="user-info">欢迎你,<span id='realName'></span></span><i class="glyph-icon fa  fa-caret-down"></i>
+       <ul class="dropdown-menu">
+        <li><a href="#"><i class="fa fa-user"></i>个人信息</a></li>
+        <li><a href="#"><i class="fa fa-cog"></i>系统设置</a></li>
+        <li><a href="javascript:void(0)" id="Exit_system"><i class="fa fa-user-times"></i>退出</a></li>
+       </ul>
+     </div> 
+   </div>
+  </div>
+<!--左侧-->
+  <div class="Sellerber_left menu" id="menuBar">
+    <div class="show_btn" id="rightArrow"><span></span></div>
+    <div class="side_title"><a title="隐藏" class="close_btn"><span></span></a></div>
+    <div class="menu_style" id="menu_style">
+    <div class="list_content">
+    <!--栏目切换-->
+    <div class="switch_style">
+    	<em class="fa fa-th-large switch"></em>
+    	<em class="fa fa-list switch_unfold"></em>
+    </div>
+    <div class="skin_select clearfix">
+      <ul class="dropdown-menu dropdown-caret clearfix">
+         <li><a class="colorpick-btn selected" href="javascript:void(0)" data-val="default"  id="default" style="background-color:#222A2D" ></a></li>
+         <li><a class="colorpick-btn" href="javascript:void(0)" data-val="blue" style="background-color:#438EB9;" ></a></li>
+         <li><a class="colorpick-btn" href="javascript:void(0)" data-val="green" style="background-color:#047944;" ></a></li>
+         <li><a class="colorpick-btn" href="javascript:void(0)" data-val="gray" style="background-color:#41a2ff;" ></a></li>
+         <li><a class="colorpick-btn" href="javascript:void(0)" data-val="red" style="background-color:#FF6868;" ></a></li>
+         <li><a class="colorpick-btn" href="javascript:void(0)" data-val="purple" style="background-color:#6F036B;" ></a></li>
+        </ul>     
+     </div>
+     <!--左侧菜单栏目-->  
+     <div class="column_list" >
+		 <ul class="menuUl menu_list" id="column_list"> 	
+		 </ul>
+	 </div> 
+    </div>
+  </div>
+ </div>
+<!--内容-->
+  <div class="Sellerber_content" id="contents">
+    <div class="breadcrumbs" id="breadcrumbs">
+       <a id="js-tabNav-prev" class="radius btn-default left_roll" href="javascript:;"><i class="fa fa-backward"></i></a>
+       <div class="breadcrumb_style clearfix">
+	     <ul class="breadcrumb clearfix" id="min_title_list">
+          <li class="active home"><span title="我的桌面" data-href="index.html"><i class="fa fa-home home-icon"></i>首页</span></li>
+         </ul>
+      </div>
+       <a id="js-tabNav-next" class="radius btn-default right_roll" href="javascript:;"><i class="fa fa-forward"></i></a>
+      <div class="btn-group radius roll-right" id="openPageList">
+		 <a class="dropdown tabClose" data-toggle="dropdown" aria-expanded="false">页签操作<i class="fa fa-caret-down" style="padding-left: 3px;"></i></a>
+			<ul class="dropdown-menu dropdown-menu-right" id="dropdown_menu">
+				<li><a class="tabReload" href="javascript:void(0);">刷新当前</a></li>
+				<li><a class="tabCloseAll" href="javascript:void(0);">全部关闭(首页)</a></li>
+			</ul>
+		</div>
+		<a href="javascript:void()" class="radius roll-right fullscreen"><i class="fa fa-arrows-alt"></i></a>
+    </div>
+  <!--具体内容-->  
+  <div id="iframe_box" class="iframe_content">
+  <div class="show_iframe index_home" id="c">
+       <iframe scrolling="yes" class="simei_iframe"  frameborder="0" src="index.html" name="iframepage" id="simei_iframe" data-href="index.html"></iframe>
+       </div>
+      </div>
+  </div>
+<!--底部-->
+  <div class="Sellerber_bottom info" id="bottom">
+  <span class="l_f">版权所有：上海众宁网络科技有限公司</span>
+  </div>
+  <!--消息提示板块内容-->
+<div class="prompt_style prompt">
+	<div class="prompt_title">通知消息</div>
+		<div class="message_list">
+		
+		</div>
+  </div> 
+ </div>
+</body>
+</html>
+<script type="text/javascript">
+initMenu();
+function initMenu()
+{
+	Ajax.post({
+	    url: getRoot+'/manager/menu.ddxj',
+	    data: {userName:localStorage.getItem("userName")},
+	    success: function(data) {
+	        if(data.response == true)
+	        {
+	        	if(isNotNull(data.data.menuList))
+	        	{
+		       	 	menuData = data.data.menuList;
+		       	 	var flag = false;
+		       	 	for(var c = 0;c<data.data.menuList.length;c++)
+		       	 	{
+			       	 	if(data.data.menuList[c].name == '消息管理')
+			       	 	{
+				       	 	flag = true;
+				       	 	break ;
+			       	 	}
+		       	 	}
+		       	 	if(!flag)
+	        		{
+		       	 		$(".news").remove();
+	        		}
+		       	 	else
+		       	 	{
+			       	 	queryMessageList();
+			       		validateMessageNotic();
+		       	 	}
+	        	}
+	        	else
+	        	{
+	        		window.location.href="login.html";
+	        	}
+	        }
+	    },
+	    async:false
+	});	
+}
+if(isNotNull(localStorage.getItem("userName")))
+{
+	Ajax.post({
+         url: getRoot+'/query/user/validate/login.ddxj',
+         data: {userName:localStorage.getItem("userName")},
+         async: false,
+         success: function(data) {
+             if(data.response)
+             {
+            	 if(isNotNull(data.data.user))
+            	 {
+            		 $("#realName").text(data.data.user.realName);
+            	 }
+               //总页数大于页码总数
+             }
+         }
+     }); 
+}
+function queryMessageList()
+{
+	Ajax.post({
+        url: getRoot+'/query/message/list.ddxj',
+        data: {type:1,pageNum:4,pageSize:99999},
+        async: true,
+        success: function(data) {
+        	$(".prompt_info").remove();
+            if(data.response)
+            {
+            	if(data.data.messageList.total == 0)
+             	{
+	            	$(".news em").css("display","none");
+             	}
+            	else
+            	{
+            		$("body").append('<audio src="../../mp3/message.mp3" autoplay="autoplay">');
+            		$(".news em").css("display","block");
+            		if(data.data.messageList.total > 99)
+            		{
+            			$(".news em").html("99+");
+            		}
+            		else
+            		{
+	            		$(".news em").html(data.data.messageList.total);
+            		}
+            	}
+            	for(var c = 0;c<data.data.messageList.list.length;c++)
+           		{
+	            	$(".message_list").append('<div class="prompt_info clearfix">'
+	            			 +'<div class="tz_title">系统通知</div>'
+            			 	 +'<a href="javascript:;" onclick="linkMessagePage()" style="overflow: hidden;display:block;"><i class="fa fa-volume-up icon_prompt label-success"></i>'+data.data.messageList.list[c].messageTitle+'</a></div>')
+           		}
+           	 	//console.log(data.data);
+            }
+        }
+    }); 
+
+}
+function validateMessageNotic()
+{
+	Ajax.post({
+        url: getRoot+'/validate/message/notic.ddxj',
+        data: {userName:localStorage.getItem("userName")},
+        async: true,
+        success: function(data) {
+            if(data.response)
+            {
+            	if(data.data.status == 1)
+            	{
+            		queryMessageList();
+            	}
+           		setTimeout(function(){
+           			validateMessageNotic();
+           		},10000)
+            	
+            }
+        }
+    }); 
+	
+}
+function linkMessagePage()
+{
+	$(".column_list a[name='message_list.html']").click();
+}
+//设置框架
+ $(function() {  		 
+	 $("#Sellerber").frame({
+		float : 'left',//设置菜单栏目方向属性
+		minStatue:true,//切换模式
+		hheight:70,//设置顶部高度 高度为0时自动样式切换（达到另外一种界面效果）
+		bheight:30,//设置底部高度
+		mwidth:200,//菜单栏宽度（最好不要改动该数值，一般200的宽度值最好）
+		switchwidth:50,//切换菜单栏目宽度
+		color_btn:'.skin_select',//设置颜色
+		menu_nav:'.menu_list',//设置栏目属性
+		column_list:'.column_list',//设置栏目名称
+		time:'.date_time',//设置时间属性(不填写不显示)
+		logo_img:'images/logo_01.png',//logo地址链接（当header为0时显示该属性）
+	    Sellerber_content:'.Sellerber_content',//右侧名称
+		Sellerber_menu:'.list_content', //左侧栏目
+		header:'.Sellerber_header',//顶部栏目	
+		prompt:'.prompt_style',
+		prompt_btn:'#promptbtn',//点击事件
+		data:menuData,//数据
+		mouIconOpen:"fa fa-angle-down",// 菜单(展开)图标
+	    mouIconClose:"fa fa-angle-up" , // 菜单（隐藏）图标
+		Rightclick:true//是否禁用右键
+	 }); 
+});
+$('#Exit_system').on('click', function(){
+      layer.confirm('是否确定退出系统？', {
+     btn: ['是','否'] ,//按钮
+	 icon:2,
+    }, 
+	function(){
+    	Ajax.post({
+            url: getRoot+'/remove/user/login.ddxj',
+            data: {userName:localStorage.getItem("userName")},
+            async: false,
+            success: function(data) {
+                if(data.response)
+                {
+                	 localStorage.removeItem("userName");
+               	  	 location.href="login.html";  
+                }
+            }
+        });
+    });
+});
+var topical = localStorage.getItem('topical');
+var topicalValue = localStorage.getItem('topicalValue');
+if(topical != undefined && topical != null)
+{
+	$(".dropdown-caret .colorpick-btn").removeClass("selected");
+	$(".dropdown-caret .colorpick-btn[data-val="+topicalValue+"]").addClass("selected");
+	$("#skin").attr("href",topical);	
+}
+else
+{
+	$(".dropdown-caret .colorpick-btn[data-val=blue]").addClass("selected");
+}
+$("#openPageList").on("click",function(){
+	$(this).find("ul").toggle();
+})
+</script>
+

@@ -1,0 +1,92 @@
+<div class="cms-edit">
+	<form action="${base}/recruit/notice/edit.htm"  method="post" id="notice_edit_form">
+		<input type="hidden" name="notice.id" value="${(notice.id)!""}" />
+		<div  class="item clear" >
+			<div class="title">
+				公告类型:&nbsp;&nbsp;
+			</div>
+			<div class="content">
+				<select class="form-control" id="noticeTypeEdit" name="notice.noticeType">
+					<option value="1" [#if notice.noticeType == '1']selected="selected"[/#if]>工人端</option>
+					<option value="2" [#if notice.noticeType == '2']selected="selected"[/#if]>工头端</option>
+					<option value="3" [#if notice.noticeType == '3']selected="selected"[/#if]>推广</option>
+					<option value="4" [#if notice.noticeType == '4']selected="selected"[/#if]>其他</option>
+				</select>
+			</div> 	
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				公告内容：
+			</div>
+			<div class="content">
+				<input type="text" name="notice.noticeContent" id="noticeContent"  isRequired="true" value="${(notice.noticeContent)!''}" class="input textinput-main"  maxLength="20" 
+								placeholder="内容不要超过20字符" autocomplete="off" style="width: 300px;"> 			
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				开始时间：
+			</div>
+			<div class="content">
+				<input type="text" name="startTime" id="startTimeEdit" value="${(notice.startTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+				onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:'%y-%M-%d %H:%i:%S',maxDate:document.getElementById('endTimeEdit').value})" placeholder="上架时间" autocomplete="off" isRequired="true"> 			
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				结束时间：
+			</div>
+			<div class="content">
+				<input type="text" name="endTime" id="endTimeEdit" value="${(notice.endTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+				onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:document.getElementById('startTimeEdit').value})" placeholder="下架时间" autocomplete="off" isRequired="true">
+			</div> 		
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#notice_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#notice_edit_form').validate())
+		{
+			var options = $("#noticeTypeEdit").val();
+			if(!isNotNull(options))
+			{
+				alertTip("请选择公告类型",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryNoticeList(1);
+		 }
+	}
+});
+$(function(){
+	if(!isNotNull($("#endTimeEdit").val()))
+	{
+		$("#startTimeEdit").attr("value",frontHour('yyyy-MM-dd hh:mm:ss'));
+		$("#endTimeEdit").attr("value",frontOneHour('yyyy-MM-dd hh:mm:ss'));
+	}
+	$('#notice_edit_form').configValidate();
+});
+</script>

@@ -1,0 +1,265 @@
+[#assign title="点点小匠-Excel导出"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/city_data.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="excelExprot">
+	<div class="alert alert-warning" >注：导出数据时，请选择相应的条件，避免带来数据庞大，响应慢。</div>
+	<ul class="nav nav-tabs">
+		<li class="[#if act?? && act == 'customer']active[/#if]"><a href="${base}/excel/export.htm?act=customer">客户信息</a></li>
+		<li class="[#if act?? && act == 'withdraw']active[/#if]"><a href="${base}/excel/export.htm?act=withdraw">提现记录</a></li>
+	</ul>
+	[#if act?? && act == 'customer']
+	<form method="post" id="excel_export_form">
+	<input type="hidden" name="act" value="${act!""}" />
+		<div class="bootstrap-widget-content">
+			<div class="order-search-item">
+				<label>真实姓名</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="真实姓名关键字筛选">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="realName" name="realName"  class="input textinput-main" maxLength="5" placeholder="真实姓名，关键字">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>电话号码</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="电话号码关键字">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="phone" name="phone"  class="input textinput-main" maxLength="11" placeholder="电话号码，关键字" fieldType="number">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>角色</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="role" name="role" >
+						<option  value="">请选择角色</option>
+						<option value="1">工人</option>
+						<option value="2">工头</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工种</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="categoryId" name="categoryId">
+						<option  value="">请选择工种</option>
+						[#if categoryUserList?? && categoryUserList?size > 0]
+							[#list categoryUserList as category]
+								<option value="${category.id}">${category.categoryName!""}</option>
+							[/#list]
+						[/#if]
+					</select>	
+				</div>
+			</div>
+				<div class="order-search-item">
+				<label>性别</label>
+				<div class="input-field clearfix">
+					<div class="cms-checkbox">
+						<label class="el-radio">
+							<input type="radio" name="sex" id="sexRadios1" value="" checked>
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">全部</span>
+							
+						</label>
+						<label class="el-radio">
+							<input type="radio" name="sex" id="sexRadios1" value="M" >
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">男</span>
+							
+						</label>
+						<label class="el-radio">
+							<input type="radio" name="sex" id="sexRadios2" value="G" >
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">女</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工龄</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="senioritySort" name="senioritySort" >
+						<option  value="">请选择工龄</option>
+						<option value="1">1年及以下</option>
+						<option value="1-3">1-3年</option>
+						<option value="3-5">3-5年</option>
+						<option value="5-10">5-10年</option>
+						<option value="10">10年及以上</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>年龄段</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="ageSort" name="ageSort" >
+						<option  value="">请选择年龄段</option>
+						<option value="18-30">18-30岁</option>
+						<option value="30-40">30-40岁</option>
+						<option value="40-50">40-50岁</option>
+						<option value="50">50岁以上</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>注册渠道</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="registerChannel" name="registerChannel" >
+						<option  value="">请选择注册渠道</option>
+						<option value="1">公众号</option>
+						<option value="2">APP</option>
+						<option value="3">小程序</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>推广编号</label>
+				<div class="input-field clearfix">
+					<input type="text" id="staffNum" name="staffNum"  class="input textinput-main" maxValue="99" placeholder="整数，非必填" fieldType="number">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>在职状态</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="jobStatus" name="jobStatus" >
+						<option  value="">请选择在职状态</option>
+						<option value="1">在职</option>
+						<option value="2">空闲</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>户口所在地</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main provinceText" id="registeredProvince" name="registeredProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main cityText" id="registeredCity" name="registeredCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control textinput-main areaText" id="registeredArea" name="registeredArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工作所在地</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main provinceText" id="workProvince" name="workProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main cityText" id="workCity" name="workCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control textinput-main areaText" id="workArea" name="workArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>注册时间</label>
+				<div class="input-field clearfix">
+					<input type="text" name="startTime" id="startTime" class="input textinput-main" style="width:40%" isRequired="true" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+									placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+				  <input type="text" name="endTime" id="endTime" class="input textinput-main" style="width:40%" isRequired="true" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+									placeholder="结束时间" autocomplete="off" > 
+				
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="button" onclick="submitExcel()"  name="yt0">导出</button> </div>
+		</div>
+	</form>
+	[#elseif act == 'withdraw']
+	<form method="post" id="excel_export_form">
+		<input type="hidden" name="act" value="${act!""}" />
+		<div class="bootstrap-widget-content">
+		<div class="order-search-item">
+				<label>真实姓名</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="真实姓名关键字筛选">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="realName" name="realName"  class="input textinput-main" maxLength="5" placeholder="真实姓名，关键字">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>电话号码</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="电话号码关键字">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="phone" name="phone"  class="input textinput-main" maxLength="11" placeholder="电话号码，关键字" fieldType="number">
+				</div>
+			</div>
+			
+			<div class="order-search-item">
+				<label>提现状态</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="withdrawStatus" name="withdrawStatus" >
+						<option  value="">请选择提现状态</option>
+						<option value="1">提现中</option>
+						<option value="2">提现成功</option>
+						<option value="3">提现失败</option>
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>所属银行</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="bankName" name="bankName" >
+						<option  value="">请选择所属银行</option>
+						[#list bankList as bank]
+						<option value="${bank}">${bank}</option>
+						[/#list]
+					</select>	
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>提现时间</label>
+				<div class="input-field clearfix">
+					<input type="text" name="startTime" id="startTime" class="input textinput-main" style="width:40%" isRequired="true" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+									placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+				  <input type="text" name="endTime" id="endTime" class="input textinput-main" style="width:40%" isRequired="true" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+									placeholder="结束时间" autocomplete="off" > 
+				
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="button" onclick="submitExcel()"  name="yt0">导出</button> </div>
+		</div>
+	</form>
+	[/#if]
+	
+</div>
+<script type="text/javascript">
+function submitExcel()
+{
+	showConfirmDialog({message : "您确定要导出这些数据吗？",height:100},function(){
+		if(!$('#excel_export_form').validate())
+		{	
+			return false;
+		}
+		[#if act?? && act == 'customer']
+			var fileName = DateUtils.getStringDate(new Date(),"MMddHHmm")+"（点点小匠客户信息）.xlsx";
+		[#elseif act?? && act == 'withdraw']
+			var fileName = DateUtils.getStringDate(new Date(),"MMddHHmm")+"（点点小匠提现信息）.xlsx";
+		[/#if]
+		var obj = $('#excel_export_form').serialize();
+		submitCallbackFile({
+			url:"${base}/excel/export.htm",
+			params:obj,
+			fileName:fileName,
+			loadingMsg:"正在导出,请稍后...",
+			callback:function(oReq){
+				var content = oReq.response;
+			    var elink = document.createElement('a');
+			    elink.download = fileName;
+			    elink.style.display = 'none';
+			    var blob = new Blob([content]);
+			    elink.href = URL.createObjectURL(blob);
+			    document.body.appendChild(elink);
+			    elink.click();
+			    document.body.removeChild(elink);
+			    TINY.box.show("导出成功！",0,0,0,0,2);
+				 TB_remove();
+			}
+		});
+	});
+}
+$('#excel_export_form').configValidate();
+changeProvinceText("#registeredProvince",null,null,null);
+changeProvinceText("#workProvince",null,null,null);
+</script>
+[#include "/common/cms_footer.html"]

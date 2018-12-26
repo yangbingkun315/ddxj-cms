@@ -1,0 +1,120 @@
+[#assign title="点点小匠-资讯管理"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="informationList">
+	<div class="alert alert-warning" >注：资讯是用户因为及时地获得它并利用它而能够在相对短的时间内给自己带来价值的信息，资讯有时效性和地域性，它必须被消费者利用。并且“提供－使用（阅读或利用）－反馈”之间能够形成一个长期稳定的CS链，具有这些特点才可以称之为资讯。 </div>
+	<ul class="nav nav-tabs">
+		<li class="active"><a>资讯管理</a></li>
+		<li><a href="${base}/information/type/list.htm">资讯分类</a></li>
+	</ul>
+	<form method="post" id="cms_information_form" action="${base}/information/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">资讯标题：</label>
+		    	<input type="text" id="infoTitle" name="infoTitle" class="form-control search-input" placeholder="资讯标题关键字">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">资讯分类：</label>
+			    <select class="form-control" id="typeId" name="typeId" >
+					<option  value="">请选择分类</option>
+			    [#if catgegoryList?? && catgegoryList?size > 0]
+			    	[#list catgegoryList as catgegorys]
+			    		<option value="${catgegorys.id}">${catgegorys.name}</option>
+			    	[/#list]
+			    [/#if]
+				</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">创建时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryInformationList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="operate-btn">
+		<div class="operate-item">
+			<a href="${base}/information/edit.htm" class="btn btn-warning" >发布资讯</a>
+		</div>
+	</div>
+	<div class="cms-table-tpl">
+		[#include "/marketing/information_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_information_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+		
+	}
+});
+
+function queryInformationList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_information_form').submit();
+}
+queryInformationList(1);
+function informationPrebiew(id)
+{
+	var url = "${base}/information/preview.htm?id="+id;
+	TB_show({"url":url,"title":"预览","width":400,"height":800});
+}
+function deleteInfo(id)
+{
+	showConfirmDialog({message : "确认要删除该条资讯吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/information/record/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryInformationList();
+			}
+		});
+	});
+}
+function confirmDisableInfo(id,stick)
+{
+	var message = "";
+	if(stick == 1)
+	{
+		message = "确认要置顶该资讯吗？";
+	}
+	else
+	{
+		message = "确认要取消置顶吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/information/record/stick.htm",{id:id,type:stick},function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryInformationList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

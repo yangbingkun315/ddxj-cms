@@ -1,0 +1,208 @@
+[#assign title="点点小匠-项目审核列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="creditRecordList">
+	<div class="alert alert-warning" >注：查询项目授信记录表，点击列表可展开详情</div>
+	<form method="post" id="credit_record_form" action="${base}/recruit/credit/record/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search_title">机构名字：</label >
+			  <input type="text" name="creditName" id="creditName"   class="form-control search-input"  autocomplete="off" placeholder="请输入机构名"> 
+		  	</div>
+		  	<div class="search-item">
+				<label class="search-title">招聘姓名：</label>
+		    	<input type="text" id="realName" name="realName" class="form-control search-input" placeholder="请输入用户名" autocomplete="off">
+			</div>
+			<div class="search-item">
+				<label class="search-title">手机号码：</label>
+		    	<input type="text" id="phone" name="phone" class="form-control search-input" placeholder="请输入手机号" autocomplete="off">
+			</div>
+		  	<div class="search-item">
+			  	<label class="search-title">审核状态：</label>
+			    <select class="form-control" id="creditStatus" name="creditStatus" >
+					 <option value="">授信状态</option>
+					 <option value="1">授信中</option>
+					 <option value="2">授信成功</option>
+					 <option value="3">授信失败</option>
+				</select>
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryCreditRecordList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+
+	<div class="cms-table-tpl">
+		[#include "/recruit/credit_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="auditTrue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<input type="hidden" id="recrodId" name="recrodId" />
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">授信审核-成功</h4>
+	            </div>
+	            <div class="modal-body"  style="text-align:center">
+		            <div class="cms-search">
+			            <div class="cms-search">
+			            	<div class="search-item">
+							  <label  class="search-title" >金额：</label >
+							  <input type="number"  placeholder="请输入授信金额" filedType="number" class="input form-control search-input"  name="totalMoney" id="totalMoney" value="${(creditRecord.totalMoney)!''}" > 
+						  	</div>
+			            </div>
+		            	<div class="search-item">
+						  <label  class="search-title">利率：</label >
+						  <input type="number"  placeholder="请输入利率" filedType="number" class="input form-control search-input" name="interestRate" id="interestRate"  value="${(creditRecord.interestRate)!''}"> 
+					  	  <!-- onkeyup="value=value.replace(/[^\d\.]/g,'')" -->
+					  	</div>
+		            </div>
+	            </div>
+	            <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                <button type="button" class="btn btn-primary" onclick="updateCreditRecrodStatus(null,1)">保存</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+		<!-- 模态框（Modal） -->
+	<div class="modal fade" id="auditFail" tabindex="-1" role="dialog"  aria-labelledby="myModalLabel" aria-hidden="true">
+		<input type="hidden" id="failRecrodId" name="failRecrodId" />
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">授信审核-失败</h4>
+	            </div>
+	            <div class="modal-body">
+		            <div class="cms-search">
+		            	<div class="search-item">
+						  <label  class="search_title"style="width:100px">失败原因：</label >
+						  <textarea class="form-control"  name="validateCause"  rows="3" cols="50" maxLength="32" id="validateCause"  maxLength="512" placeholder="最大512个字符">${(creditRecord.validateCause)!""}</textarea>
+						  <!-- <input type="text" name="validateCause" required id="validateCause"   >  -->
+					  	</div>
+		            </div>
+	            </div>
+	            <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                <button type="button" class="btn btn-primary" onclick="updateCreditRecrodStatus(null,2)">保存</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+	
+<script type="text/javascript">
+$('#credit_record_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryCreditRecordList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#credit_record_form').submit();
+}
+
+queryCreditRecordList(1);
+function creditRepayment(id)
+{
+	var url = "${base}/recruit/credit/record/repayment.htm?id="+id
+	TB_show({"url":url,"title": "授信还款","width":600,"height":500});
+	
+}
+/**
+ * 监听模态框-授信成功
+ */
+$('#auditTrue').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget) // Button that triggered the modal
+	  var modal = $(this)
+	  modal.find('#recrodId').val(button.attr("data-id"));
+	  modal.find('.modal-body #totalMoney').val("");
+	  modal.find('.modal-body #interestRate').val("");
+})
+/**
+ * 监听模态框-授信失败
+ */
+$('#auditFail').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget) // Button that triggered the modal
+	  var modal = $(this)
+	  modal.find('#failRecrodId').val(button.attr("data-id"))
+	  modal.find('.modal-body #validateCause').val("")
+})
+function updateCreditRecrodStatus(id,type)
+{
+	debugger;
+	var creditStatus,totalMoney,interestRate,validateCause;
+	
+	if(type == 1)//成功
+	{
+		
+		if($("#totalMoney").val()==''||$("#totalMoney").val()==null)
+		{
+			alertTip("申请金额不能为空",2);
+			return;
+		}
+		if($("#interestRate").val()==''||$("#interestRate").val()==null)
+		{
+			alertTip("利率不能为空",2);
+			return;
+		}
+		
+		id = $("#recrodId").val();
+		creditStatus = 2;
+		totalMoney =$("#totalMoney").val();
+		interestRate =$("#interestRate").val();
+		console.log(interestRate);
+	}
+	else if(type==2) //失败
+	{
+		if($("#validateCause").val()==null ||$("#validateCause").val()=='')
+		{
+			alertTip("失败原因不能为空",2);
+			return;
+		}
+		id = $("#failRecrodId").val();
+		creditStatus = 3;
+		validateCause = $("#validateCause").val();
+	}
+	
+	doPost("${base}/recruit/credit/record/update/status.htm",{id:id,totalMoney:totalMoney,creditStatus:creditStatus,interestRate:interestRate,validateCause:validateCause},function(data){
+		queryCreditRecordList();
+		$('#auditTrue').modal('hide');
+		$('#auditFail').modal('hide');
+	});
+}
+function confirmDeleteRecord(id)
+{
+	showConfirmDialog({message : "确认要删除此授信记录吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/recruit/credit/record/delete.htm",{creditRecordId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryCreditRecordList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

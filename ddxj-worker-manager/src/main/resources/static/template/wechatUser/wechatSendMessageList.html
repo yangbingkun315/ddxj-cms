@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="never">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>群发列表</title>
+</head>
+<style>
+#content_detail img
+{
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
+<body ng-app="wechat" ng-controller="wechatSendMessage">
+<div class="margin Competence_style" id="page_style">
+	<div class="margin inside_pages clearfix">
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+			<ul class="layui-tab-title">
+				<li><a href="wechatSeniorMessage.html">高级群发</a></li>
+			    <li><a href="wechatMassMessage.html">客服群发</a></li>
+			    <li><a href="appMassMessage.html">APP群发</a></li>
+			    <li class="layui-this">群发记录</li>
+			</ul>
+		</div>
+	</div>
+	<div class="operation clearfix same_module mb15">
+		<div class="order-search-item">
+			<span class="search_title">群发类型：</span>
+			<select name="city" ng-model="sendType" class="width160">
+				<option value="">请选择类型</option>
+				<option value="1">客服群发</option>
+				<option value="2">高级群发</option>
+				<option value="3">APP群发</option>
+			</select>
+		</div>
+		<div class="order-search-item">
+			<span class="search_title">发送类型：</span>
+			<select name="city" ng-model="massType" class="width160">
+				<option value="">请选择类型</option>
+				<option value="1">文字</option>
+				<option value="2">图文素材</option>
+				<option value="3">图片</option>
+			</select>
+		</div>
+		<div class="order-search-item">
+			<span class="search_title">创建时间：</span>
+			<input type="text" name="createTime" id="createTime" ng-model="createTime"   class="input textinput-main width160" > 
+		</div>
+		<div class="order-search-item">
+		  	<button class="btn button_btn bg-deep-blue" type="button" ng-click="queryWechatSendMessageList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+		</div>
+	</div>
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th>群发类型</th>
+						<th>发送类型</th>
+						<th>推送平台</th>
+						<th>群发标题</th>
+						<th>群发内容</th>
+						<th>推送对象</th>
+						<!-- <th>定时时间</th> -->
+						<th>修改时间</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="wechatSendMessageList.length > 0 " ng-repeat="wechat in wechatSendMessageList track by $index">
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="wechat.sendType == 1">客服群发</span>
+							<span class="label label-success radius" ng-if="wechat.sendType == 2">高级群发</span>
+							<span class="label label-success radius" ng-if="wechat.sendType == 3">APP群发</span>
+						</td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="wechat.massType == 1">文字</span>
+							<span class="label label-success radius" ng-if="wechat.massType == 2">图文素材</span>
+							<span class="label label-success radius" ng-if="wechat.massType == 3">图片</span>
+						</td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="wechat.massPlatform == 1">IOS</span>
+							<span class="label label-success radius" ng-if="wechat.massPlatform == 2">安卓</span>
+							<span class="label label-success radius" ng-if="wechat.massPlatform == 3">IOS和安卓</span>
+							<span class="label label-success radius" ng-if="wechat.massPlatform == 4">公众号</span>
+						</td>
+						<td ng-bind="wechat.massTitle"></td>
+						<td><a href="javascript:" ng-click="queryTitleDetails('群发内容',wechat.massContent)">查看群发内容</a></td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="wechat.massObject == 1">广播</span>
+							<span class="label label-success radius" ng-if="wechat.massObject == 2">工头端</span>
+							<span class="label label-success radius" ng-if="wechat.massObject == 3">工人端</span>
+							<span class="label label-success radius" ng-if="wechat.massObject == 4">公众号</span>
+						</td>
+						<!-- <td ng-bind="wechat.timingTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td> -->
+						<td ng-bind="wechat.updateTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td ng-bind="wechat.createTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td class="td-manage">
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+								<li>
+									<a title="群发用户" href="javascript:;" ng-href="sendMessageUserList.html?msgId={{wechat.id}}" >群发用户</a>
+								</li>
+								<li>
+									<a title="删除" href="javascript:;" ng-click="deleteWechatSendMessage(wechat.id)" >删除</a>
+								</li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="wechatSendMessageList == null || wechatSendMessageList.length <= 0 ">
+						<td class="center" colspan="19">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+	<a class="close" ng-click="hideBigImage()"></a>
+	<div class="hide-layer" ng-click="hideBigImage()"></div>
+	<div class="add_style add_administrator_style">
+		<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+	</div>
+</div>
+
+<div class="userinfo_style" id="content_detail" style="display: none">
+	<div class="member_show" >
+		<div class="member_content">
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+<script>
+
+function imageDataUrl()
+{
+	$("img").each(function(){
+		var dataSrc = $(this).attr("data-src")
+		if(isNotNull(dataSrc))
+		{
+			$(this).attr("src",dataSrc);
+		}
+	});
+}
+
+var createTime = {
+		elem: '#createTime',
+		format: 'YYYY-MM-DD',
+		// min: laydate.now(), //设定最小日期为当前日期
+		max: '2099-06-16', //最大日期
+		istime: true,
+		istoday: false,
+		choose: function(datas){
+		}
+	};
+laydate(createTime)
+
+var wechat = angular.module('wechat',[]);
+wechat.controller('wechatSendMessage',function($scope,$timeout)
+{
+	$scope.sendType = "";
+	$scope.massType = "";
+	$scope.createTime = "";
+	$scope.pageNum = 1;
+	$scope.pageSize = 20;	
+	
+	$scope.queryWechatSendMessageList = function()//查询列表
+	{
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			
+			Ajax.post({
+				url: getRoot + '/wechat/send/message/List.ddxj',
+				data: {sendType:$scope.sendType,massType:$scope.massType,createTime:$("#createTime").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data)
+				{
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.wechatSendMessageList.total;
+						$scope.wechatSendMessageList = data.data.wechatSendMessageList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first)
+				{
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+					{
+						$scope.queryWechatSendMessageList();
+					}
+	      	    }
+			});
+		});
+	}
+	
+	$scope.queryWechatSendMessageList();
+	
+	$scope.deleteWechatSendMessage = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/wechat/send/message/delete.ddxj',
+				data: {wechatId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryWechatSendMessageList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+	
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+	
+	$scope.queryTitleDetails = function(title,content)//查询用户详情
+	{
+		layer.open({
+			type: 1,
+			title: title,
+			maxmin: true, 
+			shadeClose:false, //点击遮罩关闭层
+			area : ['400px' , '90%'],
+			content:$('#content_detail'),
+		})
+		
+		$(".member_content").html(content);
+		imageDataUrl();
+	}
+	
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+						
+});
+</script>

@@ -1,0 +1,220 @@
+<div class="cms-edit">
+<div class="alert alert-warning" >注：针对不同操作系统的，上下架时间不能冲突 </div>
+	<form action="${base}/update/wechatMenu/edit.htm"  method="post" id="wechatMenu_edit_form">
+		<input type="hidden" name="id" value="${(wechatMenu.id)!""}" />
+		<div class="item clear">
+			<div class="title">菜单类型：</div>
+			<div class="content">
+				<select class="form-control" id="parentType">
+					<option value="">请选择菜单类型</option>
+					<option value="1" [#if !wechatMenu.parentId?? || wechatMenu.parentId == 0]selected="selected"[/#if]>一级菜单</option>
+					<option value="2" [#if wechatMenu.parentId?? && wechatMenu.parentId > 0]selected="selected"[/#if]>二级菜单</option>
+				</select>
+				<script>
+					$("#parentType").change(function(){
+						var select = $("#parentType").val();
+						if(select == 1)
+						{
+							$("#parent_menu_id").hide();
+							$("#clickAction option[value='0']").show();
+						}
+						if(select == 2)
+						{
+							$("#parent_menu_id").show();
+							$("#clickAction option[value='0']").hide();
+						}
+					})
+				</script>
+			</div>	
+		</div>
+		<div class="item clear [#if !wechatMenu.parentId?? || wechatMenu.parentId == 0]none[/#if]" id="parent_menu_id">
+			<div class="title">上级菜单：</div>
+			<div class="content">
+				<select class="form-control" id="parentId" name="parentId">
+					<option value="">请选择上级菜单</option>
+					[#if menuParentList?? && menuParentList?size > 0]
+						[#list menuParentList as parent]
+							<option value="${parent.id}" [#if (wechatMenu.parentId)?? && wechatMenu.parentId = parent.id]selected="selected"[/#if]>${parent.menuName}</option>
+						[/#list]
+					[/#if]
+				</select>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">菜单名称：</div>
+			<div class="content input-field clearfix">
+				<input type="text" class="input textinput-main" id="menuName" name="menuName" isRequired="true" placeholder="请输入菜单名称" value="${(wechatMenu.menuName)!""}" >
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">触发方式：</div>
+			<div class="content">
+				<select class="form-control" id="clickAction" name="clickAction">
+					<option value="">请选择触发方式</option>
+					<option value="0" [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 0]selected="selected"[/#if]>无触发</option>
+					<option value="1" [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 1]selected="selected"[/#if]>自定义链接</option>
+					<option value="2" [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 2]selected="selected"[/#if]>回复图片</option>
+					<option value="3" [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 3]selected="selected"[/#if]>回复文字</option>
+				</select>
+				<script>
+					$("#clickAction").change(function(){
+						var select = $("#clickAction").val();
+						if(select == 0)
+						{
+							$("#menu_url_id").hide();
+							$("#reply_image_id").hide();
+							$("#reply_text_id").hide();
+							$("#menu_key_id").hide();
+						}
+						else if(select == 1)
+						{
+							$("#menu_url_id").show();
+							$("#reply_image_id").hide();
+							$("#reply_text_id").hide();
+							$("#menu_key_id").hide();
+						}
+						else if(select == 2)
+						{
+							$("#reply_image_id").show();
+							$("#menu_url_id").hide();
+							$("#reply_text_id").hide();
+							$("#menu_key_id").hide();
+						}
+						else if(select == 3)
+						{
+							$("#menu_key_id").show();
+							$("#reply_text_id").show();
+							$("#menu_url_id").hide();
+							$("#reply_image_id").hide();
+						}
+					})
+				</script>
+			</div>	
+		</div>
+		<div class="item clear [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 1][#else]none[/#if]" id="menu_url_id">
+			<div class="title">菜单链接：</div>
+			<div class="content input-field clearfix">
+				<input type="text" class="input textinput-main" id="menuUrl" name="menuUrl" isRequired="true" placeholder="请输入菜单链接" value="${(wechatMenu.menuUrl)!""}" >
+			</div>
+		</div>
+		<div class="item clear [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 2][#else]none[/#if]" id="reply_image_id">
+			<div class="title">回复图片：</div>
+			<div class="content">
+				<input type="hidden" id="replyImage" name="replyImage" value="${wechatMenu.replyImage!""}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=screenImgUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${wechatMenu.replyImage!""}">
+					<img src="${wechatMenu.replyImage!""}" width="100%" id="screeniImg_preview" height="100%"  [#if !wechatMenu?? || !wechatMenu.replyImage]style="display:none;"[/#if]/>
+				</a>
+			</div>
+		</div>
+		<div class="item clear [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 3][#else]none[/#if]" id="menu_key_id">
+			<div class="title">菜单KEY：</div>
+			<div class="content input-field clearfix">
+				<input type="text" class="input textinput-main" readonly="readonly" id="menuKey" name="menuKey" isRequired="true" placeholder="请生成菜单KEY" value="${(wechatMenu.menuKey)!""}" >
+			</div>
+			<div class="content input-field clearfix">
+				<button type="button" style="margin: 5px;" class="btn btn-warning" onclick="randomMenuKey()">生成字符串</button>
+			</div>
+		</div>
+		<div class="item clear [#if wechatMenu.clickAction?? && wechatMenu.clickAction == 3][#else]none[/#if]" id="reply_text_id">
+			<div class="title">回复文字：</div>
+			<div class="content input-field clearfix">
+				<textarea class="form-control" maxLength="512" id="replyText" name="replyText" isRequired="true" placeholder="请输入回复文字">${(wechatMenu.replyText)!""}</textarea>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">菜单排序：</div>
+			<div class="content input-field clearfix">
+				<input type="text" class="input textinput-main" id="indexNumber" name="indexNumber" fieldType="number" isRequired="true" placeholder="请输入菜单排序，如：1" value="${(wechatMenu.indexNumber)!""}" >
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+$('#wechatMenu_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#wechatMenu_edit_form').validate())
+		{
+			if($("#clickAction").val() == 2 && !isNotNull($("#replyImage").val()))
+			{
+				alertTip("请上传图片！",2);
+				return false;
+			}
+			if($("#parentType").val() == 2 && $("#clickAction").val() == 0)
+			{
+				alertTip("触发方式选择不正确！",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.response)
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			queryWechatMenuList(1);
+		}
+		else
+		{
+			alertTip(data.responseMsg,3);
+		}
+	}
+});
+
+function screenImgUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#replyImage").val("${storageUrl}" + data);
+		$("#screeniImg_preview").attr("src","${storageUrl}" + data).show();
+		$("#screeniImg_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#wechatMenu_edit_form').configValidate();
+});
+
+function randomMenuKey()
+{
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	for( var i=0; i < 16; i++ )
+	{
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	$("#menuKey").val(text);
+}
+
+</script>

@@ -1,0 +1,195 @@
+[@compress single_line=true]
+[#assign title="点点小匠-登陆"]
+[#assign isHeader = 'true']
+[#include "/common/cms_header.html"]
+<link href="[@resUrl /]/assets/cms/css/login/login.css?v=[@cmsVersion /]" rel="stylesheet">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="login_box">
+       <div class="login_l_img a-bouncein"><img src="[@resUrl /]/assets/cms/images/login-img.png" /></div> 
+       <div class="login cms-login" id="cms-login">
+          <div class="login_logo"><a href="#"><img src="[@resUrl /]/assets/cms/images/login/login_logo.png" /></a></div>
+          <div class="login_name">
+               <p style="font-weight: bold;">《点点小匠》登陆</p>
+          </div>
+         <form  role="form" id="login_form" action="${base}/cms/login.htm" method="post">
+           	 <input  type="text" placeholder="请输入用户名" isRequired="true" autofocus name="userName" id="id_username"/>
+			 <input name="cmsPassword" id="id_password" isRequired="true"    type="password"  placeholder="请输入密码"/>
+			 <div class="login-remember">
+				 <label class="el-checkbox el-checkbox-sm">
+					<span class="margin-r">记住密码</span>
+					<input type="checkbox" name="check"  id="remember_me">
+					<span class="el-checkbox-style  pull-right"></span>
+				</label>
+			 </div>
+              <input value="登录" style="width:100%;" type="submit">
+          </form>
+          <div class="link-register" onclick="changeLoginType('register')">没有账号，马上注册</div>
+      </div> 
+       <div class="login cms-register" id="cms-register" style="display: none">
+          <div class="login_logo"><a href="#"><img src="[@resUrl /]/assets/cms/images/login/login_logo.png" /></a></div>
+          <div class="login_name">
+               <p style="font-weight: bold;">《点点小匠》注册账号</p>
+          </div>
+         <form  role="form" id="register_form" action="${base}/cms/register.htm" method="post">
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">真实姓名：</div>
+           	 	<div class="making-item">
+           	 		<input  type="text" placeholder="真实姓名" class="register-input" isRequired="true" autofocus name="registerNickName" id="registerNickName"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">性别：</div>
+           	 	<div class="making-item">
+           	 		<div class="cms-checkbox">
+						<label class="el-radio">
+							<input type="radio" name="sex" id="sexRadios1" value="M" checked>
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">男</span>
+							
+						</label>
+						<label class="el-radio">
+							<input type="radio" name="sex" id="sexRadios2" value="G" >
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">女</span>
+						</label>
+					</div>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">用户名：</div>
+           	 	<div class="making-item">
+           	 		 <input  type="text" placeholder="请输入用户名" isRequired="true"  name="registerUserName" id="registerUserName"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">密码：</div>
+           	 	<div class="making-item">
+           	 		 <input name="registerPassword" id="registerPassword" type="password" placeholder="长度为6-16位" isRequired="true"
+							autocomplete="off"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">确认密码：</div>
+           	 	<div class="making-item">
+           	 		 <input  id="confirmPassword"  repeat="#registerPassword"  type="password"   equalTo="registerPassword" placeholder="再次输入密码"
+							isRequired="true" minLength="6" maxLength="16"
+							blankText="抱歉，密码不能为空！" lengthText="抱歉，密码长度必须在6到16位之间"  autocomplete="off"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">联系电话：</div>
+           	 	<div class="making-item">
+           	 		<input  type="text" placeholder="请输入联系电话" isRequired="true"  minLength="11" maxLength="11" name="registerPhone" id="registerPhone"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">出生日期：</div>
+           	 	<div class="making-item">
+           	 		<input  type="text" placeholder="请输入出生日期" readonly="readonly" isRequired="true" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})"   name="registerBirthday" id="registerBirthday"/>
+           	 	</div>
+           	 </div>
+         	 <div class="box-making register-item">
+           	 	<div class="making-item">电子邮箱：</div>
+           	 	<div class="making-item">
+           	 		<input  type="text" placeholder="请输入电子邮箱" isRequired="true"  name="registerEmail" id="registerEmail"/>
+           	 	</div>
+           	 </div>
+           	 <div class="box-making register-item">
+           	 	<div class="making-item">家庭住址：</div>
+           	 	<div class="making-item">
+           	 		<input  type="text" placeholder="请输入家庭住址" isRequired="true"  name="registerAddress" id="registerAddress"/>
+           	 	</div>
+           	 </div>
+              <input value="立即注册" style="width:100%;margin-top: 10px;background-color: #ec971f" class="btn btn-warning" type="submit">
+          </form>
+          <div class="link-register" onclick="changeLoginType('login')">已有账号，马上登陆</div>
+      </div>
+</div>
+<script type="text/javascript">
+$('#register_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#register_form').validate())
+		{
+			if($("#confirmPassword").val() != $("#registerPassword").val())
+			{
+				minAlert("两次密码输入不一致，请重新输入",3);
+				return false;
+			}
+			return true;
+		}
+		return false;
+		return true;
+	},
+	warningMessage:"正在注册,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.response)
+		{
+			$("#register_form input").val("");
+			alertTip("注册成功，请等待管理员分配角色。<br><b style='color:red;'>如果有什么疑问，请联系我们的客服，客服电话：021-65252279，4008-008-739 或者可以联系我们QQ客服：4008008739</b>",1);
+		}
+		else
+		{
+			minAlert(data.responseMsg,2);
+		}
+	}
+});
+$(function(){
+	alyCms.user.readyLoginForm();
+	var userName = alyCms.base
+			.queryCookie("8890806337EF73E838519853EFEBC1679C949E81");
+	if (userName) {
+		$("#id_username").val(userName);
+	}
+	var password = alyCms.base
+			.queryCookie("2236505FF410E6196EE7626E28585A36E04AC590");
+	if (password) {
+		$("#id_password").val(password);
+	}
+	if(isNotNull(userName) && isNotNull(password)){
+　　　　 $("#remember_me").attr('checked',true);
+	}
+	$('#register_form').configValidate();
+	$("#registerPassword,#confirmPassword,#registerUserName,#registerEmail").blur(function(){
+		if(!$("#cms-register").is(":hidden"))
+		{
+			if ($(this).is("#registerPassword")) {
+				 alyCms.util.validatePassword("registerPassword");
+			} 
+			if ($(this).is("#confirmPassword")) {
+				 alyCms.util.validatePassword("confirmPassword");
+			} 
+			if ($(this).is("#registerUserName")) {
+				alyCms.util.validateUserName("registerUserName");
+			} 
+			if ($(this).is("#registerEmail")) {
+				alyCms.util.validateEmail("registerEmail");
+			}
+		}
+	})
+	
+　});
+[#if forceQuit??]
+	alertTip("您的账号在另一个地点登录，您被迫下线。如果这不是您本人的操作，那么您的密码可能已经泄露，建议您<b class='red'> 修改密码</b>。详情可以联系管理员",2);
+[/#if]
+function changeLoginType(type)
+{
+	hideAllErrorMessage();
+	$("input").removeClass("error_input_border");
+	$("._j_delete_bt_").remove();
+	if(type == 'login')
+	{
+		$("#cms-register").hide();
+		$("#cms-login").show();
+	}
+	else
+	{
+		$("#cms-register").show();
+		$("#cms-login").hide();
+	}
+}
+</script>
+[#include "/common/cms_footer.html"]
+[/@compress]

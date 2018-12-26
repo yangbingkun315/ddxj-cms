@@ -1,0 +1,133 @@
+[#assign title="点点小匠-管理员列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<link href="${base!}/assets/cms/css/user/skin.css?[@cmsVersion /]" rel="stylesheet">
+<div class="cms-content" id="customerUserList">
+	<div class="alert alert-warning" >注：以下是点点小匠所有的工头、工人、以及未填写完整信息的用户 </div>
+	<form method="post" id="cms_user_form" action="${base}/customer/user/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">用户名：</label>
+		    	<input type="text" id="realName" name="realName" class="form-control search-input" placeholder="请输入用户名">
+			</div>
+			<div class="search-item">
+				<label class="search-title">手机号码：</label>
+		    	<input type="text" id="phone" name="phone" class="form-control search-input" placeholder="请输入手机号">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">角色：</label>
+			    <select class="form-control" id="role" name="role" >
+					<option  value="">请选择角色</option>
+					<option value="1">工人</option>
+					<option value="2">工头</option>
+				</select>
+		  	</div>
+		  	<div class="search-item">
+			  	<label class="search-title">是否认证：</label>
+			    <select class="form-control" id="isAuth" name="isAuth" >
+					<option  value="">请选择是否认证</option>
+					<option value="1">未认证</option>
+					<option value="2">已认证</option>
+				</select>
+		  	</div>
+		  	<div class="search-item">
+				<label class="search-title">推广编号：</label>
+		    	<input type="text" id="staffNum"  name="staffNum" class="form-control search-input" placeholder="请输入推广编号">
+			</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">注册时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+			<div class="search-button">
+				<button type="button" onclick="queryUserList(1);" class="btn btn-warning">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/customer/customer_user_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_user_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+
+function queryUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_user_form').submit();
+}
+
+queryUserList(1);
+ function queryUserDetails(id)
+{
+	 var url = "${base}/customer/user/detail.htm?userId="+id
+	TB_show({"url":url,"title": "用户详情","width":400,"height":800});
+} 
+
+function confirmDisableUser(id,loginStatus)
+{
+	var message = "";
+	if(loginStatus == 2)
+	{
+		message = "确认要禁用此用户吗？";
+	}
+	else
+	{
+		message = "确认要解禁此用户吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/customer/user/forbidden/user.htm",{userId:id,type:loginStatus},function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryUserList();
+			}
+		});
+	});
+}
+function logoutUserInfo(id,name)
+{
+	var message="确定要注销<font color='red'>" + name + "</font>吗？";
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在注销，请稍后...",4);
+		doPost("${base}/customer/user/logout/user.htm",{userId:id},function(data){
+			console.log(data.responseMsg);
+				if(data.response)
+				{
+					minAlert("注销成功！",1);
+					queryUserList();
+				}
+				else
+				{
+					minAlert(data.responseMsg,1);
+					
+					queryUserList();
+				}
+		});
+	});
+}
+
+</script>
+[#include "/common/cms_footer.html"]

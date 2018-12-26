@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>工种列表</title>
+</head>
+<!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <script src="js/css3-mediaqueries.js"  type="text/javascript"></script>
+  <![endif]-->
+<style>
+	.item
+	{
+		display: inline-block;
+		margin: 5px;
+	}
+</style>
+<body ng-app="category" ng-controller="userCategory">
+	<div class="margin Competence_style" id="page_style">
+	    <div class="operation clearfix mb15">
+	 		<a  ng-click="openCategory()" id="administrator_add" class="btn button_btn bg-deep-blue"><i class="fa  fa-edit"></i>&nbsp;添加工种</a>
+		 	<div class="item search clearfix">
+				<input type="text" name="categoryName" placeholder="请输入工种名称关键字" class="form-control col-xs-8" ng-model="categoryName"/>
+				<button class="btn button_btn bg-deep-blue" style="float:left" ng-click="queryCategoryList()"  type="button"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+			</div>
+		</div>
+		<div class="compete_list" >
+			<table id="sample_table" class="table table_list table_striped table-bordered dataTable no-footer">
+				<thead>
+					<tr>
+						<th class="center"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>工种排序</th>
+						<th>工种上级ID</th>
+						<th>工种名称</th>
+						<th>包工类型</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th class="hidden-480">操作</th>
+					</tr>
+				</thead>
+	            <tbody>
+					<tr ng-if="categoryList.length > 0 " ng-repeat="category in categoryList track by $index">
+						<td class="center"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td ng-bind="category.categorySort"></td>
+						<td ng-bind="category.parentName ? category.parentName : '一级工种'"></td>
+						<td ng-bind="category.categoryName"></td>
+						<td ng-bind="category.categoryType == 1 ? '总包' : '分包'"></td>
+						<td ng-bind="category.createTime.time | date:'yyyy年MM月dd日'"></td>
+						<td ng-bind="category.updateTime.time | date:'yyyy年MM月dd日'"></td>
+						<td class="td-manage">
+						<div class="btn_group">
+						 <button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+						 <ul class="btn_group_item none">
+						   <li><a title="编辑" ng-click="openCategory(category.id)" href="javascript:;" >编辑</a></li>
+						   <li><a title="删除" href="javascript:;" ng-click="deleteCategory(category.id)" >删除</a></li>
+						 </ul>
+						</div>
+						</td>
+					</tr>
+					<tr ng-if="categoryList.length == 0 ">
+						<td class="center" colspan="8">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	 	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+	</div>
+	<!--添加管理员-->
+	<div id="add_category" class="add_category" style="display:none">
+		<form ng-submit="updateRole()" >
+			<div class="add_style add_administrator_style">
+				<ul>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>工种排序：</label>
+						<div class="formControls col-xs-6">
+						<input type="text" class="input-text col-xs-12" value="" placeholder="请输入工种排序" ng-model="category.categorySort" ></div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i class="c-red">*</i>上级工种：</label>
+						<div class="formControls col-xs-6"> 
+				      		<span class="select-box" style="width:150px;">
+								<select class="select" ng-model="category.parentId" ng-init="category.parentId = categoryParent[0].id" ng-options="categoryParent.id as categoryParent.categoryName for categoryParent in categoryParentList">
+									<option value="">一级工种</option>
+								</select>
+							</span>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>工种名称：</label>
+						<div class="formControls col-xs-6">
+						<input type="text" class="input-text col-xs-12" value="" placeholder="请输入工种名称" ng-model="category.categoryName" ></div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>包工类型：</label>
+						<div class="formControls col-xs-6"> 
+				      		<span class="select-box" style="width:150px;">
+								<select class="select" ng-model="category.categoryType" ng-init="category.categoryType=categoryTypeList[0].value" ng-options="categoryType.value as categoryType.name for categoryType in categoryTypeList">
+								<option value="">请选择包工类型</option>
+								</select>
+							</span>
+						</div>
+					</li>
+			        <li class="clearfix col-xs-12 col-lg-12 align">
+						<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="保存" ng-click="updateCategory()">
+					</li>
+			    </ul>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
+<script>
+var menuManager = angular.module('category', []);
+menuManager.controller('userCategory', function($scope,$timeout) {
+	$scope.categoryName = "";
+	$scope.pageNum = 1;
+	$scope.pageSize = 20;
+	$scope.categoryTypeList = [{
+		name:'总包',
+		value:1
+	},{
+		name:'分包',
+		value:2
+	}]
+	
+	$scope.queryCategoryList = function()//查询工种信息
+	{
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/category/list.ddxj',
+				data: {categoryName:$scope.categoryName,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.categoryList.total;
+						$scope.categoryList = data.data.categoryList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+							$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+	      	    ,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+	      			$scope.pageSize = obj.limit;
+		      		if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+		      			$scope.queryCategoryList();
+                    }
+	      	    }
+			});
+		});
+	}
+	$scope.queryCategoryList();
+	$scope.deleteCategory = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/delete/category.ddxj',
+				data: {categoryId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryCategoryList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.openCategory = function(categoryId)//打开添加窗口
+	{
+		$scope.category = "";
+		$scope.queryCategoryParent();
+		if(isNotNull(categoryId))
+		{
+			Ajax.post({
+				url: getRoot+'/manager/category/details.ddxj',
+				data: {categoryId:categoryId},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.category = data.data.category;
+						$scope.$apply();
+	         		}
+         		}
+			}); 
+		}
+		layer.open({
+			type: 1,
+			title:categoryId?'修改工种':'添加工种',
+			area: ['600px',''],
+			shadeClose: false,
+			content: $('#add_category'),
+		});
+	}
+	
+	$scope.queryCategoryParent = function()
+	{
+		Ajax.post({
+			url: getRoot+'/manager/category/parent.ddxj',
+			data: {},
+			async: true,
+			success: function(data) {
+				if(data.response == true)
+				{
+					$scope.categoryParentList = data.data.categoryParentList;
+					$scope.$apply();
+				}
+			}
+		}); 
+	}
+	
+	$scope.updateCategory = function()//更新菜单
+	{
+		if(!isNotNull($scope.category.categoryName))
+		{
+			layer.msg("请输入工种名称");
+			return false;
+		}
+		if(!isNotNull($scope.category.categoryType))
+		{
+			layer.msg("请选择包工类型");
+			return false;
+		}
+		Ajax.post({
+			url: getRoot+'/manager/update/category.ddxj',
+			data: $scope.category,
+			async: true,
+			success: function(data) {
+				if(data.response == true)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					$scope.queryCategoryList();
+				}
+			}
+		}); 
+	}
+});
+
+$(function(){
+	$("#Competence_sort").click(function(){
+		var option=$(this).find("option:selected").text();
+		var value=$(this).val();
+		if(value==0)
+		{
+			$("#sample_table tbody tr").show()
+		}
+		else
+		{
+			$("#sample_table tbody tr").hide().filter(":contains('"+(option)+"')").show();	
+		}
+	}).click();	
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>

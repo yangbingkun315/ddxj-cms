@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.WebRecruitMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.WebRecruit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_title" property="recruitTitle" jdbcType="VARCHAR" />
+        <result column="recruit_content" property="recruitContent" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="contact" property="contact" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="recruit_province" property="recruitProvince" jdbcType="VARCHAR" />
+        <result column="recruit_city" property="recruitCity" jdbcType="VARCHAR" />
+        <result column="recruit_area" property="recruitArea" jdbcType="VARCHAR" />
+        <result column="recruit_long" property="recruitLong" jdbcType="VARCHAR" />
+        <result column="recruit_lat" property="recruitLat" jdbcType="VARCHAR" />
+        <result column="recruit_address" property="recruitAddress" jdbcType="VARCHAR" />
+        <result column="recruit_person" property="recruitPerson" jdbcType="INTEGER" />
+        <result column="contractor" property="contractor" jdbcType="VARCHAR" />
+        <result column="cover_image" property="coverImage" jdbcType="VARCHAR" />
+        <result column="balance_way" property="balanceWay" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="VARCHAR" />
+        <result column="validate_status" property="validateStatus" jdbcType="INTEGER" />
+        <result column="balance_type" property="balanceType" jdbcType="INTEGER" />
+        <result column="recruit_status" property="recruitStatus" jdbcType="INTEGER" />
+        <result column="stick" property="stick" jdbcType="INTEGER" />
+        <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+        <result column="validate_cause" property="validateCause" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="project_number" property="projectNumber" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <!-- 工种 -->
+        <association property="categoryName" column="category_id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryNameById"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_title, recruit_content, user_id, contact, phone, category_id, start_time, 
+        end_time, recruit_province, recruit_city, recruit_area, recruit_long, recruit_lat, 
+        recruit_address, recruit_person, contractor, cover_image, balance_way, price, validate_status, 
+        balance_type, recruit_status, stick, stop_time, validate_cause, create_time, update_time, 
+        flag, project_number, remark
+    </sql>
+    
+    <!-- 置顶 -->
+	<update id="changeWebRecruitStick">
+		update zn_web_recruit set stick =#{type} ,update_time = NOW() where id=#{id}
+	</update>
+    
+    <!-- 删除招聘记录 -->
+	<update id="deleteWebRecruitById" parameterType="java.lang.Integer">
+		update zn_web_recruit set flag = 2 where id = #{recruitId} 
+	</update>
+
+	<!-- 多条件查询官网招聘列表 -->
+    <select id="queryWebRecruitList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo" >
+        SELECT DISTINCT r.* FROM zn_web_recruit r
+   	 	WHERE r.flag = 1
+		<if test="recruitTitle != null and recruitTitle !=''">
+			and r.recruit_title like CONCAT(CONCAT('%', #{recruitTitle}), '%')
+		</if>
+		<if test="realName != null and realName !=''">
+			and r.contact like CONCAT(CONCAT('%', #{realName}), '%')
+		</if>
+		<if test="phone != null and phone !=''">
+			and r.phone LIKE CONCAT(CONCAT('%', #{phone}), '%')
+		</if>
+		<if test="validateStatus != null and validateStatus !=''">
+			and r.validate_status = #{validateStatus}
+		</if>
+		<if test="recruitProvince != null and recruitProvince !=''">
+			and r.recruit_province = #{recruitProvince}
+		</if>
+		<if test="recruitCity != null and recruitCity !=''">
+			and r.recruit_city = #{recruitCity}
+		</if>
+		<if test="recruitArea != null and recruitArea !=''">
+			and r.recruit_area = #{recruitArea}
+		</if>
+		<if test="stopTime != null and stopTime !=''">
+			and DATE_FORMAT(r.stop_time, '%Y-%m-%d') = DATE_FORMAT(#{stopTime} , '%Y-%m-%d')
+		</if>
+		order by r.create_time desc
+    </select>
+    
+    <select id="queryWebRecruitListForStick" resultMap="BaseResultMap">
+        SELECT DISTINCT r.* FROM zn_web_recruit r
+   	 	WHERE r.flag = 1 and r.stick = 1
+		order by r.create_time desc
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_web_recruit
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_web_recruit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.WebRecruit" >
+        insert into zn_web_recruit (id, recruit_title, recruit_content, 
+            user_id, contact, phone, 
+            category_id, start_time, end_time, 
+            recruit_province, recruit_city, recruit_area, 
+            recruit_long, recruit_lat, recruit_address, 
+            recruit_person, contractor, cover_image, 
+            balance_way, price, validate_status, 
+            balance_type, recruit_status, stick, 
+            stop_time, validate_cause, create_time, 
+            update_time, flag, project_number, remark
+            )
+        values (#{id,jdbcType=INTEGER}, #{recruitTitle,jdbcType=VARCHAR}, #{recruitContent,jdbcType=VARCHAR}, 
+            #{userId,jdbcType=INTEGER}, #{contact,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+            #{categoryId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+            #{recruitProvince,jdbcType=VARCHAR}, #{recruitCity,jdbcType=VARCHAR}, #{recruitArea,jdbcType=VARCHAR}, 
+            #{recruitLong,jdbcType=VARCHAR}, #{recruitLat,jdbcType=VARCHAR}, #{recruitAddress,jdbcType=VARCHAR}, 
+            #{recruitPerson,jdbcType=INTEGER}, #{contractor,jdbcType=VARCHAR}, #{coverImage,jdbcType=VARCHAR}, 
+            #{balanceWay,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR}, #{validateStatus,jdbcType=INTEGER}, 
+            #{balanceType,jdbcType=INTEGER}, #{recruitStatus,jdbcType=INTEGER}, #{stick,jdbcType=INTEGER}, 
+            #{stopTime,jdbcType=TIMESTAMP}, #{validateCause,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, #{projectNumber,jdbcType=VARCHAR},
+            #{remark,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.WebRecruit" >
+        insert into zn_web_recruit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitTitle != null" >
+                recruit_title,
+            </if>
+            <if test="recruitContent != null" >
+                recruit_content,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="contact != null" >
+                contact,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="categoryId != null" >
+                category_id,
+            </if>
+            <if test="startTime != null" >
+                start_time,
+            </if>
+            <if test="endTime != null" >
+                end_time,
+            </if>
+            <if test="recruitProvince != null" >
+                recruit_province,
+            </if>
+            <if test="recruitCity != null" >
+                recruit_city,
+            </if>
+            <if test="recruitArea != null" >
+                recruit_area,
+            </if>
+            <if test="recruitLong != null" >
+                recruit_long,
+            </if>
+            <if test="recruitLat != null" >
+                recruit_lat,
+            </if>
+            <if test="recruitAddress != null" >
+                recruit_address,
+            </if>
+            <if test="recruitPerson != null" >
+                recruit_person,
+            </if>
+            <if test="contractor != null" >
+                contractor,
+            </if>
+            <if test="coverImage != null" >
+                cover_image,
+            </if>
+            <if test="balanceWay != null" >
+                balance_way,
+            </if>
+            <if test="price != null" >
+                price,
+            </if>
+            <if test="validateStatus != null" >
+                validate_status,
+            </if>
+            <if test="balanceType != null" >
+                balance_type,
+            </if>
+            <if test="recruitStatus != null" >
+                recruit_status,
+            </if>
+            <if test="stick != null" >
+                stick,
+            </if>
+            <if test="stopTime != null" >
+                stop_time,
+            </if>
+            <if test="validateCause != null" >
+                validate_cause,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="projectNumber != null" >
+                project_number,
+            </if>
+            <if test="remark != null" >
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitTitle != null" >
+                #{recruitTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitContent != null" >
+                #{recruitContent,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="contact != null" >
+                #{contact,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null" >
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null" >
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recruitProvince != null" >
+                #{recruitProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitCity != null" >
+                #{recruitCity,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitArea != null" >
+                #{recruitArea,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLong != null" >
+                #{recruitLong,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLat != null" >
+                #{recruitLat,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitAddress != null" >
+                #{recruitAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitPerson != null" >
+                #{recruitPerson,jdbcType=INTEGER},
+            </if>
+            <if test="contractor != null" >
+                #{contractor,jdbcType=VARCHAR},
+            </if>
+            <if test="coverImage != null" >
+                #{coverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceWay != null" >
+                #{balanceWay,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="validateStatus != null" >
+                #{validateStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceType != null" >
+                #{balanceType,jdbcType=INTEGER},
+            </if>
+            <if test="recruitStatus != null" >
+                #{recruitStatus,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="stopTime != null" >
+                #{stopTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateCause != null" >
+                #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="projectNumber != null" >
+                #{projectNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.WebRecruit" >
+        update zn_web_recruit
+        <set >
+            <if test="recruitTitle != null" >
+                recruit_title = #{recruitTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitContent != null" >
+                recruit_content = #{recruitContent,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="contact != null" >
+                contact = #{contact,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null" >
+                category_id = #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null" >
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recruitProvince != null" >
+                recruit_province = #{recruitProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitCity != null" >
+                recruit_city = #{recruitCity,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitArea != null" >
+                recruit_area = #{recruitArea,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLong != null" >
+                recruit_long = #{recruitLong,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLat != null" >
+                recruit_lat = #{recruitLat,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitAddress != null" >
+                recruit_address = #{recruitAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitPerson != null" >
+                recruit_person = #{recruitPerson,jdbcType=INTEGER},
+            </if>
+            <if test="contractor != null" >
+                contractor = #{contractor,jdbcType=VARCHAR},
+            </if>
+            <if test="coverImage != null" >
+                cover_image = #{coverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceWay != null" >
+                balance_way = #{balanceWay,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="validateStatus != null" >
+                validate_status = #{validateStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceType != null" >
+                balance_type = #{balanceType,jdbcType=INTEGER},
+            </if>
+            <if test="recruitStatus != null" >
+                recruit_status = #{recruitStatus,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                stick = #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="stopTime != null" >
+                stop_time = #{stopTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateCause != null" >
+                validate_cause = #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="projectNumber != null" >
+                project_number = #{projectNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.WebRecruit" >
+        update zn_web_recruit
+        set recruit_title = #{recruitTitle,jdbcType=VARCHAR},
+            recruit_content = #{recruitContent,jdbcType=VARCHAR},
+            user_id = #{userId,jdbcType=INTEGER},
+            contact = #{contact,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            category_id = #{categoryId,jdbcType=INTEGER},
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            end_time = #{endTime,jdbcType=TIMESTAMP},
+            recruit_province = #{recruitProvince,jdbcType=VARCHAR},
+            recruit_city = #{recruitCity,jdbcType=VARCHAR},
+            recruit_area = #{recruitArea,jdbcType=VARCHAR},
+            recruit_long = #{recruitLong,jdbcType=VARCHAR},
+            recruit_lat = #{recruitLat,jdbcType=VARCHAR},
+            recruit_address = #{recruitAddress,jdbcType=VARCHAR},
+            recruit_person = #{recruitPerson,jdbcType=INTEGER},
+            contractor = #{contractor,jdbcType=VARCHAR},
+            cover_image = #{coverImage,jdbcType=VARCHAR},
+            balance_way = #{balanceWay,jdbcType=VARCHAR},
+            price = #{price,jdbcType=VARCHAR},
+            validate_status = #{validateStatus,jdbcType=INTEGER},
+            balance_type = #{balanceType,jdbcType=INTEGER},
+            recruit_status = #{recruitStatus,jdbcType=INTEGER},
+            stick = #{stick,jdbcType=INTEGER},
+            stop_time = #{stopTime,jdbcType=TIMESTAMP},
+            validate_cause = #{validateCause,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},
+            project_number = #{projectNumber,jdbcType=VARCHAR},
+            remark = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="queryMultipleConditional" resultMap="BaseResultMap" parameterType="java.util.Map">
+    	SELECT
+		r.*,
+		c.category_name
+		FROM
+		zn_web_recruit AS r
+		INNER JOIN zn_category AS c ON r.category_id = c.id
+   	 	WHERE r.flag = 1
+   	 	<if test="province != null and province !=''">
+			and r.recruit_province like concat(concat('%', #{province}), '%')
+		</if>
+		<if test="city != null and city !=''">
+			and r.recruit_city like concat(concat('%', #{city}), '%')
+		</if>
+		<if test="area != null and area !=''">
+			and r.recruit_area like concat(concat('%', #{area}), '%')
+		</if>
+		<if test="categoryName != null and categoryName !=''">
+			and c.category_name like concat(concat('%', #{categoryName}), '%')
+		</if>
+		order by r.create_time desc
+    </select>
+    <select id="queryWebSiteRecruitDetail" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT
+		r.*,
+		c.category_name
+		FROM
+		zn_web_recruit AS r
+		INNER JOIN zn_category AS c ON r.category_id = c.id
+   	 	WHERE r.flag = 1 AND  r.id = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>

@@ -1,0 +1,138 @@
+ <div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('complainListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>用户姓名</td>
+   		<td>用户电话</td>
+   		<td>投诉类型</td>
+   		<td style="width:400px">投诉内容</td>
+   		<td>投诉图片</td>
+   		<td>是否处理</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if complainList?? && complainList?size > 0]
+	   	[#list complainList as complainList]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="complainListId" id="${complainList.id}" >
+					<label class="el-checkbox-style" for="${complainList.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${complainList.user.realName!""}</td>
+	   		<td>${complainList.user.phone!""}</td>
+	   		<td>
+	   			[#if complainList.type??]
+	   				[#if complainList.type == '1']
+	   					投诉
+	   				[#elseif complainList.type == '2']
+	   					建议
+	   				[#elseif complainList.type == '3']
+	   					其它
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${complainList.complainContent!""}</td>
+	   		<td align="center" valign="middle">
+	   		
+	   		[#if complainList.imgUrl != '']
+	   			[#list complainList.imgUrl?split("###") as image]
+	   				<a href="${image}" class="label label-default galpop-info [#if image_index != 0]none[/#if]" data-galpop-group="image_${complainList.id}" >打开图片</a>
+	   			[/#list]
+	   		[#else]
+	   			无
+	   		[/#if]
+	   		</td>
+	   		<td>
+	   			[#if complainList.status??]
+	   				[#if complainList.status == '1']
+	   					未受理
+	   				[#elseif complainList.status == '2']
+	   					已受理
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${complainList.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   		<td>${complainList.updateTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   		<td>
+	   			[#if complainList.status=='1']
+			   		[@shiro.hasPermission name="system:complain:audit"]
+				  		<button type="button" class="btn btn-warning" onclick="updateComPlainStatus(${complainList.id})">受理</button>
+				  	[/@shiro.hasPermission]
+				[#elseif complainList.status=='2']
+				  	[@shiro.hasPermission name="system:complain:delete"]
+				  		<button type="button" class="btn btn-danger" onclick="deleteComPlain(${complainList.id})">删除</button>
+				  	[/@shiro.hasPermission]
+			  	[/#if]
+		  	</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+$('.galpop-info').galpop({callback:imagePageCallback});
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryComplainList(pagination.pageNumber);
+		}
+	});
+}
+function openImages(data)
+{
+	var images = [];
+	if(data.indexOf("###") > -1)
+	{
+		var imagesSplit = data.split("###");
+		for(var d = 0;d<imagesSplit.length;d++)
+		{
+			images.push(imagesSplit[d]);
+		}
+	}
+	else
+	{
+		images.push(data);
+	}
+	var settings = {};
+	$.fn.galpop('openBox',settings,images,0);
+}
+function updateComPlainStatus(id)
+{
+	doPost("${base}/cms/comPlain/handle.htm",{id:id},function(data){
+		if(data.response == true)
+		{
+			queryComplainList(1);
+		}
+	});
+}
+function deleteComPlain(id)
+{
+	doPost("${base}/cms/comPlain/delete.htm",{id:id},function(data){
+		if(data.response == true)
+		{
+			queryComplainList(1);
+		}
+	});
+}
+</script>

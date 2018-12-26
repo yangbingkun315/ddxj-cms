@@ -1,0 +1,80 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('keywordsId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>ID</td>
+   		<td>关键字</td>
+   		<td>完全匹配</td>
+   		<td>回复内容</td>
+   		<td>回复类型</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if keywordsList?? && keywordsList?size > 0]
+	   	[#list keywordsList as keywords]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="keywordsId" id="${keywords.id}" >
+					<label class="el-checkbox-style" for="${keywords.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${keywords.id!""}</td>
+	   		<td>
+	   			${keywords.keyWords!""}
+	   		</td>
+	   		<td>[#if keywords.isMatch == 1]是[#else]否[/#if]</td>
+			<td style="max-width:550px;word-break:break-word;">
+				[#if keywords.replyType == 1]
+					${keywords.replayWords}
+				[#elseif keywords.replyType == 2 ]
+					<img alt="" src="${keywords.replayWords?split('###')[0]}" href="${keywords.replayWords?split('###')[0]}"  height="80px"  class="galpop-single openImage">
+				[#elseif keywords.replyType == 3 ]
+					${keywords.replayWords?split('###')[0]}
+				[/#if]
+			</td>
+			<td style="max-width:550px;word-break:break-word;">
+				[#if keywords.replyType == 1]
+					文字回复
+				[#elseif keywords.replyType == 2]
+					发送图片
+				[#elseif keywords.replyType == 3]
+					图文回复
+				[/#if]
+			</td>
+	   		<td>${(keywords.createTime?string("yyyy-MM-dd HH:mm:ss"))!''}</td>
+	   		<td>${(keywords.updateTime?string("yyyy-MM-dd HH:mm:ss"))!''}</td>
+	   		<td>
+				<button type="button" class="btn btn-warning" onclick="wechatKeywordsEdit(${keywords.id})">编辑</button>
+				<button type="button" class="btn btn-danger" onclick="confirmWechatMenu(${keywords.id})">删除</button>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="9" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryKeywordsList(pagination.pageNumber);
+		}
+	});
+}
+$('.openImage').galpop();
+</script>

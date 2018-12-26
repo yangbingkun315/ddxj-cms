@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.manager.ManagerUserMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.manager.ManagerUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="VARCHAR" />
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+        <result column="role_id" property="roleId" jdbcType="INTEGER" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <association property="managerRole" column="role_id" select="net.zn.ddxj.mapper.manager.ManagerRoleMapper.queryRole"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_name, sex,user_password, role_id, real_name, phone, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_manager_user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_manager_user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.manager.ManagerUser" >
+        insert into zn_manager_user (id, user_name, user_password, 
+            role_id, real_name, phone, 
+            create_time, update_time, flag,sex
+            )
+        values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
+            #{roleId,jdbcType=INTEGER}, #{realName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER},#{sex,jdbcType=VARCHAR} 
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.manager.ManagerUser" >
+        insert into zn_manager_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userName != null" >
+                user_name,
+            </if>
+            <if test="userPassword != null" >
+                user_password,
+            </if>
+            <if test="roleId != null" >
+                role_id,
+            </if>
+            <if test="realName != null" >
+                real_name,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="sex != null" >
+                sex,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null" >
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null" >
+                #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="realName != null" >
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="sex != null" >
+               #{sex,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.manager.ManagerUser" >
+        update zn_manager_user
+        <set >
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null" >
+                user_password = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null" >
+                role_id = #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="realName != null" >
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="sex != null" >
+              sex = #{sex,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.manager.ManagerUser" >
+        update zn_manager_user
+        set user_name = #{userName,jdbcType=VARCHAR},
+            user_password = #{userPassword,jdbcType=VARCHAR},
+            role_id = #{roleId,jdbcType=INTEGER},
+            real_name = #{realName,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},sex=#{sex,jdbcType=VARCHAR},
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="queryUserInfo" resultMap="BaseResultMap">
+    	select 
+    		<include refid="Base_Column_List" />
+    	from zn_manager_user where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="queryUserList" resultMap="BaseResultMap" parameterType="string">
+    	select 
+    		<include refid="Base_Column_List" />
+    	from zn_manager_user where user_name != 'admin' 
+	   	<if test="realName != null and realName != ''" >
+		 AND real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+		 </if>
+    </select>
+    <select id="querySettingRole" resultType="java.lang.Integer">
+    	select count(id) from zn_manager_user where role_id = #{roleId}
+    </select>
+</mapper>

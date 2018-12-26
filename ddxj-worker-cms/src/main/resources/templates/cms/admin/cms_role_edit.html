@@ -1,0 +1,62 @@
+<div class="cms-edit">
+	<form action="${base}/cms/role/edit.htm" method="post" id="role_edit">
+		<input type="hidden" name="id" value="${(role.id)!""}">
+		<div  class="item clear" style="height:50px;">
+			<div class="title">
+				角色名称：
+			</div>
+			<div class="content">
+				<input type="text"  class="input textinput-main" autofocus style="height:40px;width:160px;" 
+					placeholder="请输入角色名称" name="roleName" required autocomplete="off" value="${(role.roleName)!""}" maxLength="32">
+			</div>
+		</div>
+		<div  class="item clear" style="height:50px;">
+			<div class="title">
+				角色Key：
+			</div>
+			<div class="content">
+				<input type="text"  class="input textinput-main" style="height:40px;width:160px;" 
+					placeholder="请生成key"  name="roleKey"  isRequired="true" autocomplete="off"  maxLength="32" value="${(role.roleKey)!""}">
+			</div>
+			<div class="tip font_red">角色名称的英文</div>
+		</div>
+		<div  class="item clear" style="height: 100px;">
+			<div class="title">
+				角色描述：
+			</div>
+			<div class="content">
+				<textarea class="form-control" rows="3" required maxLength="32" name="roleDescription" isRequired="true" placeholder="请输入角色描述">${(role.roleDescription)!""}</textarea>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+$('#role_edit').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+ 			 $('#cms_role_form').submit();
+		 }
+	}
+});
+</script>

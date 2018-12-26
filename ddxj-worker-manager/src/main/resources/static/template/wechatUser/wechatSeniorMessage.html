@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link href="../../js/lay/css/layui.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/chosen.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/city_data.js" type="text/javascript"></script>
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/hsCheckData.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<title>高级群发</title>
+</head>
+<body ng-app="wechat" ng-controller="wechatSetting">
+<style>
+.layui-form-switch
+{
+	height: 23px !important;
+    width: 53px !important;
+    margin-top: 0px !important;
+}
+.mass_number
+{
+	line-height:50px;
+	background-color:#fdf9e3;
+	border:1px solid #fbebcd;
+	text-indent: 20px;
+}
+.befollowed
+{
+	width:initial;
+	margin-top:initial;
+	overflow: visible;
+}
+</style>
+	<div class="margin inside_pages clearfix">
+		<div class="mass_number text-muted" style="line-height: 20px;">
+			<div>群发区别：</div>
+			<div>1.高级群发：与公众平台共用群发次数，订阅号每日一条，服务号下粉丝每人每月只能接收4条（但能群发次数不限）</div>
+			<div>2.客服群发：向公众号下48小时内有互动员的粉丝进行群发，群发次数不限制</div>
+			<div>3.APP群发：自定义群发消息，向平台号下所有用户群发，可定时发送，可条件筛选，不限次数</div>
+		</div>
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+			<ul class="layui-tab-title">
+				<li class="layui-this">高级群发</li>
+			    <li><a href="wechatMassMessage.html">客服群发</a></li>
+			    <li><a href="appMassMessage.html">APP群发</a></li>
+			    <li><a href="wechatSendMessageList.html">群发记录</a></li>
+			</ul>
+			<div class="add_style clearfix relative">
+				<ul>
+					<li class="clearfix">
+						<label class="label_name col-xs-1"><i>*</i>群发类型：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-11">
+							<select id="massType_id" ng-model="massType" ng-init="massType=typeList[0].value" ng-options="role.value as role.name for role in typeList">
+			       			</select>
+			       			&nbsp;&nbsp;<span style="color: red;">群发图文信息需要先在图文素材新建好方能设置</span>
+						</div>
+					</li>
+					<li class="clearfix" ng-show="massType == 1">
+						<label class="label_name col-xs-1"><i>*</i>群发内容：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-3">
+							<textarea class="layui-textarea" id="LAY_demo1" ng-model="massContent" style="display: none"></textarea>
+						</div>
+						&nbsp;&nbsp;<span style="color: red;">如需要发链接，请选中文字之后点击编辑器“插入链接”即可,链接前缀为“http://”</span>
+					</li>
+					<li class="clearfix" ng-show="massType == 2">
+						<label class="label_name col-xs-1"><i>*</i>群发信息：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-11">
+			       			<select id="mediaId_id" ng-model="mediaId" ng-init="mediaId=newsList[0].media_id" ng-options="role.media_id as role.title for role in newsList">
+			       				<option value="">请选择群发信息</option>
+			       			</select>
+						</div>
+					</li>
+					<li class="clearfix" ng-show="massType == 3">
+						<label class="label_name col-xs-1"><i>*</i>群发图片：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-11">
+							<div class="preview_img" style="max-width: 300px;">
+								<img style="max-width: 100%;max-height: 100%;" ng-src="{{imgUrl}}" id="imgUrl" border="0" src="../../images/image.png" />
+							</div>
+							<div class="fileInput ">
+								<input type="file" onchange="imageChange(this,'imgUrl')" class="upFileBtn" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" />
+					        </div>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-1"><i>*</i>地区：&nbsp;&nbsp;</label> 
+						<div class="Add_content col-xs-11">
+							<span class="add_name">
+				     			<select ng-model="province" ng-options="s.value as s.value for s in provinceList">
+				               		<option value="">不限</option>
+				       			</select>
+							</span>
+						</div>   
+		   			</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-1"><i>*</i>工种：&nbsp;&nbsp;</label> 
+						<div class="Add_content col-xs-11">
+							<span class="add_name">
+								<select class="select Competence_sort" data-placeholder="请选择工种" multiple id="user_category"  name="admin-role" size="1">
+									<option value="">不限</option>
+								</select>
+							</span>
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-1"><i>*</i>性别：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-11">
+							<select id="sex_id" ng-model="sex" ng-options="role.value as role.name for role in sexList">
+								<option value="">不限</option>
+			       			</select>
+						</div>
+					</li>
+					<li class="clearfix">
+		   				<div class="col-xs-4">
+							<label class="label_name col-xs-3"><i>*</i>年龄段：&nbsp;&nbsp;</label> 
+							<div class="Add_content col-xs-9">
+								<input type="text" name="startAge" id="startAge" ng-model="startAge" placeholder="始" class="textinput-main width160"/>&nbsp;至&nbsp;
+								<input type="text" name="endAge" id="endAge" ng-model="endAge" placeholder="终" class="textinput-main width160"/>
+							</div>   
+						</div>
+		   			</li>
+		   			<li class="clearfix">
+						<div class="col-xs-4">
+							<label class="label_name col-xs-3"><i>*</i>关注时间：&nbsp;&nbsp;</label> 
+							<div class="Add_content col-xs-9">
+								<input type="text" name="startAge" id="startTime" ng-model="startTime" placeholder="始" class="textinput-main width160"/>&nbsp;至&nbsp;
+								<input type="text" name="endAge" id="endTime" ng-model="endTime" placeholder="终" class="textinput-main width160"/>
+							</div>   
+						</div>
+					</li>
+	    			<li class="clearfix">
+						<label class="label_name col-xs-1"><i>*</i>粉丝标签：&nbsp;&nbsp;</label>
+						<div class="Add_content col-xs-11">
+							<span class="add_name">
+								<select class="select Competence_sort" ng-model="tagId" ng-options="tags.id as tags.name for tags in tagsList">
+									<option value="">不限</option>
+								</select>
+								&nbsp;&nbsp;<span style="color: red;">选择粉丝标签后将对微信公众号此标签下的所有用户进行群发，以上筛选条件将不生效</span>
+							</span>
+						</div>
+					</li>
+				</ul>
+				<div class="Button_operation btn_width">
+					<button class="btn button_btn bg-deep-blue" type="button" ng-click="submitWechat()">确定群发</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+var startTime = 
+{
+	elem: '#startTime',
+	format: 'YYYY-MM-DD hh:mm:ss',
+    min: '2000-01-01 00:00:00',
+    max: '2099-06-16 23:59:59',
+    istime: true,
+    istoday: false,
+    choose: function(datas)
+    {
+    	startTime.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+};
+var endTime = 
+{
+	elem: '#endTime',
+	format: 'YYYY-MM-DD hh:mm:ss',
+    //min: laydate.now(),
+    max: '2099-06-16 23:59:59',
+    istime: true,
+    istoday: false,
+    choose: function(datas)
+    {
+    	endTime.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+};
+laydate(startTime);
+laydate(endTime);
+
+var startAge = {
+	elem: '#startAge',
+	format: 'YYYY-MM-DD hh:mm:ss',
+	// min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas){
+	}
+};
+var endAge = {
+	elem: '#endAge',
+	format: 'YYYY-MM-DD hh:mm:ss',
+	// min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas){
+	}
+};
+laydate(startAge)
+laydate(endAge)
+
+var wechat = angular.module('wechat', []);
+wechat.controller('wechatSetting', function($scope,$timeout,$sce)
+{
+	$scope.typeList = [{name:'文字信息',value:1},{name:'图文信息',value:2},{name:'回复图片',value:3}];
+	$scope.sexList = [{name:'男',value:'M'},{name:'女',value:'F'}];
+	
+	$scope.provinceList = cityData;
+	
+	$scope.massType = "";
+	$scope.tagId = "";
+	$scope.massContent = "";
+	$scope.province = "";
+	$scope.sex = "";
+	$scope.startAge = "";
+	$scope.endAge = "";
+	$scope.startTime = "";
+	$scope.endTime = "";
+	
+	$scope.findWechatSetting = function()
+	{
+		Ajax.post({
+			url: getRoot+'/wechat/senior/mass/message/query.ddxj', 
+			data: {},
+	        async: true,
+	        success: function(data) {
+	    		if(data.response == true)
+    			{
+	    			$scope.newsList = data.data.newsList;
+	    			$scope.tagsList = data.data.tagsList;
+	    			
+	    			$scope.queryCategoryType();
+	    			
+	    			$scope.$apply();
+	    			
+	    			layui.use('layedit', function(){
+	    				layedit = layui.layedit,$ = layui.jquery;
+	    				layedit.set({height: 150 });
+	    				textAreaIndex = 
+    					layedit.build('LAY_demo1', {
+    						tool: [
+    						       ,'link' //超链接
+    						       ,'unlink' //清除链接
+    						     ]
+    					});//自定义工具栏
+	    			});
+         		}
+       		}
+		}); 
+	}
+	
+	$scope.findWechatSetting();
+	
+	$scope.queryCategoryType = function()//根据角色查询角工种
+	{
+		Ajax.post({
+			url: getRoot+'/member/query/worker/type.ddxj',
+			data: {categoryType:2},
+			async: true,
+			success: function(data) {
+				if(data.response == true)
+				{
+					var categoryListData = data.data.categoryList;
+					$("#user_category").empty();
+					for(var d = 0;d<categoryListData.length;d++)
+					{
+						$("#user_category").append("<option value='"+categoryListData[d].id+"'>"+categoryListData[d].categoryName+"</option>")
+					}
+					$("#user_category").chosen({
+						allow_single_deselect: true, //是否允许取消选择
+						max_selected_options:3, //最大选择数
+						disable_search:false,
+						width:200
+					});
+					$("#user_category").trigger("chosen:updated");
+	             }
+	         }
+		});
+	}
+	
+	$scope.submitWechat = function()
+	{
+		$scope.submitData = {};
+		
+		$scope.submitData.massType = $scope.massType;
+		$scope.submitData.tagId = $scope.tagId;
+		$scope.submitData.massContent = layedit.getContent(textAreaIndex);
+		if(isNotNull($scope.submitData.massContent))
+		{
+			$scope.submitData.massContent = $scope.submitData.massContent.replace(/<p>(.*?)<\/p>/g,"$1");
+		}
+		if(isNotNull($scope.mediaId))
+		{
+			$scope.submitData.mediaId = $scope.mediaId;
+		}
+		else
+		{
+			$scope.submitData.mediaId = "";
+		}
+		$scope.submitData.province = $scope.province;
+		$scope.submitData.sex = $scope.sex;
+		$scope.submitData.startAge = $("#startAge").val();
+		$scope.submitData.endAge = $("#endAge").val();
+		$scope.submitData.startTime = $("#startTime").val();
+		$scope.submitData.endTime = $("#endTime").val();
+		
+		if($scope.massType == 1)
+		{
+			if(!isNotNull($scope.submitData.massContent))
+			{
+				layer.msg("请输入群发内容！");
+				return false;
+			}
+		}
+		else if($scope.massType == 2)
+		{
+			if(!isNotNull($scope.mediaId))
+			{
+				layer.msg("请选择群发信息！");
+				return false;
+			}
+		}
+		else if($scope.massType == 3)
+		{
+			var image = $("#imgUrl").attr("src");
+			if(!isNotNull(image) || image == "../../images/image.png")
+			{
+				layer.msg("请上传群发图片！");
+				return false;
+			}
+			else
+			{
+				$scope.submitData.imgUrl = image;
+			}
+		}
+		
+		var categorysList = $("#user_category").val();
+		if(isNotNull(categorysList))
+		{
+			var categorys = "";
+			for(var d = 0;d<categorysList.length;d++)
+			{
+				categorys +=categorysList[d]+",";
+			}
+			$scope.submitData.categorys = categorys.substring(0,categorys.length -1);
+		}
+		
+		Ajax.post({
+			url: getRoot+'/wechat/senior/mass/message/send.ddxj',
+			data: $scope.submitData,
+			async: true,
+			success: function(data) 
+			{
+				if(data.response)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+				}
+			}
+		})
+	}
+});
+/*********滚动事件*********/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+
+</script>

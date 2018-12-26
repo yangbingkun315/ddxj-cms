@@ -1,0 +1,42 @@
+[#assign title="点点小匠-群发用户"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="massMessageApp">
+	<div class="alert alert-warning" >注：查询此群发记录下所有接收用户 </div>
+	<form method="post" id="send_message_user_list" action="${base}/wechat/message/user/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<input id="msgId" type="hidden" name="msgId" value="${msgId}"/>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_message_user_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#send_message_user_list').ajaxForm({
+	beforeSubmit:function(){
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+
+function querySendMessageUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#send_message_user_list').submit();
+}
+
+querySendMessageUserList(1);
+
+</script>
+[#include "/common/cms_footer.html"]

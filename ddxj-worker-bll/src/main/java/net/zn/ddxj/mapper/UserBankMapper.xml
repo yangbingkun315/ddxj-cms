@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.UserBankMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.UserBank" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="bank_card" property="bankCard" jdbcType="VARCHAR" />
+        <result column="bank_front" property="bankFront" jdbcType="VARCHAR" />
+        <result column="bank_opposite" property="bankOpposite" jdbcType="VARCHAR" />
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+        <result column="bank_type" property="bankType" jdbcType="VARCHAR" />
+        <result column="cardholder_name" property="cardholderName" jdbcType="VARCHAR" />
+        <result column="cardholder_id_number" property="cardholderIdNumber" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="validate_json" property="validateJson" jdbcType="VARCHAR" />
+        <result column="rgb" property="rgb" jdbcType="VARCHAR" />
+        <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, bank_card, bank_front, bank_opposite, bank_name, bank_type, cardholder_name, 
+        cardholder_id_number, create_time, update_time, flag, phone, address, validate_json,rgb,bank_code
+    </sql>
+    
+    <!-- 根据UserId查询绑定银行卡 -->
+    <select id="findUserBankList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        SELECT * FROM zn_user_bank WHERE user_id = #{userId} and flag = 1
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user_bank
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_user_bank
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.UserBank" >
+        insert into zn_user_bank (id, user_id, bank_card, 
+            bank_front, bank_opposite, bank_name, 
+            bank_type, cardholder_name, cardholder_id_number, 
+            create_time, update_time, flag, 
+            phone, address, validate_json,rgb,bank_code
+            )
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bankCard,jdbcType=VARCHAR}, 
+            #{bankFront,jdbcType=VARCHAR}, #{bankOpposite,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR}, 
+            #{bankType,jdbcType=VARCHAR}, #{cardholderName,jdbcType=VARCHAR}, #{cardholderIdNumber,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, 
+            #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{validateJson,jdbcType=VARCHAR}, #{rgb,jdbcType=VARCHAR},#{bankCode,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.UserBank" >
+        insert into zn_user_bank
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="bankCard != null" >
+                bank_card,
+            </if>
+            <if test="bankFront != null" >
+                bank_front,
+            </if>
+            <if test="bankOpposite != null" >
+                bank_opposite,
+            </if>
+            <if test="bankName != null" >
+                bank_name,
+            </if>
+            <if test="bankType != null" >
+                bank_type,
+            </if>
+            <if test="cardholderName != null" >
+                cardholder_name,
+            </if>
+            <if test="cardholderIdNumber != null" >
+                cardholder_id_number,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="address != null" >
+                address,
+            </if>
+            <if test="validateJson != null" >
+                validate_json,
+            </if>
+            <if test="rgb != null" >
+                rgb,
+            </if>
+            <if test="bankCode != null" >
+                bank_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="bankCard != null" >
+                #{bankCard,jdbcType=VARCHAR},
+            </if>
+            <if test="bankFront != null" >
+                #{bankFront,jdbcType=VARCHAR},
+            </if>
+            <if test="bankOpposite != null" >
+                #{bankOpposite,jdbcType=VARCHAR},
+            </if>
+            <if test="bankName != null" >
+                #{bankName,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="cardholderName != null" >
+                #{cardholderName,jdbcType=VARCHAR},
+            </if>
+            <if test="cardholderIdNumber != null" >
+                #{cardholderIdNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="validateJson != null" >
+                #{validateJson,jdbcType=VARCHAR},
+            </if>
+            <if test="rgb != null" >
+                #{rgb,jdbcType=VARCHAR},
+            </if>
+            <if test="bankCode != null" >
+            	#{bankCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.UserBank" >
+        update zn_user_bank
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="bankCard != null" >
+                bank_card = #{bankCard,jdbcType=VARCHAR},
+            </if>
+            <if test="bankFront != null" >
+                bank_front = #{bankFront,jdbcType=VARCHAR},
+            </if>
+            <if test="bankOpposite != null" >
+                bank_opposite = #{bankOpposite,jdbcType=VARCHAR},
+            </if>
+            <if test="bankName != null" >
+                bank_name = #{bankName,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                bank_type = #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="cardholderName != null" >
+                cardholder_name = #{cardholderName,jdbcType=VARCHAR},
+            </if>
+            <if test="cardholderIdNumber != null" >
+                cardholder_id_number = #{cardholderIdNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="validateJson != null" >
+                validate_json = #{validateJson,jdbcType=VARCHAR},
+            </if>
+            <if test="rgb != null" >
+                rgb = #{rgb,jdbcType=VARCHAR},
+            </if>
+            <if test="bankCode != null" >
+                bank_code = #{bankCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.UserBank" >
+        update zn_user_bank
+        set user_id = #{userId,jdbcType=INTEGER},
+            bank_card = #{bankCard,jdbcType=VARCHAR},
+            bank_front = #{bankFront,jdbcType=VARCHAR},
+            bank_opposite = #{bankOpposite,jdbcType=VARCHAR},
+            bank_name = #{bankName,jdbcType=VARCHAR},
+            bank_type = #{bankType,jdbcType=VARCHAR},
+            cardholder_name = #{cardholderName,jdbcType=VARCHAR},
+            cardholder_id_number = #{cardholderIdNumber,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},
+            phone = #{phone,jdbcType=VARCHAR},
+            address = #{address,jdbcType=VARCHAR},
+            validate_json = #{validateJson,jdbcType=VARCHAR},
+            rgb = #{rgb,jdbcType=VARCHAR},
+            bank_code = #{bankCode,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <!-- 根据UserId,bankCard获取用户信息 -->
+    <select id="findUserBank" resultMap="BaseResultMap"  >
+        SELECT * FROM zn_user_bank WHERE user_id = #{userId} and bank_card=#{bankCard} and flag=1
+    </select>
+    <select id="findUserBankByBankCard" resultMap="BaseResultMap"  >
+        SELECT * FROM zn_user_bank WHERE  bank_card=#{bankCard} and flag=1
+    </select>
+    <!-- 删除用户绑定的银行卡 -->
+    <delete id="delUserBankRecord" parameterType="java.lang.Integer" >
+        delete from zn_user_bank
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+    <!-- 根据UserId查询绑定银行卡 -->
+    <select id="countUserBindingCard" resultType="java.lang.Integer" >
+        SELECT count(1) FROM zn_user_bank WHERE user_id = #{userId} and flag = 1
+    </select>
+    <!-- 解除绑卡 -->
+    <delete id="untieBankCard"  parameterType="java.lang.String">
+    	 delete from zn_user_bank
+        where user_id = #{userId} and bank_card = #{bankCard}
+    </delete>
+</mapper>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.SalaryRecordMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.SalaryRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="transfer_id" property="transferId" jdbcType="INTEGER" />
+        <result column="recruit_id" property="recruitId" jdbcType="INTEGER" />
+        <result column="assign_user_id" property="assignUserId" jdbcType="INTEGER" />
+        <result column="sendee_user_id" property="sendeeUserId" jdbcType="INTEGER" />
+        <result column="money" property="money" jdbcType="DECIMAL" />
+        <result column="transfer_way" property="transferWay" jdbcType="INTEGER" />
+        <result column="transfer_desc" property="transferDesc" jdbcType="VARCHAR" />
+        <result column="transfer_type" property="transferType" jdbcType="INTEGER" />
+        <result column="unit" property="unit" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="audit_status" property="auditStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!-- 一对一 转账配置 -->
+        <association property="toUser" column="sendee_user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail"></association>
+        <association property="recruit" column="recruit_id" select="net.zn.ddxj.mapper.RecruitMapper.queryRecruitByIdCut"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, transfer_id, recruit_id, assign_user_id, sendee_user_id, money, transfer_way, 
+        transfer_desc, transfer_type, unit, count, price, audit_status, create_time, update_time, 
+        flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_salary_record
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        update zn_salary_record set flag = 2
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.SalaryRecord" >
+        insert into zn_salary_record (id, transfer_id, recruit_id, 
+            assign_user_id, sendee_user_id, money, 
+            transfer_way, transfer_desc, transfer_type, 
+            unit, count, price, 
+            audit_status, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{transferId,jdbcType=INTEGER}, #{recruitId,jdbcType=INTEGER}, 
+            #{assignUserId,jdbcType=INTEGER}, #{sendeeUserId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, 
+            #{transferWay,jdbcType=INTEGER}, #{transferDesc,jdbcType=VARCHAR}, #{transferType,jdbcType=INTEGER}, 
+            #{unit,jdbcType=VARCHAR}, #{count,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+            #{auditStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.SalaryRecord" >
+        insert into zn_salary_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="transferId != null" >
+                transfer_id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="assignUserId != null" >
+                assign_user_id,
+            </if>
+            <if test="sendeeUserId != null" >
+                sendee_user_id,
+            </if>
+            <if test="money != null" >
+                money,
+            </if>
+            <if test="transferWay != null" >
+                transfer_way,
+            </if>
+            <if test="transferDesc != null" >
+                transfer_desc,
+            </if>
+            <if test="transferType != null" >
+                transfer_type,
+            </if>
+            <if test="unit != null" >
+                unit,
+            </if>
+            <if test="count != null" >
+                count,
+            </if>
+            <if test="price != null" >
+                price,
+            </if>
+            <if test="auditStatus != null" >
+                audit_status,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="transferId != null" >
+                #{transferId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="assignUserId != null" >
+                #{assignUserId,jdbcType=INTEGER},
+            </if>
+            <if test="sendeeUserId != null" >
+                #{sendeeUserId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="transferWay != null" >
+                #{transferWay,jdbcType=INTEGER},
+            </if>
+            <if test="transferDesc != null" >
+                #{transferDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="transferType != null" >
+                #{transferType,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null" >
+                #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                #{count,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="auditStatus != null" >
+                #{auditStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.SalaryRecord" >
+        update zn_salary_record
+        <set >
+            <if test="transferId != null" >
+                transfer_id = #{transferId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                recruit_id = #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="assignUserId != null" >
+                assign_user_id = #{assignUserId,jdbcType=INTEGER},
+            </if>
+            <if test="sendeeUserId != null" >
+                sendee_user_id = #{sendeeUserId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="transferWay != null" >
+                transfer_way = #{transferWay,jdbcType=INTEGER},
+            </if>
+            <if test="transferDesc != null" >
+                transfer_desc = #{transferDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="transferType != null" >
+                transfer_type = #{transferType,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null" >
+                unit = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                count = #{count,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="auditStatus != null" >
+                audit_status = #{auditStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.SalaryRecord" >
+        update zn_salary_record
+        set transfer_id = #{transferId,jdbcType=INTEGER},
+            recruit_id = #{recruitId,jdbcType=INTEGER},
+            assign_user_id = #{assignUserId,jdbcType=INTEGER},
+            sendee_user_id = #{sendeeUserId,jdbcType=INTEGER},
+            money = #{money,jdbcType=DECIMAL},
+            transfer_way = #{transferWay,jdbcType=INTEGER},
+            transfer_desc = #{transferDesc,jdbcType=VARCHAR},
+            transfer_type = #{transferType,jdbcType=INTEGER},
+            unit = #{unit,jdbcType=VARCHAR},
+            count = #{count,jdbcType=VARCHAR},
+            price = #{price,jdbcType=DECIMAL},
+            audit_status = #{auditStatus,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 查询发放记录 -->
+     <select id="selectByUserIdAndRecruitId" resultMap="BaseResultMap">
+    	select <include refid="Base_Column_List" /> from zn_salary_record where flag = 1  and  sendee_user_id = #{userId} and recruit_id =#{recruitId}   
+    </select>
+    <!-- 查询发放条数 -->
+    <select id="selectCount" resultType="java.lang.Integer">
+    	select count(1) from zn_salary_record where flag = 1  and   sendee_user_id = #{userId} and recruit_id = #{recruitId}     	
+    </select>
+      <!-- 发放金额(成功的) -->
+    <select id="totalMoeny" resultType="java.math.BigDecimal">
+    	select SUM(money) from zn_salary_record where flag = 1 and audit_status=2 and  sendee_user_id = #{userId} and recruit_id = #{recruitId}      	
+    </select>
+    <!-- 查询发放记录 -->
+    <select id="querySalaryRecord" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+    	SELECT s.*, u.real_name, u.phone FROM zn_salary_record AS s INNER JOIN zn_user AS u ON s.sendee_user_id = u.id
+		WHERE s.flag=1 and u.flag = 1
+    	<if test="auditStatus != null and auditStatus != ''" >
+          AND  s.audit_status = #{auditStatus}
+        </if>
+        <if test="realName != null and realName != ''" >
+          AND u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+        </if>
+        <if test="phone != null and phone != ''" >
+          AND  u.phone = #{phone}
+        </if>
+        order by update_time desc
+    </select>
+    
+    <!-- 查询发放记录 -->
+    <select id="querySalaryRecordCms" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+    	SELECT s.* FROM zn_salary_record AS s INNER JOIN zn_user AS u ON s.sendee_user_id = u.id
+		WHERE s.flag = 1 and u.flag = 1
+    	<if test="auditStatus != null and auditStatus != ''" >
+          AND  s.audit_status = #{auditStatus}
+        </if>
+        <if test="realName != null and realName != ''" >
+          AND u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+        </if>
+        <if test="phone != null and phone != ''" >
+          AND  u.phone = #{phone}
+        </if>
+        order by update_time desc
+    </select>
+    
+    <!-- 更新审核状态 -->
+    <update id="updateAuditStatus"  parameterType="java.lang.Integer">
+    	update zn_salary_record SET audit_status=#{auditStatus} , update_time=NOW() where id=#{salaryId}
+    </update>
+    
+    <!-- 删除申请工头的记录 -->
+    <update id="deleteSalaryRecord" parameterType="java.lang.Integer">
+    	update zn_salary_record set flag=2 where sendee_user_id=#{userId}
+    </update>
+    <!-- 删除发放的记录 -->
+    <update id="delSalaryRecord" parameterType="java.lang.Integer">
+    	 delete from zn_salary_record
+        where assign_user_id = #{userId} OR sendee_user_id = #{userId}
+    </update>
+</mapper>

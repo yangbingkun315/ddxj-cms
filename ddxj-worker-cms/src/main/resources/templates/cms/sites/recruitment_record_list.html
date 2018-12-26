@@ -1,0 +1,81 @@
+[#assign title="点点小匠-招聘列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="recruitmentList">
+	<div class="alert alert-warning" >注：招聘列表 </div>
+	<form method="post" id="recruitment_record_form" action="${base}/sites/recruitment/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label class="search-title">职位名称：</label>
+			  <input type="text" name="recruitName" id="recruitName" placeholder="职位名称关键字"  class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryRecruitmentList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:recruitment:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updatePosition()">添加职位</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/circle/circle_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#recruitment_record_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryRecruitmentList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#recruitment_record_form').submit();
+}
+
+queryRecruitmentList(1);
+function updatePosition(id)
+{
+	var url = "${base}/sites/recruitment/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改职位" : "新增职位","width":500,"height":930});
+}
+function confirmDeletePosition(id)
+{
+	showConfirmDialog({message : "确认要删除该招聘吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/sites/recruitment/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryRecruitmentList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

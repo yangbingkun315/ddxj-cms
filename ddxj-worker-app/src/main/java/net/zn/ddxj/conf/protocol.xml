@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocols>
+
+	<protocol imp="com.pabank.container.protocol.http.HTTPProtocolConfig">
+		<property name="protocolId" value="default"/>
+		<property name="commonConfig" ref="commonConfig"/>
+		<property name="reqConfig" ref="reqConfig"/>
+		<property name="respConfig" ref="respConfig"/>
+		<property name="advancedParams" ref="advancedParams"/>
+		<property name="security" ref="security"/>
+		<property name="impClass" value="com.pabank.container.protocol.http.client.HTTPClientConnector"/>
+	</protocol>
+	
+	<bean id="commonConfig" imp="com.pabank.container.protocol.http.HTTPBaseConfig">
+		<property name="uri" value="https://my-st1.orangebank.com.cn"/>
+		<property name="method" value="127.0.0.1"/>
+		<property name="contentType" value="5858"/>
+		<property name="serverType" value=""/>
+		<property name="encoding" value="1000"/>
+		<property name="action" value="1000"/>
+	</bean>
+	
+	<bean  id="reqConfig" imp="com.pabank.container.protocol.http.HTTPBaseConfig">
+		<property name="uri" value="https://my-st1.orangebank.com.cn"/>
+		<property name="method" value="post"/>
+		<property name="contentType" value="text/html"/>
+		<property name="serverType" value="jetty"/>
+		<property name="encoding" value="utf-8"/>
+		<property name="action" value="2"/>
+	</bean>
+	<bean  id="respConfig" imp="com.pabank.container.protocol.http.HTTPBaseConfig">
+		<property name="uri" value="https://my-st1.orangebank.com.cn"/>
+		<property name="method" value="post"/>
+		<property name="contentType" value="text/html"/>
+		<property name="serverType" value="jetty"/>
+		<property name="encoding" value="utf-8"/>
+		<property name="action" value="2"/>
+	</bean>
+	<bean  id="advancedParams" imp="com.pabank.container.protocol.http.AdvancedParams">
+		<property name="threadCount" value="50"/>
+		<property name="connectionTimeout" value="30000"/>
+		<property name="readTimeout" value="30000"/>
+		<property name="soLinger" value="0"/>
+		<property name="tcpNoDelay" value="true"/>
+		<property name="reuseAddress" value="true"/>
+		<property name="readBufferSize" value="2048"/>
+		<property name="writeBufferSize" value="2048"/>
+		<property name="maxConnCount" value="2000"/>
+		<property name="connPerHostCount" value="200"/>
+		<property name="no_client_cache" value="false"/>
+	</bean>
+	
+	<bean  id="security" imp="com.pabank.container.protocol.http.SecurityConfig">
+		<property name="protocol" value="default"/>
+		<property name="bidirectional" value="false"/>
+	</bean>
+	
+	<bean  id="keyStore" imp="com.pabank.container.protocol.http.KeyStoreConfig">
+		<property name="path" value="50"/>
+		<property name="keyPass" value="30000"/>
+		<property name="type" value="30000"/>
+	</bean>
+	<bean  id="trustStore" imp="com.pabank.container.protocol.http.KeyStoreConfig">
+		<property name="path" value="50"/>
+		<property name="keyPass" value="30000"/>
+		<property name="type" value="30000"/>
+	</bean>
+</protocols>

@@ -1,0 +1,132 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('salaryId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>编号</td>
+   		<td>项目标题</td>
+   		<td>收款人姓名</td>
+   		<td>收款人电话</td>
+   		<td>发放金额</td>
+   		<td>转账类型</td>
+   		<td>转账方式</td>
+   		<td>审核状态</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if salaryList?? && salaryList?size > 0]
+	   	[#list salaryList as salary]
+	   	<tr class="pointer [#if salary.auditStatus == '3']warning[/#if]">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="salaryId" id="${salary.id}" >
+					<label class="el-checkbox-style" for="${salary.id}"></label>
+				</div>
+		   	</td>
+		   	<td>${salary.id!""}</td>
+		   	<td>${salary.recruit.recruitTitle!""}</td>
+		   	<td>${salary.toUser.realName!""}</td>
+		   	<td>${salary.toUser.phone!""}</td>
+		   	<td>${salary.money?string('currency')!""}</td>
+		   	<td align="center" valign="middle">
+		   	[#if salary.transferWay??]
+	   				[#if salary.transferWay == '1']
+	   					<button type="button" class="btn btn-danger btn-xs">授信支付</button>
+	   				[#elseif salary.transferWay == '2']
+	   					<button type="button" class="btn btn-primary btn-xs">余额支付</button>
+	   				[#elseif salary.transferWay == '3']
+	   					<button type="button" class="btn btn-primary btn-xs">银行支付</button>
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td align="center" valign="middle">
+		   	[#if salary.transferType??]
+	   				[#if salary.transferType == '1']
+	   					转账
+	   				[#elseif salary.transferType == '2']
+	   					结算
+	   				[#elseif salary.transferType == '3']
+	   					充值
+	   				[#elseif salary.transferType == '4']
+	   					提现
+	   				[#elseif salary.transferType == '5']
+	   					系统发放
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td align="center" valign="middle">
+		   	[#if salary.auditStatus??]
+	   				[#if salary.auditStatus == '1']
+	   					<button type="button" class="btn btn-primary btn-xs">审核中</button>
+	   				[#elseif salary.auditStatus == '2']
+	   					<button type="button" class="btn btn-success btn-xs">审核成功</button>
+	   				[#elseif salary.auditStatus == '3']
+	   					<button type="button" class="btn btn-danger btn-xs">审核失败</button>
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td >${salary.createTime?string("yyyy-MM-dd")}</td>
+	   		<td >${salary.updateTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   					[#if salary.auditStatus??]
+   						[#if salary.auditStatus==1]
+   							[@shiro.hasPermission name="system:salary:review"]
+					   			<li>
+					   				<a onclick="updateSalaryStatus(${salary.id},1)">审核成功</a>
+					   			</li>
+					   			<li class="divider"></li>
+				   			[/@shiro.hasPermission]
+				   			[@shiro.hasPermission name="system:salary:review"]
+					   			<li>
+					   				<a onclick="updateSalaryStatus(${salary.id},2)">审核失败</a>
+					   			</li>
+					   			<li class="divider"></li>
+					   		[/@shiro.hasPermission]
+   						[/#if]
+   					[/#if]
+				   		[@shiro.hasPermission name="system:salary:delete"]
+				   			<li>
+				   				<a onclick="confirmSlideRecord(${salary.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="12" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserList(pagination.pageNumber);
+		}
+	});
+}
+$('.openImage').galpop();
+</script>

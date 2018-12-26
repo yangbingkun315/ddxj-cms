@@ -1,0 +1,101 @@
+[#assign title="点点小匠-资讯管理"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="informationList">
+	<div class="alert alert-warning" >注：资讯是用户因为及时地获得它并利用它而能够在相对短的时间内给自己带来价值的信息，资讯有时效性和地域性，它必须被消费者利用。并且“提供－使用（阅读或利用）－反馈”之间能够形成一个长期稳定的CS链，具有这些特点才可以称之为资讯。 </div>
+	<ul class="nav nav-tabs">
+		[@shiro.hasPermission name="system:information:list"]
+		<li><a href="${base}/information/list.htm">资讯管理</a></li>
+		[/@shiro.hasPermission]
+		[@shiro.hasPermission name="system:information:type"]
+		<li class="active"><a>资讯分类</a></li>
+		[/@shiro.hasPermission]
+	</ul>
+	<form method="post" id="cms_info_type_form" action="${base}/information/type/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">分类名称：</label>
+		    	<input type="text" id="categoryName" name="categoryName" class="form-control search-input" placeholder="分类名称">
+			</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">创建时间：</label>
+			  <input type="text" name="createTime" id="createTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="创建时间" autocomplete="off" >
+			
+		  	</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryInfoTypeList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	[@shiro.hasPermission name="system:information:type:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateInfoType()">添加分类</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/marketing/information_type_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_info_type_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+		
+	}
+});
+
+function queryInfoTypeList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_info_type_form').submit();
+}
+queryInfoTypeList(1);
+
+function updateInfoType(id)
+{
+	var url="${base}/information/type/edit.htm";
+	if(id)
+	{
+		url += "?typeId=" + id;
+	}
+		TB_show({"url":url,"title": id ? "修改分类" : "添加分类","width":350,"height":300});
+}
+function deleteInfoType(id)
+{
+	showConfirmDialog({message : "确认要删除该条资讯分类吗？",height:100},function(){
+	alertTip("正在删除，请稍后...",4);
+	doPost("${base}/information/type/delete.htm",{id:id},function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else
+		{
+			minAlert("删除成功！",1);
+			queryInfoTypeList();
+		}
+	 	})
+	});
+}
+
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,119 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('wechatUserId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td align="center">用户头像</td>
+   		<td>用户昵称</td>
+   		<td>用户openId</td>
+   		<td>性别</td>
+   		<td>所在国家</td>
+   		<td>所在省份</td>
+   		<td>所在城市</td>
+   		<td>用户语言</td>
+   		<td>粉丝备注</td>
+   		<td>标签</td>
+   		<td>关注渠道</td>
+   		<td>关注时间</td>
+   	</tr>
+   	[#if wechatUserList?? && wechatUserList?size > 0]
+	   	[#list wechatUserList as wechatUser]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="wechatUserId" id="${wechatUser.id}" >
+					<label class="el-checkbox-style" for="${wechatUser.id}"></label>
+				</div>
+		   	</td>
+	   		<td align="center" valign="middle">
+		   		[#if wechatUser.headImgUrl?? && wechatUser.headImgUrl?length > 0]
+		   		<img alt="" src="${wechatUser.headImgUrl!''}" width="50px" class="galpop-single galpop-info" href="${wechatUser.headImgUrl!''}">
+	   			[#else]
+	   				<img alt="" src="[@resUrl /]/assets/cms/images/not_image.png" width="50px" class="galpop-single galpop-info" href="${wechatUser.headImgUrl!''}">
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			${wechatUser.nickName!"未知"}
+	   		</td>
+	   		<td>
+   				${wechatUser.openId!"未知"}
+	   		</td>
+	   		<td>
+	   			[#if wechatUser.sex == '1']
+		   			男
+   				[#elseif wechatUser.sex == '2']
+   					女
+   				[#else]
+   					未知
+	   			[/#if]
+	   		</td>
+	   		<td>
+   				${wechatUser.country!"未知"}
+	   		</td>
+	   		<td>
+	   			${wechatUser.province!"未知"}
+	   		</td>
+	   		<td>
+	   			${wechatUser.city!"未知"}
+	   		</td>
+	   		<td>
+	   			${wechatUser.language!"未知"}
+	   		</td>
+	   		<td>
+	   			${wechatUser.remark!"暂无"}
+	   		</td>
+	   		<td>
+	   			${wechatUser.tagIdList!"暂无"}
+	   		</td>
+	   		<td>
+	   			[#if wechatUser.subscribeScene == 'ADD_SCENE_SEARCH']
+		   			公众号搜索
+   				[#elseif wechatUser.sex == 'ADD_SCENE_ACCOUNT_MIGRATION']
+   					公众号迁移
+   				[#elseif wechatUser.sex == 'ADD_SCENE_PROFILE_CARD']
+   					名片分享
+   				[#elseif wechatUser.sex == 'ADD_SCENE_QR_CODE']
+   					扫描二维码
+   				[#elseif wechatUser.sex == 'ADD_SCENEPROFILE_LINK']
+   					图文页内名称点击
+   				[#elseif wechatUser.sex == 'ADD_SCENE_PROFILE_ITEM']
+   					图文页右上角菜单
+   				[#elseif wechatUser.sex == 'ADD_SCENE_PAID']
+   					支付后关注
+   				[#elseif wechatUser.sex == 'ADD_SCENE_OTHERS']
+   					其他
+   				[#else]
+   					未知
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			${wechatUser.subscribeTime!"未知"}
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="13" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryWechatUserList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop();
+</script>

@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<script type="text/javascript" src="../../js/proTree.js" ></script>
+
+<title>发放记录</title>
+<body ng-app="salary" ng-controller="salaryManager">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+		<div class="order-search-item">
+	  <span class="search_title">收款姓名：</span>
+	  <input type="text" name="realName" id="realName" ng-model="realName"   class="input textinput-main width160" placeholder="请输入用户姓名"> 
+  	</div>
+	<div class="order-search-item">
+	  <span class="search_title">收款手机：</span>
+	  <input type="text" name="phone" id="phone" ng-model="phone"   class="input textinput-main width160" placeholder="请输入手机号码"> 
+  	</div>
+	<div class="order-search-item">
+	  <span class="search_title">审核状态：</span>
+	      <select name="auditStatus" ng-model="auditStatus" class="width160">
+	        <option value="">请选择审核状态</option>
+			<option value="1">审核中</option>
+			<option value="2">审核成功</option>
+			<option value="3">审核失败</option>
+	      </select>
+   	 </div>
+    <div class="order-search-item" >
+	  <button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="querySalaryRecordList ('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+  	</div>  
+	</div>
+<!-- 	<div class="operation clearfix same_module mb15">
+    <ul class="choice_search">
+		     <li class="clearfix col-xs-2 col-lg-2 col-ms-2 "><label class="label_name ">接受姓名：</label><input name="realName" type="text" ng-model="realName"  class="form-control col-xs-5 col-lg-4"/></li>
+		     <li class="clearfix col-xs-2 col-lg-2 col-ms-2 "><label class="label_name ">接受电话：</label><input name="phone" type="text" ng-model="phone" class="form-control col-xs-5 col-lg-4"/></li>
+		     <li class="clearfix col-xs-3 col-lg-2 col-ms-2 ">
+			 <label class="label_name ">审核状态：</label>
+			 <select class="select Competence_sort form-control col-xs-6 col-lg-5"  name="admin-role" size="1" ng-model="auditStatus">
+					<option value="">请选择审核状态</option>
+					<option value="1">审核中</option>
+					<option value="2">审核成功</option>
+					<option value="3">审核失败</option>
+			 </select>
+	     </li>
+		       <li class="clearfix col-xs-2 col-lg-2 col-ms-2 "><button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="querySalaryRecordList()"><i class="fa  fa-search"></i>&nbsp;搜索</button></li>
+
+    </ul>
+	</div> -->
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th  width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>编号</th>
+						<th>项目标题</th>
+						<th>接收者姓名</th>
+						<th>接收电话</th>
+						<th>发放金额</th>
+						<th>转账类型</th>
+						<th>转账方式</th>
+						<th>审核状态</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="salaryList.length > 0 " ng-repeat="salary in salaryList track by $index">
+						<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td ng-bind="salary.id"></td>
+						<td ng-bind="salary.recruit.recruitTitle" style="max-width:200px;"></td>
+						<td ng-bind="salary.toUser.realName" style="max-width:200px;"></td>
+						<td ng-bind="salary.toUser.phone" style="max-width:200px;"></td>
+						<td ng-bind="salary.money" style="max-width:200px;"></td>
+						<td class="td-way">
+							<span class="label label-success radius" ng-if="salary.transferWay == 1">授信支付</span>
+							<span class="label label-success radius" ng-if="salary.transferWay == 2">余额支付</span>
+							<span class="label label-success radius" ng-if="salary.transferWay == 3">银行支付</span>
+						</td>
+						<td class="td-type">
+							<span class="label label-success radius" ng-if="salary. transferType == 1">转账</span>
+							<span class="label label-success radius" ng-if="salary. transferType == 2">结算</span>
+							<span class="label label-success radius" ng-if="salary. transferType == 3">充值</span>
+							<span class="label label-success radius" ng-if="salary. transferType == 4">提现</span>
+							<span class="label label-success radius" ng-if="salary. transferType == 5">系统发放</span>
+						</td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="salary.auditStatus == 1">审核中</span>
+							<span class="label label-success radius" ng-if="salary.auditStatus == 2">审核成功</span>
+							<span class="label label-success radius" ng-if="salary.auditStatus == 3">审核失败</span>
+						</td>
+						<td ng-bind="salary.createTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="salary.updateTime.time | date:'yyyy-MM-dd'"></td>
+						<td class="td-manage">
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="审核成功" ng-click="updatesalaryTrue(salary.id)"   ng-if="salary.auditStatus == 1" href="javascript:;" >审核成功</a></li> 
+							<li><a title="审核失败" ng-click="updatesalaryFalse(salary.id)"  ng-if="salary.auditStatus == 1"  href="javascript:;">审核失败</a></li>
+							<li><a title="删除" ng-click="deletepayment(payment.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div>
+							<!-- <span ng-if="salary.auditStatus == 1">
+								<span ng-if="salary.auditStatus == 1">	
+									<a title="审核成功" ng-click="updatesalaryTrue(salary.id)"   href="javascript:;" class="btn button_btn bg-deep-blue">审核成功</a>
+									<a title="审核失败" ng-click="updatesalaryFalse(salary.id)"   href="javascript:;" class="btn button_btn bg-deep-blue">审核失败</a>
+								</span>
+							</span>
+							<a title="删除" ng-click="deletepayment(payment.id)" href="javascript:;" class="btn button_btn btn-danger">删除</a> -->
+						</td>
+					</tr>
+					<tr ng-if="salaryList == null || salaryList.length <= 0 ">
+						<td class="center" colspan="20">暂无数据<b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+	
+</body>
+</html>
+<script>
+
+var salaryManager = angular.module('salary', []);
+salaryManager.controller('salaryManager', function($scope,$timeout) {
+	$scope.realName="";
+	$scope.phone="";
+	$scope.auditStatus="";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.querySalaryRecordList = function(type)
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/query/salary/list.ddxj',
+				data: {realName:$scope.realName,phone:$scope.phone,auditStatus:$scope.auditStatus,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.salaryList.total;
+						$scope.salaryList = data.data.salaryList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.querySalaryRecordList();
+                    }
+	      	    }
+			});
+		});
+	}
+	
+	$scope.querySalaryRecordList();
+	var flag = true;
+	$scope.updatesalaryTrue = function(id)
+	{
+		layer.confirm("确定要审核成功吗？",function(index){
+			if(!flag)
+			{
+				return ;
+			}
+			flag = false;
+			Ajax.post({
+				url: getRoot+'/manager/query/salary/update.ddxj',
+				data: {salaryId:id,auditStatus:2},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						flag = true;
+						$scope.querySalaryRecordList();
+					}
+				}
+			}); 
+		});
+	}
+	$scope.updatesalaryFalse = function(id)
+	{
+		layer.confirm("确定要审核失败吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/query/salary/update.ddxj',
+				data: {salaryId:id,auditStatus:3},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.querySalaryRecordList();
+					}
+				}
+			}); 
+		});
+	}
+	
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>

@@ -1,0 +1,57 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('mediaId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>素材mediaId</td>
+   		<td>标题</td>
+   		<td>摘要</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if newsList?? && newsList?size > 0]
+	   	[#list newsList as news]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="mediaId" id="${media_id}" >
+					<label class="el-checkbox-style" for="${media_id}"></label>
+				</div>
+		   	</td>
+	   		<td>${news.media_id!""}</td>
+	   		<td>${news.title!""}</td>
+	   		<td>${news.digest!""}</td>
+	   		<td>
+	   			<a href="${base}/query/news/view/details/list.htm?mediaId=${news.media_id}" class="btn btn-warning">素材文章</a>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="5" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+console.log(page);
+if(page==0)
+{
+	$("#currentPageNumber").text(1);
+}
+//$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${total!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryWechatMaterialList(pagination.pageNumber);
+		}
+	});
+}
+</script>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CmsRoleMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CmsRole" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        <result column="role_key" property="roleKey" jdbcType="VARCHAR" />
+        <result column="role_description" property="roleDescription" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="VARCHAR" />
+         <association property="roleCount" column="id" select="net.zn.ddxj.mapper.CmsUserMapper.queryUserRoleCount" javaType="java.lang.Integer"></association>
+         <!-- 一对多关系 -->
+        <collection property="resourceList"  column="id" select="net.zn.ddxj.mapper.CmsResourceMapper.findResourceListByRoleId"></collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, role_name, role_key, role_description, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_cms_role
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_cms_role
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CmsRole" >
+        insert into zn_cms_role (id, role_name, role_key, 
+            role_description, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{roleKey,jdbcType=VARCHAR}, 
+            #{roleDescription,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CmsRole" >
+        insert into zn_cms_role
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="roleName != null" >
+                role_name,
+            </if>
+            <if test="roleKey != null" >
+                role_key,
+            </if>
+            <if test="roleDescription != null" >
+                role_description,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="roleName != null" >
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleKey != null" >
+                #{roleKey,jdbcType=VARCHAR},
+            </if>
+            <if test="roleDescription != null" >
+                #{roleDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CmsRole" >
+        update zn_cms_role
+        <set >
+            <if test="roleName != null" >
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleKey != null" >
+                role_key = #{roleKey,jdbcType=VARCHAR},
+            </if>
+            <if test="roleDescription != null" >
+                role_description = #{roleDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CmsRole" >
+        update zn_cms_role
+        set role_name = #{roleName,jdbcType=VARCHAR},
+            role_key = #{roleKey,jdbcType=VARCHAR},
+            role_description = #{roleDescription,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="findRoleList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+    	  select 
+        <include refid="Base_Column_List" />
+        from zn_cms_role
+        where  flag = 1 
+        <if test="roleName != null and roleName != ''">
+        	and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
+        </if>
+        order by create_time
+    </select>
+    <delete id="deleteRoleResource">
+    	delete from zn_cms_role_resource where role_id = #{roleId}
+    </delete>
+    <insert id="addRoleResource">
+    INSERT INTO zn_cms_role_resource (`role_id`, `resource_id`) VALUES (#{roleId}, #{resourceId});
+    </insert>
+</mapper>

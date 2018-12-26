@@ -1,0 +1,55 @@
+[#assign title="点点小匠-图文素材"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<style>
+#replyText
+{
+	width:250px;
+	height:100px!important;
+}
+.textinput-main
+{
+	width:250px!important;
+}
+</style>
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >注：微信公众号平台所有的图文素材，可以将这些图文素材同步到资讯列表中。 </div>
+	[#assign wechatTabActive = 3]
+	[#include "/wechat/wechat_tab.html"]
+	<form method="post" id="cms_wechat_material_form" action="${base}/query/wechatMaterial/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_material_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_wechat_material_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryWechatMaterialList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_wechat_material_form').submit();
+}
+queryWechatMaterialList(1)
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,89 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('inviteId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td align="center">用户头像</td>
+   		<td >用户姓名</td>
+   		<td >用户手机</td>
+   		<td >性别</td>
+   		<td >所在省份</td>
+   		<td >所在城市</td>
+   		<td >所在地区</td>
+   		<td >邀请人奖励金</td>
+   		<td >受邀人奖励金</td>
+   		<td >注册状态</td>
+   		<td >更新时间</td>
+   	</tr>
+   	[#if inviteRecordList?? && inviteRecordList?size > 0]
+	   	[#list inviteRecordList as invite]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="inviteId" id="${invite.id}" >
+					<label class="el-checkbox-style" for="${invite.id}"></label>
+				</div>
+		   	</td>
+		   	<td align="center" valign="middle">
+		   		[#if invite.user.userPortrait??]
+		   		<img alt="" src="${invite.user.userPortrait!''}" width="50px" class="galpop-single galpop-info" href="${invite.user.userPortrait!''}">
+	   			[#else]
+	   				<img alt="" src="[@resUrl /]/assets/cms/images/not_image.png" width="50px" class="galpop-single galpop-info" href="${invite.user.userPortrait!''}">
+	   			[/#if]
+	   		</td>
+	   		<td>${invite.user.realName!""}</td>
+	   		<td>${invite.user.phone!""}</td>
+	   		<td>
+	   			[#if invite.user.sex??]
+	   				[#if invite.user.sex == 'M']
+	   					男
+	   				[#elseif invite.user.sex == 'F']
+	   					女
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${invite.user.registeredProvince!""}</td>
+	   		<td>${invite.user.registeredCity!""}</td>	
+	   		<td>${invite.user.registeredArea!""}</td>
+	   		<td>${invite.inviterBonus?string('currency')!""}</td>
+	   		<td>${invite.inviteesBonus?string('currency')!""}</td>
+	   		<td>
+	   			[#if invite.status == '1']
+	   				<button type="button" class="btn btn-primary btn-xs">已关注</button>
+	   			[#elseif invite.status == '2']
+	   				<button type="button" class="btn btn-danger btn-xs" >未关注</button>
+   				[#elseif invite.status == '3']
+   					<button type="button" class="btn btn-success btn-xs">已注册</button>
+	   			[/#if]
+	   		</td>
+	   		<td>${invite.updateTime?string("yyyy-MM-dd")}</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="14" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserList(pagination.pageNumber);
+		}
+	});
+}
+$('.openImage').galpop();
+</script>

@@ -1,0 +1,144 @@
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-edit">
+	[#if self??]
+		<div class="alert alert-warning" > 注：用户名、角色、电话号码不能擅自修改，如需变更，请联系管理员 </div>
+	[/#if]
+	<form action="${base}/cms/user/edit.htm" method="post" id="cms_user_edit_form">
+		<input type="hidden" id="userId" name="userId" value="${(user.id)!0}" />
+		<div class="table-making">
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">昵称：</div>
+						<div class="content">
+							<input type="text" value="${(user.nickName)!""}" id="nickName" name="nickName" class="input textinput-main"  placeholder="请输入昵称" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div class="item clear">
+						
+						<div class="title">用户名：</div>
+						<div class="content">
+							<input type="text" value="${(user.userName)!""}" id="userName" name="userName" class="input textinput-main"  minLength="4" placeholder="请输入用户名" required [#if self??]disabled="disabled"[/#if] autocomplete="off" >
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">角色：</div>
+						<div class="content">
+							<select class="form-control" id="roleId" name="roleId" [#if self??]disabled="disabled"[/#if]>
+								<option value="">请选择角色</option>
+								[#if cmsRoleList?? && cmsRoleList?size > 0]
+									[#list cmsRoleList as role]
+										<option value="${role.id}" [#if user?? && user.roleId == role.id]selected="selected"[/#if]>${role.roleName}</option>
+									[/#list]
+								[/#if]
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">性别：</div>
+						<div class="content">
+							<div class="cms-checkbox">
+								<label class="el-radio">
+									<input type="radio" name="sex" id="sexRadios1" value="M" [#if user?? && user.sex == 'G'][#else]checked[/#if]>
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">男</span>
+									
+								</label>
+								<label class="el-radio">
+									<input type="radio" name="sex" id="sexRadios2" value="G" [#if user?? && user.sex == 'G']checked[/#if]>
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">女</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">出生日期：</div>
+						<div class="content">
+							<input type="text" name="birthday" id="birthday" class="input textinput-main" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" showRightMsg="false"
+							placeholder="出生日期" autocomplete="off" value="${(user.birthday?string('yyyy-MM-dd HH:mm:ss'))!""}" required>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">电话：</div>
+						<div class="content">
+							<input type="text" value="${(user.telphone)!""}" id="telphone"  [#if self??]disabled="disabled"[/#if] autocomplete="off"  name="telphone" class="input textinput-main"  placeholder="请输入电话" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">邮箱：</div>
+						<div class="content">
+							<input type="email" value="${(user.email)!""}" id="email" name="email" class="input textinput-main"  placeholder="请输入邮箱" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">住址：</div>
+						<div class="content">
+							<input type="text" value="${(user.address)!""}" id="address" name="address" class="input textinput-main"  placeholder="请输入住址" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div class="item clear" style="height:80px;">
+						<div class="title">用户描述：</div>
+						<div class="content">
+							<textarea class="form-control" rows="3" maxLength="32" id="description" name="description"  placeholder="请输入用户描述">${(user.description)!""}</textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#cms_user_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		return true;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+ 			 $('#cms_user_form').submit();
+		 }
+	}
+});
+</script>

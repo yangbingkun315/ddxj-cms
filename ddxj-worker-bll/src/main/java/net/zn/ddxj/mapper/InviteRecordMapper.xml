@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.InviteRecordMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.InviteRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="inviter_id" property="inviterId" jdbcType="INTEGER" />
+        <result column="open_id" property="openId" jdbcType="VARCHAR" />
+        <result column="invitees_phone" property="inviteesPhone" jdbcType="VARCHAR" />
+        <result column="inviter_bonus" property="inviterBonus" jdbcType="DECIMAL" />
+        <result column="invitees_bonus" property="inviteesBonus" jdbcType="DECIMAL" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+         <!-- 一对一 关系 -->
+        <association property="user" column="invitees_phone" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetailByPhone"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, inviter_id, open_id, invitees_phone, inviter_bonus, invitees_bonus, create_time, 
+        update_time, status
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_invite_record
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_invite_record
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.InviteRecord" >
+        insert into zn_invite_record (id, inviter_id, open_id, 
+            invitees_phone, inviter_bonus, invitees_bonus, 
+            create_time, update_time, status
+            )
+        values (#{id,jdbcType=INTEGER}, #{inviterId,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, 
+            #{inviteesPhone,jdbcType=VARCHAR}, #{inviterBonus,jdbcType=DECIMAL}, #{inviteesBonus,jdbcType=DECIMAL}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.InviteRecord" >
+        insert into zn_invite_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="inviterId != null" >
+                inviter_id,
+            </if>
+            <if test="openId != null" >
+                open_id,
+            </if>
+            <if test="inviteesPhone != null" >
+                invitees_phone,
+            </if>
+            <if test="inviterBonus != null" >
+                inviter_bonus,
+            </if>
+            <if test="inviteesBonus != null" >
+                invitees_bonus,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="inviterId != null" >
+                #{inviterId,jdbcType=INTEGER},
+            </if>
+            <if test="openId != null" >
+                #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteesPhone != null" >
+                #{inviteesPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="inviterBonus != null" >
+                #{inviterBonus,jdbcType=DECIMAL},
+            </if>
+            <if test="inviteesBonus != null" >
+                #{inviteesBonus,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.InviteRecord" >
+        update zn_invite_record
+        <set >
+            <if test="inviterId != null" >
+                inviter_id = #{inviterId,jdbcType=INTEGER},
+            </if>
+            <if test="openId != null" >
+                open_id = #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteesPhone != null" >
+                invitees_phone = #{inviteesPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="inviterBonus != null" >
+                inviter_bonus = #{inviterBonus,jdbcType=DECIMAL},
+            </if>
+            <if test="inviteesBonus != null" >
+                invitees_bonus = #{inviteesBonus,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.InviteRecord" >
+        update zn_invite_record
+        set inviter_id = #{inviterId,jdbcType=INTEGER},
+            open_id = #{openId,jdbcType=VARCHAR},
+            invitees_phone = #{inviteesPhone,jdbcType=VARCHAR},
+            inviter_bonus = #{inviterBonus,jdbcType=DECIMAL},
+            invitees_bonus = #{inviteesBonus,jdbcType=DECIMAL},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            status = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectByOpenId" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+        from zn_invite_record
+        where open_id = #{openId,jdbcType=VARCHAR} 
+        <if test="status != null" >
+             and status = #{status,jdbcType=INTEGER}
+        </if>
+    </select>
+    
+    <select id="queryInviteRecord" resultMap ="BaseResultMap" parameterType ="java.lang.Integer">
+    	select 
+        <include refid="Base_Column_List" />
+        from zn_invite_record
+        where inviter_id = #{userId,jdbcType=VARCHAR}  and status = 3 
+    </select>
+    
+    <select id="queryInviteBonusCount" resultType ="java.math.BigDecimal" parameterType ="java.lang.Integer" >
+    	select sum(inviter_bonus) from zn_invite_record where inviter_id = #{userId} and status = 3
+    </select>
+    
+    <select id="queryInviteRecordCount" parameterType="java.lang.Integer" resultType="int">
+    	select count(*) from zn_invite_record where inviter_id = #{userId} and status=3
+    </select>
+    <select id="selectInviteRecord" resultMap ="BaseResultMap" parameterType ="net.zn.ddxj.vo.RequestVo">
+		SELECT
+		r.*,
+		u.sex,
+		u.age,
+		u.real_name
+		FROM
+		zn_invite_record AS r
+		INNER JOIN zn_user AS u ON r.invitees_phone = u.phone
+		where r.status = 3 and r.inviter_id = #{userId} 
+        <if test="phone != null and phone !=''" >
+             and  r. invitees_phone  like concat(concat('%', #{phone}), '%')
+        </if>
+         <if test="realName != null and realName!=''" >
+             and u.real_name like concat(concat('%', #{realName}), '%')
+        </if> 
+    </select>
+    
+    <select id="queryInviteRecordCms" resultMap ="BaseResultMap" parameterType ="net.zn.ddxj.vo.CmsRequestVo">
+		SELECT
+		r.*,
+		u.sex,
+		u.age,
+		u.real_name
+		FROM
+		zn_invite_record AS r
+		INNER JOIN zn_user AS u ON r.invitees_phone = u.phone
+		where r.inviter_id = #{userId} 
+        <if test="phone != null and phone !=''" >
+             and  r.invitees_phone like concat(concat('%', #{phone}), '%')
+        </if>
+         <if test="realName != null and realName!=''" >
+             and u.real_name like concat(concat('%', #{realName}), '%')
+        </if> 
+    </select>
+</mapper>

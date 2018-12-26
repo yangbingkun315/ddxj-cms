@@ -1,0 +1,161 @@
+server:
+  port: 9080
+  context-path: /worker-manager
+    #激活哪一个环境的配置文件
+spring:
+  jmx: 
+    enabled: false
+  profiles:
+    active: test
+---
+###测试配置文件###
+spring:
+  profiles: test
+  # Redis配置
+  redis:
+   host: 47.97.215.128
+   port: 6379
+   password: Diandxj123456
+   timeout: 10000
+   pool:
+    max-idle: 20
+    min-idle: 5
+    max-active: 20
+    max-wait: 2
+  application:
+    name: worker-app
+  #数据库连接信息
+  datasource:
+        name: test
+        url: jdbc:mysql://47.97.215.128:3306/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+        username: root
+        password: wad371890
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+       
+xxl: 
+  job: 
+    admin: 
+      addresses: http://47.97.215.128:8081/xxl-job-admin
+    executor: 
+      appname: ddxj-manager-job-executor
+      ip: 
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1
+    accessToken: 
+---
+###本地配置文件###
+spring:
+  profiles: local
+  # Redis配置
+  redis:
+   host: 47.97.215.128
+   port: 6379
+   password: Diandxj123456
+   timeout: 10000
+   pool:
+    max-idle: 20
+    min-idle: 5
+    max-active: 20
+    max-wait: 2
+
+  application:
+    name: worker-app
+  #数据库连接信息
+  datasource:
+        name: test
+        url: jdbc:mysql://127.0.0.1:3306/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+        username: root
+        password: sr19971212
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+xxl: 
+  job: 
+    admin: 
+      addresses: http://47.97.215.128:8081/xxl-job-admin
+    executor: 
+      appname: ddxj-manager-job-executor
+      ip: 
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1
+    accessToken: 
+---
+###生产配置文件###
+spring:
+  profiles: prd
+  # Redis配置
+  redis:
+   host: 172.19.125.167
+   port: 6379
+   password: Diandxj123456
+   timeout: 10000
+   pool:
+    max-idle: 20
+    min-idle: 5
+    max-active: 20
+    max-wait: 2
+  application:
+    name: worker-manager
+  #数据库连接信息
+  datasource:
+        name: test
+        url: jdbc:mysql://172.19.81.252:8066/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useSSL=false
+        username: ddxj-root
+        password: ddxj0208
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+xxl: 
+  job: 
+    admin: 
+      addresses: http://172.19.50.68:8081/xxl-job-admin
+    executor: 
+      appname: ddxj-manager-job-executor
+      ip: 
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1
+    accessToken: 

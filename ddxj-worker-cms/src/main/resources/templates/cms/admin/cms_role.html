@@ -1,0 +1,89 @@
+[#assign title="点点小匠-角色列表"]
+[#include "/common/cms_header.html"]
+<div class="cms-content" id="cmsRoleList">
+	<div class="alert alert-warning" >注：此列表中的角色可承担相应的资源权限 </div>
+	<form method="post" id="cms_role_form" action="${base}/cms/role/list.htm">
+	<input id="currentPage" type="hidden" name="currentPage"/>
+	<div class="cms-search">
+	  <div class="search-item">
+	  	<label class="search-title">角色名称：</label>
+	    <input type="text" id="roleName"  name="roleName"  class="form-control search-input" placeholder="请输入角色名称">
+	  </div>
+	  <div class="search-button">
+	     <button type="button" onclick="queryRoleList(1)" class="btn btn-warning">查询</button>
+	  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:role:add"]
+	<div class="operate-btn">
+	  <div class="operate-item">
+	     <button type="button" class="btn btn-warning" onclick="updateCmsRole()">添加角色</button>
+	  </div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+	  [#include "/admin/cms_role_tpl.html"]
+	</div>
+	 [#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_role_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 $(".cms-table-tpl").html(data);
+		 }
+	}
+});
+function queryRoleList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_role_form').submit();
+}
+queryRoleList(1);
+function updateCmsRole(id)
+{
+	var url = "${base}/cms/role/edit.htm";
+	if(id)
+	{
+		url += "?roleId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改用户" : "创建角色","width":400,"height":400});
+}
+function confirmDeleteRole(id)
+{
+	showConfirmDialog({message : "确认要删除此角色吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/cms/role/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryRoleList();
+			}
+		});
+	});
+}
+function distributionResource(id)
+{
+	var url = "${base}/cms/role/resource/edit.htm";
+	if(id)
+	{
+		url += "?roleId=" + id;
+	}
+	TB_show({"url":url,"title":"分配权限","width":400,"height":400});
+}
+</script>
+[#include "/common/cms_footer.html"]

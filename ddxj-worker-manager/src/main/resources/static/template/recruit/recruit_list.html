@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>招聘信息管理</title>
+</head>
+<body ng-app="recruit" ng-controller="userRecruit">
+
+<style>
+.add_menber li .label_name, .member_content li .label_name{width:100px;}
+</style>
+
+<div class="margin Competence_style" id="page_style">
+<div class="operation clearfix same_module mb15">
+
+	<div class="order-search-item">
+	  <span class="search_title">招聘标题：</span>
+	  <input type="text" name="recruitTitle" id="recruitTitle" ng-model="recruitTitle"  class="input textinput-main" placeholder="请输入招聘标题" style="width:160px;" > 
+  	</div>
+  	<div class="order-search-item">
+	  <span class="search_title">招聘姓名：</span>
+	  <input name="realName" type="text" ng-model="realName"  id="realName" class="input textinput-main" placeholder="请输入招聘姓名" style="width:160px;" > 
+  	</div>
+  	<div class="order-search-item">
+	  <span class="search_title">招聘手机：</span>
+	  <input name="phone" type="text" ng-model="phone"  id="realName" class="input textinput-main" placeholder="请输入招聘手机" style="width:160px;" > 
+  	</div>
+  	<div class="order-search-item">
+  	<span class="search_title">截至时间：</span>
+	  <input  id="stopTime"  type="text"  class="input textinput-main laydate-icon" placeholder="请输入至时间" style="width:160px;" > 
+  	</div>
+	  <button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryRecruitList(1)"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+</div>
+<div class="bkg_List clearfix datatable_height confirm">
+  <table class="table  table_list table_striped table-bordered">
+		 <thead>
+		    <tr>
+		     <th  width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+		     <th>招聘标题</th>
+		     <th>招聘进程</th>
+		     <th style="width:200px">招聘内容</th>
+		     <th>开工地址</th>
+		     <th>开工时间</th>
+		     <th>结束时间</th>
+		     <th>报名截止时间</th>
+		     <th>招聘人姓名</th>
+		     <th>招聘人电话</th>
+		     <th>审核状态</th>
+		     <th>审核失败原因</th>
+		     <th>操作</th>
+		    </tr>
+		   </thead>
+             <tbody>
+			     <tr ng-if="recruitList.length > 0 " ng-repeat="recruit in recruitList track by $index">
+			     <td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+			     <td ng-bind="recruit.recruitTitle"></td>
+			     <td><a href="recruitUserList.html?recruitId={{recruit.id}}&userId={{recruit.userId}}">点击查看</a></td>
+			     <td ng-bind="recruit.recruitContent" style="max-width:200px;"></td>
+			     <td ng-bind="recruit.recruitAddress"></td>
+			     <td ng-bind="recruit.startTime.time | date:'yyyy-MM-dd'"></td>
+			     <td ng-bind="recruit.endTime.time | date:'yyyy-MM-dd'"></td>
+			     <td ng-bind="recruit.stopTime.time | date:'yyyy-MM-dd'"></td>
+			     <td ng-bind="recruit.user.realName"></td>
+			     <td ng-bind="recruit.user.phone"></td>
+			      <td class="td-status">
+				      <span class="label btn-info radius" ng-if="recruit.validateStatus == 1">审核中</span>
+				      <span class="label label-error radius" ng-if="recruit.validateStatus == 2">审核失败</span>
+				      <span class="label label-success radius" ng-if="recruit.validateStatus == 3">审核成功</span>
+			      </td>
+			     <td ng-bind="recruit.validateCause?recruit.validateCause:'无'"></td>
+			        <td class="td-manage">
+		        		<div class="btn_group">
+						 <button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+						 <ul class="btn_group_item none">
+							<li><a title="审核成功" ng-click="updateRecruitTrue(recruit.id);" ng-if="recruit.validateStatus == 1">审核成功</a></li> 
+							<li><a title="审核失败" ng-click="updateRecruitFalse(recruit.id);"  ng-if="recruit.validateStatus == 1">审核失败</a></li>
+							<li><a title="编辑" ng-href="recruitEdit.html?recruitId={{recruit.id}}" >编辑</a></li>
+							<li><a title="删除" ng-click="deleteRecruit(recruit.id)" >删除</a></li>
+						</ul>
+						</div>
+			       </td>
+			    </tr>
+			    <tr ng-if="recruitList == null || recruitList.length <= 0 ">
+			   	<td class="center" colspan="13">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+			   </tr>
+   			 </tbody>
+	        </table>
+     </div>
+  <div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<!-- 审核失败 -->
+<div id="update_recruit" class="update_recruit" style="display:none">
+	<form ng-submit="" >
+		<div class="add_style add_administrator_style">
+			<ul>
+				<li class="clearfix">
+					<label class="label_name col-xs-2 col-lg-2"><i>*</i>失败原因：</label>
+					<div class="formControls col-xs-6">
+					<input type="text" class="input-text col-xs-12" value="" placeholder="请输入审核失败原因" ng-model="validateCause" ></div>
+				</li>
+		        <li class="clearfix col-xs-12 col-lg-12 align">
+					<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="确定" ng-click="submitRecruitFalse();">
+				</li>
+		    </ul>
+		</div>
+	</form>
+</div>
+</body>
+</html>
+<script>
+var stopTime = {
+	elem: '#stopTime',
+	format: 'YYYY-MM-DD',
+	// min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas){
+	}
+};
+laydate(stopTime)
+
+var menuManager = angular.module('recruit', []);
+menuManager.controller('userRecruit', function($scope,$timeout) {
+	$scope.recruitTitle="";
+	$scope.realName="";
+	$scope.phone="";
+	$scope.stopTime="";
+	$scope.validateCause = "";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryRecruitList = function(fresh)//查询招聘列表
+	{
+		
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/recruit/list.ddxj',
+				data: {recruitTitle:$scope.recruitTitle,realName:$scope.realName,phone:$scope.phone,stopTime:$("#stopTime").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.recruitList.total;
+						$scope.recruitList = data.data.recruitList.list;
+						$scope.$apply();
+						if(isNotNull(fresh) && fresh == 1)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.queryRecruitList();
+                    }
+	      	    }
+			});
+		});
+	}
+	
+	$scope.queryRecruitList(1);
+	
+	$scope.deleteRecruit = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/recruit/delete.ddxj',
+				data: {recruitId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryRecruitList(1);
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRecruitTrue = function(id)
+	{
+		layer.confirm("确定要审核成功吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/recruit/update/status.ddxj',
+				data: {recruitId:id,validateStatus:3,recruitStatus:1},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.queryRecruitList(1);
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRecruitFalse=function(id)
+	{
+		$scope.recruitId = id;
+		layer.open({
+			type: 1,
+			title:'审核失败',
+			area: ['600px',''],
+			shadeClose: false,
+			content: $('#update_recruit'),
+		});
+	}
+	
+	$scope.submitRecruitFalse=function(){
+		if(!isNotNull($scope.validateCause))
+		{
+			layer.msg("请输入审核失败原因");
+			return false;
+		}
+		layer.confirm("确定要审核失败吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/recruit/update/status.ddxj',
+				data: {recruitId : $scope.recruitId,validateStatus : 2,recruitStatus:0,validateCause : $scope.validateCause},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.closeAll();
+						layer.msg("处理成功");
+						$scope.queryRecruitList(1);
+					}
+				}
+			}); 
+		});
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>
+

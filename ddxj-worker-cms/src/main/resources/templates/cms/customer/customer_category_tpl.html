@@ -1,0 +1,73 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('categoryListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>工种排序</td>
+   		<td>工种上级</td>
+   		<td>工种名称</td>
+   		<td>包工类型</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if categoryList?? && categoryList?size > 0]
+	   	[#list categoryList as category]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="categoryListId" id="${category.id}" >
+					<label class="el-checkbox-style" for="${category.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${category.categorySort!""}</td>
+	   		<td>${(category.parentName)!"一级工种"}</td>
+	   		<td>${category.categoryName!""}</td>
+	   		<td>
+	   			[#if category.categoryType??]
+	   				[#if category.categoryType == 1]
+	   					总包
+	   				[#elseif category.categoryType == '2']
+	   					分包
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${category.createTime?string('yyyy-MM-dd')}</td>
+	   		<td>${category.updateTime?string('yyyy-MM-dd')}</td>
+	   		<td>
+	   		[@shiro.hasPermission name="system:category:edit"]
+		  		<button type="button" class="btn btn-warning" onclick="updateUserCategory(${category.id})">编辑</button>
+		  	[/@shiro.hasPermission]
+		  	[@shiro.hasPermission name="system:category:delete"]
+		   		<button type="button" class="btn btn-danger" onclick="confirmDeleteCategory(${category.id})">删除</button>
+		   	[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="11" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryCategoryList(pagination.pageNumber);
+		}
+	});
+}
+</script>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.RecruitCreditMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.RecruitCredit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="credit_id" property="creditId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="recruit_id" property="recruitId" jdbcType="INTEGER" />
+        <result column="total_money" property="totalMoney" jdbcType="DECIMAL" />
+        <result column="credit_status" property="creditStatus" jdbcType="INTEGER" />
+        <result column="usable_money" property="usableMoney" jdbcType="DECIMAL" />
+        <result column="interest_rate" property="interestRate" jdbcType="VARCHAR" />
+        <result column="validate_cause" property="validateCause" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!-- 一对一关系 -->
+        <association property="credit" column="credit_id" select="net.zn.ddxj.mapper.CreditMapper.getCreditByCreditId" ></association>
+        <!-- 一对一关系 -->
+        <association property="creditRepayment" column="recruit_id" select="net.zn.ddxj.mapper.CreditRepaymentMapper.queryRecruitRepmentRecord" ></association>
+          <!-- 一对一关系 -->
+        <association property="recruit" column="recruit_id" select="net.zn.ddxj.mapper.RecruitMapper.queryRecruitByIdCut" ></association>
+        <!-- 一对一关系 -->
+        <association property="creditUrgentContactsList" column="id" select="net.zn.ddxj.mapper.CreditUrgentContactsMapper.getCreditUrgentContactsById" ></association>
+        <!-- 一对多 -->
+        <collection property="creditContactsImageList"  column="id" select="net.zn.ddxj.mapper.CreditContactsImageMapper.getImageListById"></collection>
+    </resultMap>
+
+     <sql id="Base_Column_List" >
+        id, credit_id, user_id, recruit_id, total_money, credit_status, usable_money, interest_rate, 
+        validate_cause, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_recruit_credit
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_recruit_credit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.RecruitCredit" >
+        insert into zn_recruit_credit (id, credit_id, user_id, 
+            recruit_id, total_money, credit_status, 
+            usable_money, interest_rate, validate_cause, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{creditId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+            #{recruitId,jdbcType=INTEGER}, #{totalMoney,jdbcType=DECIMAL}, #{creditStatus,jdbcType=INTEGER}, 
+            #{usableMoney,jdbcType=DECIMAL}, #{interestRate,jdbcType=VARCHAR}, #{validateCause,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.RecruitCredit" >
+        insert into zn_recruit_credit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="creditId != null" >
+                credit_id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="totalMoney != null" >
+                total_money,
+            </if>
+            <if test="creditStatus != null" >
+                credit_status,
+            </if>
+            <if test="usableMoney != null" >
+                usable_money,
+            </if>
+            <if test="interestRate != null" >
+                interest_rate,
+            </if>
+            <if test="validateCause != null" >
+                validate_cause,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="creditId != null" >
+                #{creditId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="totalMoney != null" >
+                #{totalMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="creditStatus != null" >
+                #{creditStatus,jdbcType=INTEGER},
+            </if>
+            <if test="usableMoney != null" >
+                #{usableMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="interestRate != null" >
+                #{interestRate,jdbcType=VARCHAR},
+            </if>
+            <if test="validateCause != null" >
+                #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.RecruitCredit" >
+        update zn_recruit_credit
+        <set >
+            <if test="creditId != null" >
+                credit_id = #{creditId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                recruit_id = #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="totalMoney != null" >
+                total_money = #{totalMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="creditStatus != null" >
+                credit_status = #{creditStatus,jdbcType=INTEGER},
+            </if>
+            <if test="usableMoney != null" >
+                usable_money = #{usableMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="interestRate != null" >
+                interest_rate = #{interestRate,jdbcType=VARCHAR},
+            </if>
+            <if test="validateCause != null" >
+                validate_cause = #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.RecruitCredit" >
+        update zn_recruit_credit
+        set credit_id = #{creditId,jdbcType=INTEGER},
+            user_id = #{userId,jdbcType=INTEGER},
+            recruit_id = #{recruitId,jdbcType=INTEGER},
+            total_money = #{totalMoney,jdbcType=DECIMAL},
+            credit_status = #{creditStatus,jdbcType=INTEGER},
+            usable_money = #{usableMoney,jdbcType=DECIMAL},
+            interest_rate = #{interestRate,jdbcType=VARCHAR},
+            validate_cause = #{validateCause,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <!-- 根据用户ID查询授信信息 -->
+    <select id="queryRecruitCredit"  resultMap="BaseResultMap" >
+		SELECT * FROM zn_recruit_credit where user_id=#{userId} and recruit_id = #{recruitId} and flag=1 
+    </select>
+    <!-- 查询是否授信 -->
+    <select id="queryUserIsCredit" resultMap="BaseResultMap"  >
+    	SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			zn_recruit_credit
+		WHERE
+		zn_recruit_credit.user_id = #{userId} AND
+		zn_recruit_credit.recruit_id =#{recruitId} AND
+		zn_recruit_credit.credit_status = 2 AND
+		zn_recruit_credit.flag = 1
+		LIMIT 1   	
+    </select>
+    <!-- 授信的可用额度 -->
+    <update id="updateUsableMoney" parameterType="net.zn.ddxj.entity.RecruitCredit">
+    	UPDATE zn_recruit_credit SET usable_money=#{usableMoney} WHERE user_id=#{userId} AND recruit_id=#{recruitId} 
+    </update>
+    <!-- 根查询授信记录 -->
+    <select id="findCreditRecord"  resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+		SELECT
+			rc.id,
+			rc.credit_id,
+			rc.user_id,
+			rc.recruit_id,
+			rc.total_money,
+			rc.credit_status,
+			rc.usable_money,
+			rc.interest_rate,
+			rc.validate_cause,
+			rc.create_time,
+			rc.update_time,
+			rc.flag,
+			u.real_name,
+			u.phone
+		FROM
+			zn_recruit_credit rc
+		INNER JOIN zn_user AS u ON rc.user_id = u.id
+		WHERE
+			rc.flag = 1 
+	<if test="creditStatus != null and creditStatus !=''" >
+	        and rc.credit_status = #{creditStatus,jdbcType=INTEGER}
+	</if>
+	<if test="creditName != null and creditName !=''" >
+	        and c.credit_name like concat(concat('%', #{creditName}), '%')
+	</if>
+	<if test="realName != null and realName !=''" >
+	        and u.real_name like concat(concat('%', #{realName}), '%')
+	</if>
+	<if test="phone != null and phone !=''" >
+	        and u.phone like concat(concat('%', #{phone}), '%')
+	</if>
+	ORDER BY rc.update_time DESC
+    </select>
+    <!-- 删除活动授信记录 -->
+     <delete id="delRecruitCreditRecord" parameterType="java.lang.Integer" >
+        delete from zn_recruit_credit
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+   <!-- 根据recruitId统计授信记录 -->
+   <select id="findRecruitCredit" resultMap="BaseResultMap">
+   		SELECT * from zn_recruit_credit WHERE recruit_id=#{recruitId} and flag=1 
+   </select>
+</mapper>

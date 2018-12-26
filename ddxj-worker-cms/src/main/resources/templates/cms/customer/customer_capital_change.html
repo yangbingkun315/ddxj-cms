@@ -1,0 +1,147 @@
+[#assign title="点点小匠-用户资金变动"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/echarts-all.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="customerUserList">
+	<div id="transferEcharts" style="width:100%; height: 400px;"></div>
+	<form method="post" id="capital_change_form" action="${base}/customer/user/transfer/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<input id="userId" type="hidden" name="userId" value="${userId}"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  	<label class="search-title">支付方式：</label>
+			    <select class="form-control" id="status" name="status" >
+			    	<option value="1">支出</option>
+					<option value="2">收入</option>
+				</select>
+		  	</div>
+		  	<div class="search-item">
+			  	<label class="search-title">支付类型：</label>
+			    <select class="form-control" id="transferWay" name="transferWay" >
+					<option  value="">请选择支付类型</option>
+					<option value="1">授信支付</option>
+					<option value="2">余额支付</option>
+					<option value="3">银行卡支付</option>
+				</select>
+		  	</div>
+		  	<div class="search-item">
+			  	<label class="search-title">转账类型：</label>
+			    <select class="form-control" id="transferType" name="transferType" >
+					<option  value="">请选择转账类型</option>
+					<option value="1">转账</option>
+					<option value="2">结算</option>
+					<option value="3">充值</option>
+					<option value="4">提现</option>
+					<option value="5">发放</option>
+				</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">交易时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryUserTransferDetails(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/customer/customer_capital_change_tpl.html"]
+	</div> 
+[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+//初始化echarts实例
+ function initMyChartData()
+ {
+ 	var myChart = echarts.init(document.getElementById('transferEcharts'));
+ 	doPost("${base}/customer/user/transfer/echart.htm",{userId:${userId}},function(data){
+ 		if(data.response)
+ 		{
+ 			initMyChart(JSON.parse(data.data),myChart);
+ 		}
+ 	})
+ }
+ function initMyChart(dataMap,myChart)
+ {
+ 	var option = {
+	        tooltip: {
+	            show: true
+	        },
+	        legend: {
+	            data:['今日','本周','本月','总计']
+	        },
+	        xAxis : [
+	            {
+	                type : 'category',
+	                data : ["转账支出金额","转账收入金额","结算金额","充值金额","提现金额","系统发放金额"],
+	                splitLine: {show: false},
+	            }
+	        ],
+	        yAxis : [
+	            {
+	                type : 'value'
+	            }
+	        ],
+	        series : [
+	            {
+	                "name":"今日",
+	                "type":"bar",
+	                "data":[dataMap.todayZZ, dataMap.todaySR, dataMap.todayJS, dataMap.todayCZ,dataMap.todayTX, dataMap.todayFF]
+	            },
+	            {
+	                "name":"本周",
+	                "type":"bar",
+	                "data":[ dataMap.weekZZ, dataMap.weekSR, dataMap.weekJS,dataMap.weekCZ,dataMap.weekTX, dataMap.weekFF]
+	            },
+	            {
+	                "name":"本月",
+	                "type":"bar",
+	                "data":[ dataMap.monthZZ, dataMap.monthSR, dataMap.monthJS,dataMap.monthCZ,dataMap.monthTX,dataMap.monthFF]
+	            },
+	            {
+	                "name":"总计",
+	                "type":"bar",
+	                "data":[dataMap.zongjiZZ, dataMap.zongjiSR, dataMap.zongjiJS, dataMap.zongjiCZ, dataMap.zongjiTX,dataMap.zongjiFF]
+	            }
+	            
+	        ]
+	    };
+ 	//使用制定的配置项和数据显示图表
+ 	myChart.setOption(option); 
+ }
+ initMyChartData();
+
+ $('#capital_change_form').ajaxForm({
+		beforeSubmit:function(){
+				
+			return true;
+		},
+		warningMessage:"正在查询,请稍后...",
+		success:function(data){
+			$.removeFormOverLay(data);
+		},
+		closeFormOverLayCallBack:function(data){
+			 $(".cms-table-tpl").html(data);
+			
+		}
+});
+
+function queryUserTransferDetails(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#capital_change_form').submit();
+}
+
+queryUserTransferDetails(1);
+
+</script>
+
+[#include "/common/cms_footer.html"]

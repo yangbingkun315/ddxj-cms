@@ -1,0 +1,94 @@
+[#assign title="点点小匠-手机闪屏列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="screenList">
+	<div class="alert alert-warning" >注：闪屏的设计理念是，让用户第一时间关注节气的变化、以及重大事件、活动的宣布，让用户打开APP的第一时间能看到信息 </div>
+	<form method="post" id="cms_screen_form" action="${base}/cms/screen/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+		  	<div class="search-item">
+			  	<label class="search-title">推送平台：</label>
+			    <select class="form-control" id="pushPlatform" name="pushPlatform" >
+					<option  value="">全部</option>
+					<option value="1">IOS</option>
+					<option value="2">Android</option>
+				</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">上架时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:screen:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateScreen()">添加闪屏</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/admin/screen_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_screen_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryScreenList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_screen_form').submit();
+}
+
+queryScreenList(1);
+
+function updateScreen(id)
+{
+	var url = "${base}/cms/screen/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改闪屏" : "新增闪屏","width":750,"height":650});
+}
+function confirmScreenRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该条闪屏记录吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/cms/screen/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryScreenList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

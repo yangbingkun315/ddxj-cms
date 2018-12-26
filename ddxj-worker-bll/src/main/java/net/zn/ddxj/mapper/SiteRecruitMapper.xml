@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.SiteRecruitMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.SiteRecruit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_img" property="recruitImg" jdbcType="VARCHAR" />
+        <result column="recruit_name" property="recruitName" jdbcType="VARCHAR" />
+        <result column="recruit_demand" property="recruitDemand" jdbcType="VARCHAR" />
+        <result column="recurit_duties" property="recuritDuties" jdbcType="VARCHAR" />
+        <result column="recruit_tenure" property="recruitTenure" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_img, recruit_name, recruit_demand, recurit_duties, recruit_tenure, name, 
+        phone, email, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_site_recruit
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!-- 删除发布的职位招聘 -->
+	<update id="delSiteRecruit" parameterType="java.lang.Integer">
+		update  zn_site_recruit set flag=2 ,update_time=NOW()
+        where id = #{id}
+	</update>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_site_recruit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.SiteRecruit" >
+        insert into zn_site_recruit (id, recruit_img, recruit_name, 
+            recruit_demand, recurit_duties, recruit_tenure, 
+            name, phone, email, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{recruitImg,jdbcType=VARCHAR}, #{recruitName,jdbcType=VARCHAR}, 
+            #{recruitDemand,jdbcType=VARCHAR}, #{recuritDuties,jdbcType=VARCHAR}, #{recruitTenure,jdbcType=VARCHAR}, 
+            #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.SiteRecruit" >
+        insert into zn_site_recruit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitImg != null" >
+                recruit_img,
+            </if>
+            <if test="recruitName != null" >
+                recruit_name,
+            </if>
+            <if test="recruitDemand != null" >
+                recruit_demand,
+            </if>
+            <if test="recuritDuties != null" >
+                recurit_duties,
+            </if>
+            <if test="recruitTenure != null" >
+                recruit_tenure,
+            </if>
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="email != null" >
+                email,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitImg != null" >
+                #{recruitImg,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitName != null" >
+                #{recruitName,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitDemand != null" >
+                #{recruitDemand,jdbcType=VARCHAR},
+            </if>
+            <if test="recuritDuties != null" >
+                #{recuritDuties,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitTenure != null" >
+                #{recruitTenure,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.SiteRecruit" >
+        update zn_site_recruit
+        <set >
+            <if test="recruitImg != null" >
+                recruit_img = #{recruitImg,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitName != null" >
+                recruit_name = #{recruitName,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitDemand != null" >
+                recruit_demand = #{recruitDemand,jdbcType=VARCHAR},
+            </if>
+            <if test="recuritDuties != null" >
+                recurit_duties = #{recuritDuties,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitTenure != null" >
+                recruit_tenure = #{recruitTenure,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.SiteRecruit" >
+        update zn_site_recruit
+        set recruit_img = #{recruitImg,jdbcType=VARCHAR},
+            recruit_name = #{recruitName,jdbcType=VARCHAR},
+            recruit_demand = #{recruitDemand,jdbcType=VARCHAR},
+            recurit_duties = #{recuritDuties,jdbcType=VARCHAR},
+            recruit_tenure = #{recruitTenure,jdbcType=VARCHAR},
+            name = #{name,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            email = #{email,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <!-- 查询招贤纳士列表 -->
+    <select id="queryAllSiteRecruit" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo" >
+    	select 
+        <include refid="Base_Column_List" />
+        from zn_site_recruit
+        where flag=1
+        <if test="recruitName != null" >
+           AND recruit_name like concat(concat('%', #{recruitName}),'%')
+        </if>
+    </select>
+    <!-- 查询详情 -->
+    <select id="querySiteRecruitDetail" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_site_recruit
+        where id = #{recruitId}
+    </select>
+</mapper>

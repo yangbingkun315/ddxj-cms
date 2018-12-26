@@ -1,0 +1,118 @@
+.tip_overlay
+{
+	position:fixed;
+	background:black;
+	filter:alpha(opacity=50);  
+      -moz-opacity:0.5;  
+      -khtml-opacity: 0.5;  
+      opacity: 0.5;  
+      width:100%;
+      height:100%;
+      top:0;
+      left:0;
+      z-index:9999;
+}
+.tip_content
+{
+	position:fixed;
+	height:340px;
+	width: 720px;
+    margin-left: -360px;
+    margin-top: -169.5px;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    background-color: white;
+    border-radius: 5px;
+      webkit-animation:0.5s ease-out backwards;-moz-animation:0.5s ease-out backwards;-ms-animation:0.5s ease-out backwards;animation:0.5s ease-out backwards;
+	-webkit-animation-name:fadeinL;-moz-animation-name:fadeinL;-ms-animation-name:fadeinL;animation-name:fadeinL;
+	
+}
+.tip_title a
+{
+        float: right;
+    font-size: 26px;
+    line-height: 50px;
+    color: #907575;
+    text-shadow: 0 1px 0 #ffffff;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    margin-right: 20px;
+    text-decoration: none;
+        cursor: pointer;
+}
+.tip_title span
+{
+	font-weight: 400;
+    font-style: normal;
+    color: #222;
+    font-size: 18px;
+    line-height: 50px;
+    margin-left: 20px;
+}
+.tip_body
+{
+	padding: 66px 45px 108px;
+}
+.tip_title
+{
+	border-radius: 5px;
+    height: 50px;
+    background-color: #f4f5f9;
+}
+.tip_body_icon.success
+{
+	    background: url(../../images/common/tip_icon.png) 0 -1908px no-repeat;
+}
+.tip_body_icon.warning
+{
+	    background: url(../../images/common/tip_icon.png) 0 -2132px no-repeat;
+}
+.tip_body_icon
+{
+	background:url(../../images/common/tip_icon.png) 0 -1964px no-repeat;
+	    width: 46px;
+    height: 46px;
+    vertical-align: middle;
+    display: inline-block;
+}
+.tip_body_text
+{
+        padding: 12px;
+    text-align: center;
+    min-width: 50%;
+}
+.tip_body_content
+{
+	    margin-left: 10px;
+	        font-size: 18px;
+}
+.tip_button
+{
+   margin-top: 50px;
+   text-align:center;
+}
+.tip_button .left_btn:hover
+{
+	 background-color: #028CBA;
+}
+.tip_button .left_btn
+{
+	    padding: 10px 30px;
+    background-color: #09C;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+        text-decoration: none;
+}
+.tip_button .right_btn
+{
+	    margin-left: 20px;
+	    padding: 10px 30px;
+    background-color: #EBE2E2;
+    color: black;
+    font-size: 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor:pointer;
+}

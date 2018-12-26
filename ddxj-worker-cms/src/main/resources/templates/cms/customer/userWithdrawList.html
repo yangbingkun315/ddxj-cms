@@ -1,0 +1,98 @@
+[#assign title="点点小匠-提现列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="userWithdrawList">
+	<div class="alert alert-warning" >注：根据登陆角色对平台所有用户的提现进行处理 </div>
+	<form method="post" id="user_withdraw_form" action="${base}/query/userWithdraw/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">提现姓名：</label>
+		    	<input type="text" id="realName" name="realName" class="form-control search-input" placeholder="请输入提现姓名">
+			</div>
+			<div class="search-item">
+				<label class="search-title">手机号码：</label>
+		    	<input type="text" id="phone" name="phone" class="form-control search-input" placeholder="请输入手机号码">
+			</div>
+			<div class="search-item">
+				<label class="search-title">审核流程：</label>
+		    	<select id="withdrawProcess" name="withdrawProcess" class="form-control" style="width:150px;">
+			        <option value="">请选择审核状态</option>
+					<option value="1">客服审核</option>
+					<option value="2">财务审核</option>
+					<option value="3">财经审核</option>
+					<option value="4">boss审核</option>
+					<option value="5">出纳打款</option>
+					<option value="6">打款成功</option>
+				</select>
+			</div>
+			<div class="search-item">
+				<label class="search-title">审核状态：</label>
+		      	<select id="withdrawStatus" name="withdrawStatus" class="form-control" style="width:150px;">
+			        <option value="">请选择审核状态</option>
+					<option value="0">审核中</option>
+					<option value="1">客服审核成功</option>
+					<option value="2">客服审核失败</option>
+					<option value="3">财务审核成功</option>
+					<option value="4">财务审核失败</option>
+					<option value="5">财经审核成功</option>
+					<option value="6">财经审核失败</option>
+					<option value="7">boss审核成功</option>
+					<option value="8">boss审核失败</option>
+					<option value="9">出纳打款</option>
+				</select>
+			</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryUserWithdrawList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/customer/userWithdrawListTpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#user_withdraw_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+
+function queryUserWithdrawList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#user_withdraw_form').submit();
+}
+
+queryUserWithdrawList(1);
+
+function updateWithdrawStatus(id,withdrawStatus,withdrawProcess)
+{
+	showConfirmDialog({message : "确定要执行操作吗？(<span style='color:red;'>请仔细检查后确认操作，操作后不可更改！</span>)",height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/update/withdraw/status.htm",{id:id,withdrawStatus:withdrawStatus,withdrawProcess:withdrawProcess},function(data){
+			if(data.response)
+			{
+				minAlert("处理成功！",1);
+				setTimeout(function(){
+					queryUserWithdrawList(1);
+				},500);
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

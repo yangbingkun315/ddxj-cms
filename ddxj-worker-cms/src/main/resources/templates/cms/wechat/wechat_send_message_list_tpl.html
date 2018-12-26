@@ -1,0 +1,129 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('wechatListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>群发类型</td>
+		<td>发送类型</td>
+		<td>推送平台</td>
+		<td>推送对象</td>
+		<td>更新时间</td>
+		<td>创建时间</td>
+		[@shiro.hasPermission name="system:mass:message:group"]
+		<td>操作</td>
+		[/@shiro.hasPermission]
+   	</tr>
+   	[#if wechatSendMessageList?? && wechatSendMessageList?size > 0]
+	   	[#list wechatSendMessageList as wechat]
+	   	<tr class="pointer">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="wechatListId" id="${wechat.id}" >
+					<label class="el-checkbox-style" for="${wechat.id}"></label>
+				</div>
+		   	</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">
+	   			[#if wechat.sendType == 1]
+	   				客服群发
+	   			[#elseif wechat.sendType == 2]
+	   				高级群发
+	   			[#elseif wechat.sendType == 3]
+	   				APP群发
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">
+	   			[#if wechat.massType == 1]
+	   				文字
+	   			[#elseif wechat.massType == 2]
+	   				图文素材
+	   			[#elseif wechat.massType == 3]
+	   				图片
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">
+	   			[#if wechat.massPlatform == 1]
+	   				IOS
+	   			[#elseif wechat.massPlatform == 2]
+	   				安卓
+	   			[#elseif wechat.massPlatform == 3]
+	   				IOS和安卓
+	   			[#elseif wechat.massPlatform == 4]
+	   				公众号
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">
+	   			[#if wechat.massObject == 1]
+	   				广播
+	   			[#elseif wechat.massObject == 2]
+	   				工头端
+	   			[#elseif wechat.massObject == 3]
+	   				工人端
+	   			[#elseif wechat.massObject == 4]
+	   				公众号
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">${wechat.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+	   		<td onclick="openCmsDetail('messageList_detail_${wechat.id}');">${wechat.updateTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+	   		[@shiro.hasPermission name="system:mass:message:group"]
+	   		<td>
+		   		<div class="btn-group" id="item_group_${wechat.id}"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" >
+		   				[@shiro.hasPermission name="system:mass:message:user:list"]
+			   			<li>
+			   				<a href="${base}/wechat/message/user/list.htm?msgId=${wechat.id}">群发用户</a>
+			   			</li>
+			   			<li class="divider"></li>
+						[/@shiro.hasPermission]
+			   			[@shiro.hasPermission name="system:mass:message:delete"]
+			   			<li>
+			   				<a onclick="deleteWechatSendMessage(${wechat.id});">删除</a>
+			   			</li>
+			   			[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+		  	</td>
+		  	[/@shiro.hasPermission]
+	   	</tr>
+	   	<tr id="messageList_detail_${wechat.id}" class="cms_list_detail none" item="detail">
+			<td colspan="14" tdType="orderItemDetail">
+				<table class="table table-hover table-striped table-bordered draggable sortable order_item_detail">
+					<tbody>
+						<tr>
+							<td class="firstTd">群发标题：</td>
+							<td>${wechat.massTitle!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">群发内容：</td>
+							<td>${wechat.massContent!""}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="15" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			querySendMessageList(pagination.pageNumber);
+		}
+	});
+}
+</script>

@@ -1,0 +1,95 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('appMenuId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td align="center">序号</td>
+   		<td align="center">图片预览</td>
+   		<td align="center">模块名称</td>
+   		<td align="center">模块内容</td>
+   		<td align="center">跳转链接</td>
+   		<td align="center">推送端口</td>
+   		<td align="center">创建时间</td>
+   		<td >操作</td>
+   	</tr>
+   	[#if appMenuList?? && appMenuList?size > 0]
+	   	[#list appMenuList as appMenu]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="appMenuId" id="${appMenu.id}" >
+					<label class="el-checkbox-style" for="${appMenu.id}"></label>
+				</div>
+		   	</td>
+		   	<td align="center" valign="middle">${appMenu.menuSort!""}</td>
+		   	<td align="center" valign="middle">
+		   		[#if appMenu.logo?? && appMenu.logo?length > 0]
+		   		<img alt="" src="${appMenu.logo!''}" class="galpop-single openImage" href="${appMenu.logo!''}" width="50px">
+	   			[#else]
+	   				<img alt="" src="[@resUrl /]/assets/cms/images/not_image.png" width="50px" class="galpop-single openImage" href="${appMenu.logo!''}">
+	   			[/#if]
+	   		</td>
+	   		<td align="center" valign="middle">${appMenu.title!""}</td>
+	   		<td align="center" valign="middle" style="width: 400px;">${appMenu.content!""}</td>
+	   		<td align="center" valign="middle">${appMenu.menuUrl!""}</td>
+	   		<td align="center" valign="middle">
+	   			[#if appMenu.type??]
+	   				[#if appMenu.type == 1]
+	   					<button type="button" class="btn btn-success btn-xs">工人</button>
+	   				[#elseif appMenu.type == '2']
+	   					<button type="button" class="btn btn-primary btn-xs">工头</button>
+	   				[#elseif appMenu.type == '3']
+	   					<button type="button" class="btn btn-info btn-xs">通用</button>
+	   				[#elseif appMenu.type == '4']
+	   					<button type="button" class="btn btn-danger btn-xs">其他</button>
+	   				[/#if]
+	   			[#else]
+	   				<button type="button" class="btn btn-primary btn-xs">未知</button>
+	   			[/#if]
+	   		</td>
+	   		<td align="center" valign="middle">${(appMenu.createTime?string("yyyy-MM-dd HH:mm:ss"))!''}</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   						[@shiro.hasPermission name="system:app:menu:edit"]
+				   			<li>
+				   				<a onclick="updateAppMenu(${appMenu.id})">编辑</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+				   		[@shiro.hasPermission name="system:app:menu:delete"]
+				   			<li>
+				   				<a onclick="confirmDeleteAppMenu(${appMenu.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryAppMenuList(pagination.pageNumber);
+		}
+	});
+}
+</script>

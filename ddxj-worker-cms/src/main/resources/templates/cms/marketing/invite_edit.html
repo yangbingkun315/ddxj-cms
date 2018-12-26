@@ -1,0 +1,127 @@
+<div class="cms-edit">
+	<form action="${base}/marketing/invite/edit.htm"  method="post" id="invite_edit_form">
+		<input type="hidden" name="id" value="${(inviteSetting.id)!""}" />
+		<div  class="item clear" >
+			<div class="title">
+				分享标题：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="titleEdit" name="inviteSetting.title" isRequired="true" placeholder="请输入分享标题" value="${(inviteSetting.title)!""}" style="width: 300px;">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				分享内容：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="contentEdit" name="inviteSetting.content" isRequired="true" placeholder="请输入分享内容" value="${(inviteSetting.content)!""}" style="width: 300px;">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				分享链接：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="linkUrlEdit" name="inviteSetting.linkUrl" isRequired="true" placeholder="请输入分享跳转链接" value="${(inviteSetting.linkUrl)!""}" style="width: 300px;">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				分享渠道：
+			</div>
+			<div class="content">
+				<select class="form-control" id="typeEdit" name="inviteSetting.type">
+					<option value="">请选择分享渠道</option>
+					<option value="1" [#if inviteSetting.type == '1']selected="selected"[/#if]>微信好友</option>
+					<option value="2" [#if inviteSetting.type == '2']selected="selected"[/#if]>朋友圈</option>
+				</select>
+			</div> 		
+		</div>
+		<div id="content_uploadImage" class="item clear">
+			<div class="title">
+			上传分享图片：
+			</div>
+			<div class="content">
+				<input type="hidden" id="imgEdit" name="inviteSetting.img" value="${(inviteSetting.img)!""}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=creditLogoUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${inviteSetting.img!""}">
+					<img  src="${inviteSetting.img!""}" width="100%" id="creditLogo_preview" height="100%"  [#if !inviteSetting?? || !inviteSetting.img] style="display:none;"[/#if]/>
+				</a>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#invite_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#invite_edit_form').validate())
+		{
+			if(!isNotNull($("#typeEdit").val()))
+			{
+				alertTip("请选择分享渠道",2);
+				return false;
+			}
+			if(!isNotNull($("#imgEdit").val()))
+			{
+				alertTip("请上传图片",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryUserList(1);
+		 }
+	}
+});
+function creditLogoUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#imgEdit").val("${storageUrl}" + data);
+		$("#creditLogo_preview").attr("src","${storageUrl}" + data).show();
+		$("#creditLogo_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#invite_edit_form').configValidate();
+});
+</script>

@@ -1,0 +1,96 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('bannerId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td >轮播图</td>
+   		<td >跳转链接</td>
+   		<td >类型</td>
+   		<td >上架时间</td>
+   		<td >下架时间</td>
+   		<td >创建时间</td>
+   		<td >更新时间</td>
+   		<td >操作</td>
+   	</tr>
+   	[#if bannerList?? && bannerList?size > 0]
+	   	[#list bannerList as banner]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="bannerId" id="${banner.id}" >
+					<label class="el-checkbox-style" for="${banner.id}"></label>
+				</div>
+		   	</td>
+		   	<td align="center" valign="middle">
+		   	[#if banner.bannerType??]
+	   				[#if banner.bannerType == 1]
+	   				<img alt="" src="${banner.bannerUrl!''}" class="galpop-single openImage" href="${banner.bannerUrl!''}" height="50px" width="100px">
+	   				[#elseif banner.bannerType == '2']
+	   				<a   href="${banner.bannerUrl!''}" target="_bank">查看视频</a>
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${banner.bannerLink!""}</td>
+	   		<td >
+	   			[#if banner.bannerType??]
+	   				[#if banner.bannerType == 1]
+	   					图片
+	   				[#elseif banner.bannerType == '2']
+	   					视频
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td >${(banner.startTime?string("yyyy-MM-dd HH:mm:ss"))!''}</td>
+	   		<td >${(banner.endTime?string("yyyy-MM-dd HH:mm:ss"))!""}</td>
+	   		<td >${banner.createTime?string("yyyy-MM-dd")}</td>
+	   		<td >${banner.updateTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   						[@shiro.hasPermission name="system:advert:edit"]
+				   			<li>
+				   				<a onclick="updateBanner(${banner.id})">编辑</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+				   		[@shiro.hasPermission name="system:advert:delete"]
+				   			<li>
+				   				<a onclick="confirmSlideRecord(${banner.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryBannerList(pagination.pageNumber);
+		}
+	});
+}
+$('.openImage').galpop();
+</script>

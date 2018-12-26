@@ -1,0 +1,29 @@
+##################七牛##########################
+access_key: LsPoDI1AUG5qygyzfRDiQT5tROKbL92WTlrEwdTn
+secret_key: 3hVA-r5-Gf1_-AbFPBAxd4YoGtewiTtF-GXn_RLo
+bucket_name: ddxj-prd
+bucket_host_name: res.diandxj.com
+###################友盟推送KEY################
+##安卓
+u_push_android_app_key: 5aead042b27b0a38da000232
+u_push_android_app_message_secret: 21f36603c1894ac888ac88eeab0104a4
+u_push_android_app_master_secret: x9ztd2fje1meoq8ujpzyxpgols26fbjn
+##IOS
+u_push_ios_app_key: 5aead35df43e487b84000072
+u_push_ios_app_master_secret: fyorqlp4pab1jexcl4vmznwjupm1lu2a
+###############图片视频服务器域名###############
+static_url: http://res.diandxj.com
+################微信公众号##################
+##微信公众号appid####正式环境
+wx_app_id: wx183170965aafbd8a
+##微信公众号appsecret####正式环境
+wx_app_secret: 70be09b3e812dae18a1bd25c59aa7109
+##微信公众号token####正式环境
+token_key: kzCVfZTBUTVKRWPIqRnUlDQ6DsJNbO
+######################################云片短信服务#############################################
+yunpian_api_key: 30b7989dbe8fbd4b16a4ada432f943a6
+yunpian_api_key_martketing : 7dc47efb99a1b2db024fc890e4de6de8
+###############友盟推送生产开关##############
+production_mode: true
+###############云片短信推送开关##############
+yunpian_sms_push: true

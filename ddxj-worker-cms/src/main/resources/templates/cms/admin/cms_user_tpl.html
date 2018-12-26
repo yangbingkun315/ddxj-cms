@@ -1,0 +1,113 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('userListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>编号</td>
+   		<td>登陆名</td>
+   		<td>姓名</td>
+   		<td>性别</td>
+   		<td>出生日期</td>
+   		<td>手机</td>
+   		<td>住址</td>
+   		<td>角色</td>
+   		<td>加入时间</td>
+   		<td>状态</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if cmsUserList?? && cmsUserList?size > 0]
+	   	[#list cmsUserList as userList]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="userListId" id="${userList.id}" >
+					<label class="el-checkbox-style" for="${userList.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${userList.id!""}</td>
+	   		<td>${userList.userName!""}</td>
+	   		<td>${userList.nickName!""}</td>
+	   		<td>
+	   			[#if userList.sex??]
+	   				[#if userList.sex == 'G']
+	   					女
+	   				[#elseif userList.sex == 'M']
+	   					男
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${userList.birthday?string('yyyy-MM-dd')}</td>
+	   		<td>${userList.telphone!""}</td>
+	   		<td>${userList.address!""}</td>
+	   		<td>${userList.role.roleName!""}</td>
+	   		<td>${userList.createTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+	   			[#if userList.locked == '0']
+	   				<button type="button" class="btn btn-primary btn-xs">正常</button>
+	   			[#elseif userList.locked == '1']
+	   				<button type="button" class="btn btn-danger btn-xs">锁定</button>
+	   			[/#if]
+	   		</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+		   			[@shiro.hasPermission name="system:user:edit"]
+			   			<li>
+			   				<a onclick="updateCmsUser(${userList.id})">修改</a>
+			   			</li>
+			   			<li class="divider"></li>
+		   			[/@shiro.hasPermission]
+		   			[@shiro.hasPermission name="system:user:paddword"]
+			   			<li>
+			   				<a onclick="changeUserPassword(${userList.id})">重置密码</a>
+			   			</li>
+			   			<li class="divider"></li>
+			   		[/@shiro.hasPermission]
+		   			[@shiro.hasPermission name="system:user:disable"]
+			   			<li>
+			   				[#if userList.locked == 0]
+			   				<a onclick="confirmDisableUser(${userList.id},1)">锁定用户</a>
+			   				[#else]
+			   				<a onclick="confirmDisableUser(${userList.id},0)">解锁用户</a>
+			   				[/#if]
+			   			</li>
+			   			<li class="divider"></li>
+			   		[/@shiro.hasPermission]
+		   			[@shiro.hasPermission name="system:user:delete"]
+			   			<li>
+			   				<a onclick="confirmDeleteUser(${userList.id})">删除</a>
+			   			</li>
+			   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="12" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserList(pagination.pageNumber);
+		}
+	});
+}
+</script>

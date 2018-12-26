@@ -1,0 +1,90 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('inviteId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td >分享图片</td>
+   		<td >分享标题</td>
+   		<td >分享内容</td>
+   		<td >分享链接</td>
+   		<td >分享渠道</td>
+   		<td >创建时间</td>
+   		<td >操作</td>
+   	</tr>
+   	[#if inviteList?? && inviteList?size > 0]
+	   	[#list inviteList as invite]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="inviteId" id="${invite.id}" >
+					<label class="el-checkbox-style" for="${invite.id}"></label>
+				</div>
+		   	</td>
+		   	<td align="center" valign="middle">
+		   	[#if invite.img??]
+		   		<img alt="" class="galpop-single openImage" src="${invite.img!''}" href="${invite.img!''}" width="50px" height="50px">
+   			[#else]
+   				未知
+   			[/#if]
+	   		</td>
+	   		<td>${invite.title!""}</td>
+	   		<td>${invite.content!""}</td>
+	   		<td>${invite.linkUrl!""}</td>
+	   		<td >
+	   			[#if invite.type??]
+	   				[#if invite.type == 1]
+	   					<a class="label label-primary">微信好友</a>
+	   				[#elseif invite.type == '2']
+	   					<a class="label label-primary">朋友圈</a>
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td >${invite.createTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   						[@shiro.hasPermission name="system:invite:edit"]
+				   			<li>
+				   				<a onclick="updateBanner(${invite.id})">编辑</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+				   		[@shiro.hasPermission name="system:invite:delete"]
+				   			<li>
+				   				<a onclick="confirmSlideRecord(${invite.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserList(pagination.pageNumber);
+		}
+	});
+}
+$('.openImage').galpop();
+</script>

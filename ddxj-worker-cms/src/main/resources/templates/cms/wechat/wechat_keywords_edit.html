@@ -1,0 +1,236 @@
+<div class="cms-edit">
+	<form action="${base}/wechat/keywords/edit.htm"  method="post" id="wechat_keywords_edit_form">
+		<input type="hidden" name="id" value="${(keyWords.id)!""}" />
+		<div class="item clear">
+			<div class="title">完全匹配：</div>
+			<div class="content">
+				<label class="el-switch el-switch-lg" style="margin-top: 5px;">
+					<input type="checkbox" name="isMatchAllKeyWords" id="isMatch" [#if keyWords?? && keyWords.isMatch == 1]checked="checked"[/#if]>
+					<span class="el-switch-style"></span>
+				</label>
+			</div>	
+		</div>
+		<div class="item clear">
+			<div class="title">关&nbsp;&nbsp;键&nbsp;&nbsp;词：</div>
+			<div class="content">
+				<input type="text" name="keyWords" value="${(keyWords.keyWords)!""}" class="input textinput-main" placeholder="最大32个字" 
+						isRequired="true" maxLength="32" autocomplete="off" id="keyWordsName"> 
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">回复类型：</div>
+			<div class="content">
+				<select class="form-control" id="replyType" name="replyType" >
+					<option value="1" [#if keyWords?? && keyWords.replyType == 1]selected="selected"[/#if]>发送文本</option>
+					<option value="2" [#if keyWords?? && keyWords.replyType == 2]selected="selected"[/#if]>发送图片</option>
+					<option value="3" [#if keyWords?? && keyWords.replyType == 3]selected="selected"[/#if]>图文素材</option>
+				</select>
+				<script>
+					$("#replyType").change(function(){
+					var select = $("#replyType").val();
+					if(select == 1)
+					{
+						$("#replayWords_id").show();
+						$("#imageTextList_id").hide();
+						$("#befollowedReplyImg_id").hide();
+					}
+					if(select == 2)
+					{
+						$("#befollowedReplyImg_id").show();
+						$("#imageTextList_id").hide();
+						$("#replayWords_id").hide();
+					}
+					if(select == 3)
+					{
+						$("#imageTextList_id").show();
+						$("#befollowedReplyImg_id").hide();
+						$("#replayWords_id").hide();
+						
+					}
+				})
+				</script>
+			</div>	
+		</div>
+		
+		<div class="item [#if keyWords.replyType && keyWords.replyType == 1] [#elseif !keyWords.replyType??][#else]none[/#if]" id="replayWords_id">
+			<div class="title">回复内容：</div>
+			<div class="content" style="width:300px;">
+				<textarea class="form-control" name="replayWords" placeholder="最大512个字" isRequired="true" maxLength="512" id="replayWords" rows="3" cols="34" >${(keyWords.replayWords)!""}</textarea>
+			</div>
+		</div>
+		<div class="item [#if keyWords.replyType && keyWords.replyType == 2][#else]none[/#if]" id="befollowedReplyImg_id">
+			<div class="title">回复图片<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="图片不支持GIF类型、动态图片" >&#xe61f;</i>：</div>
+			<div class="content">
+				<input type="hidden" id="replyImage" name="befollowedReplyImg" value="${(keyWords.replayWords?split('###')[0])!""}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=keywordsSendUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${keyWords.replayWords!""}">
+					<img  [#if keyWords?? && keyWords.replyType == 2]src="${keyWords.replayWords?split('###')[0]!''}"[#else]src="" [/#if] width="100%" id="keywordsSend_preview" height="100%"  />
+				</a>
+			</div>
+		</div>
+		<div class="item [#if keyWords.replyType && keyWords.replyType == 3][#else]none[/#if]" id="imageTextList_id">
+			<div class="title">图文信息：</div>
+			<div class="content">
+				<select class="form-control" id="imageTextList" name="imageTextList">
+					<option value="">请选择图文信息</option>
+					[#if newsList?? && newsList?size > 0]
+						[#list newsList as new]
+							<option value="${new.title}###${new.media_id}" [#if keyWords?? && new.title+'###'+new.media_id == keyWords.replayWords]selected="selected"[/#if]>${new.title}</option>
+						[/#list]
+					[/#if]
+				</select>
+			</div>
+		</div>
+		
+		
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+$('#wechat_keywords_edit_form').ajaxForm({
+	beforeSerialize : function(){
+		var content = getTextContent();
+		$("#replayWords").text(content);
+	},
+	beforeSubmit:function(){
+		if($('#wechat_keywords_edit_form').validate())
+		{
+			if($("#replyType").val() == 2 && !isNotNull($("#replyImage").val()))
+			{
+				minAlert("请上传图片！",2);
+				return false;
+			}
+			if($("#replyType").val() == 1 && !isNotNull($("#replayWords").text()))
+			{
+				minAlert("请填写回复内容",2);
+				return false
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.response)
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			queryKeywordsList(1);
+		}
+		else
+		{
+			alertTip(data.responseMsg,3);
+		}
+	}
+});
+
+function keywordsSendUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#replyImage").val("${storageUrl}" + data);
+		$("#keywordsSend_preview").attr("src","${storageUrl}" + data).show();
+		$("#keywordsSend_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+
+function replaceAllText(text,sub,replacement)
+{
+	text = text.replace(sub,replacement);
+	
+	if(text.indexOf(sub) > -1)
+	{
+		return replaceAllText(text,sub,replacement);
+	}
+	return text;
+}
+function getTextContent()
+{
+	if(typeof msgContentInstance == "undefined")
+	{
+		return "";
+	}
+	var text = msgContentInstance.getContent();
+	
+	text = replaceAllText(text,"<div>","<br>");
+	text = replaceAllText(text,"</div>","");
+	
+	var wrap = $("<div></div>").html(text);
+	
+	if(wrap.find("a").length > 0)
+	{
+		wrap.find("a").each(function(){
+			var list = [];
+			var attributes = this.attributes;
+			for(var i = 0;i < attributes.length;i++)
+			{
+				list.push(attributes[i].name);
+			}
+			
+			for(var i = 0;i < list.length;i++)
+			{
+				var attr = list[i];
+				if(attr != "href")
+				{
+					$(this).removeAttr(attr);
+				}
+			}
+		});
+	}
+	
+	var html = htmlDecode(wrap.html());
+	
+	html = html.replace(/<br\s*\/?>/gi,"\r\n");
+	
+	return html;
+}
+function htmlDecode(str)
+{  
+    var s = "";
+    if(str.length == 0) return "";
+    s = str.replace(/&amp;/g,"&");
+    s = s.replace(/&lt;/g,"<");
+    s = s.replace(/&gt;/g,">");
+    s = s.replace(/&nbsp;/g," ");
+    s = s.replace(/&#39;/g,"\'");
+    s = s.replace(/&quot;/g,"\"");
+    
+    s = s.replace(/<(?!a|\/a).*?>/g,"");
+    
+    return s;  
+}
+
+$(function(){
+	$('.openImage').galpop();
+	$('#wechat_keywords_edit_form').configValidate();
+	new nicEditor({"buttonList":["link","unlink"]}).panelInstance('replayWords');
+	msgContentInstance = nicEditors.findEditor("replayWords");
+});
+</script>

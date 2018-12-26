@@ -1,0 +1,313 @@
+[#assign title="点点小匠-首页"]
+[#include "/common/cms_header.html"]
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<div class="cms-content" id="cmsIndex">
+	<div class="alert alert-info" > 1、您的每一步操作将记录在日志记录中，请谨慎操作。<br />2、账号切勿于他人共享，账号不能同时在线。</div>
+	<div class="cms-title-h1 cms_hr">
+		<i class="iconfont">&#xe60f;</i>管理员信息
+	</div>
+	<div class="cms-user-info a-fadeinR">
+			<table>
+				<tr>
+					<td><i class="iconfont">&#xe70c;</i><label>账号名称：</label>${(user.userName)!""}<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="账户名称为登陆名">&#xe61f;</i></td>
+					<td><i class="iconfont">&#xe608;</i><label>昵称：</label>${(user.nickName)!""}</td>
+					<td><i class="iconfont">&#xe610;</i><label>角色：</label>${(user.role.roleName)!""}</td>
+					<td><i class="iconfont">&#xe62b;</i><label>性别：</label>
+					[#if user.sex??]
+		   				[#if user.sex == 'G']
+		   					女
+		   				[#elseif user.sex == 'M']
+		   					男
+		   				[/#if]
+			   		[#else]
+			   				未知
+		   			[/#if]
+	   			</td>
+					<td><i class="iconfont">&#xe637;</i><label>出生日期：</label>${user.birthday?string('yyyy-MM-dd')}</td>
+					<td><i class="iconfont">&#xe617;</i><label>联系电话：</label>${user.telphone!""}<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="需修改联系电话，请上报至管理员" >&#xe61f;</i></td>
+				</tr>
+				<tr>
+					<td><i class="iconfont">&#xe600;</i><label>联系邮箱：</label>${user.email!""}</td>
+					<td><i class="iconfont">&#xe607;</i><label>注册时间：</label>${user.createTime?string("yyyy-MM-dd")}</td>
+					<td colspan="3"><i class="iconfont">&#xe73e;</i><label>账号状态：</label>
+						[#if user.locked == '0']
+							<span class="label label-warning">正常</span>
+			   			[#elseif user.locked == '1']
+			   				<span class="label-danger">锁定</span>
+			   			[/#if]
+	   				</td>
+				</tr>
+				<tr>
+					<td colspan="6"><i class="iconfont">&#xe887;</i><label>家庭住址：</label>${user.address!""}</td>
+				</tr>
+				<tr>
+					<td colspan="6"><i class="iconfont">&#xe60d;</i><label>用户描述：</label>${user.description!""}</td>
+				</tr>
+			</table>
+	</div>
+	<div class="cms-title-h1 cms_hr">
+		<i class="iconfont">&#xe78e;</i>站内统计
+	</div>
+	<div class="cms-number-count-content a-fadeinL">
+		<!-- <a class="cms-index-card box-making bg_color_brown">
+		<div class="making-item left_img bg_color_brown">
+			<i class="iconfont">&#xe73b;</i>
+			<div class="card-title">在线人数</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${onlineCount!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a> -->
+	<a class="cms-index-card box-making bg_color_bule">
+		<div class="making-item left_img bg_color_bule">
+			<i class="iconfont">&#xe619;</i>
+			<div class="card-title">总注册量</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${totalCount!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_green">
+		<div class="making-item left_img bg_color_green">
+			<i class="iconfont">&#xe60f;</i>
+			<div class="card-title">今日注册量</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${todayCount!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_azure">
+		<div class="making-item left_img bg_color_azure">
+			<i class="iconfont">&#xe609;</i>
+			<div class="card-title">工人总数</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${worker!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_gray">
+		<div class="making-item left_img bg_color_gray">
+			<i class="iconfont">&#xe64f;</i>
+			<div class="card-title">工头总数</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${foreman!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_orange">
+		<div class="making-item left_img bg_color_orange">
+			<i class="iconfont">&#xe601;</i>
+			<div class="card-title">未填写资料</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${totalCount-(foreman+worker)}</span>
+			<span class="unit">人</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_purple">
+		<div class="making-item left_img bg_color_purple">
+			<i class="iconfont">&#xe6c8;</i>
+			<div class="card-title">通知</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${massageCount!0}</span>
+			<span class="unit">条</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_yellow">
+		<div class="making-item left_img bg_color_yellow">
+			<i class="iconfont">&#xe600;</i>
+			<div class="card-title">未读</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${massageTrue!0}</span>
+			<span class="unit">条</span>
+		</div>
+	</a>
+	<a class="cms-index-card box-making bg_color_violet">
+		<div class="making-item left_img bg_color_violet">
+			<i class="iconfont">&#xe633;</i>
+			<div class="card-title">已读</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${massageFalse!0}</span>
+			<span class="unit">条</span>
+		</div>
+	</a>
+	 <a class="cms-index-card box-making bg_color_brown">
+		<div class="making-item left_img bg_color_brown">
+			<i class="iconfont">&#xe63c;</i>
+			<div class="card-title">已发注册金</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${regosterSumMoney?string(',###.00')!0.00}</span>
+			<span class="unit"></span>
+		</div>
+	</a> 
+	<a class="cms-index-card box-making bg_color_red">
+		<div class="making-item left_img bg_color_red">
+			<i class="iconfont">&#xe78b;</i>
+			<div class="card-title">已提现成功</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${withdrawSuccessMoney?string(',###.00')!0.00}</span>
+			<span class="unit"></span>
+		</div>
+	</a> 
+	<a class="cms-index-card box-making bg_color_pink">
+		<div class="making-item left_img bg_color_pink">
+			<i class="iconfont">&#xe603;</i>
+			<div class="card-title">已实名认证</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${realAuthCount!0}</span>
+			<span class="unit">人</span>
+		</div>
+	</a> 
+	<a class="cms-index-card box-making bg_color_violet1">
+		<div class="making-item left_img bg_color_violet1">
+			<i class="iconfont">&#xe631;</i>
+			<div class="card-title">圈子动态</div>
+		</div>
+		<div class="making-item">
+			<span class="number">${circleCount!0}</span>
+			<span class="unit">条</span>
+		</div>
+	</a> 
+	</div>
+	<div class="a-fadeinR">
+		<div class="cms-title-h1">
+			<i class="iconfont">&#xe60f;</i>基础功能
+		</div>
+		[#assign resourceIndex = 0]
+		<div class="cms-function-content">
+			[#if resourceList?? && resourceList?size > 0 ]
+			[#list resourceList as resource]
+				[#if resource.parentId == '']
+				<div class="cms-function-title">${resource.resourceName}</div>
+					<ul class="cms-function-ul">
+					[#list resourceList as resourceSub]
+						[#if resourceSub.parentId == resource.id && resourceSub.resourceType == 1]
+							<li class="[#if ((.now?string('yyyyMMdd'))?number - (resourceSub.createTime?string('yyyyMMdd'))?number) < 150] new[/#if]">
+								<a data-original-title="${resourceSub.resourceDescription!"暂无介绍，敬请期待"}"
+								data-toggle="tooltip" data-placement="bottom" class="tooltip-info"
+								href="${base}${resourceSub.resourceUrl!""}">
+									<div class="service-list-item-logo">
+										<i class="iconfont bg_color_${resourceIndex}">${resourceSub.icon}</i>
+									</div>
+									<div class="service-list-item-name">${resourceSub.resourceName}</div>
+									<div class="service-list-item-desc">${resourceSub.resourceDescription!"暂无介绍，敬请期待"}</div>
+								</a>
+							</li>
+						[/#if]
+					[/#list]
+				</ul>
+				[#assign resourceIndex = resourceIndex + 1]
+				[/#if]
+			[/#list]
+			[/#if]
+		</div>
+	</div>
+	<div class="cms-title-h1 cms_hr">
+		<i class="iconfont">&#xe78e;</i>统计图
+	</div>
+	<div class="box-making cms-count-content a-fadeinR">
+		<div class="making-item">
+			<div id="chartmain" style="width:100%; height: 800px;"></div>
+		</div>
+		<div class="making-item">
+			[#include "/admin/recruit_map.html"]
+		</div>
+	</div>
+<!-- 	[#include "/admin/user_map.html"] -->
+	
+	
+</div>
+<script type="text/javascript">
+//初始化echarts实例
+function initMyChartData()
+{
+	var myChart = echarts.init(document.getElementById('chartmain'));
+	doPost("${base}/cms/index.htm",{},function(data){
+		if(data.response == true)
+		{
+			initMyChart(JSON.parse(data.data),myChart)
+		}
+	})
+}
+function initMyChart(dataMap,myChart)
+{
+	var dateList = dataMap.dataList;
+	var length=dataMap.dataList.length;
+	var date = [];
+	var count = [];
+	for(var i = 0;i < length;i++)
+	{
+		date.push(dataMap.dataList[i].date)
+		count.push(dataMap.dataList[i].count);
+	}
+	option = {
+		title: {
+			text: "用户注册统计",
+			subtext: '近一个月注册量'+length+'人',
+			x: "center"
+		},
+		tooltip: {
+			trigger: "item",
+			formatter: "{a} <br/>{b} : {c}人"
+		},
+		legend: {
+			x: 'left',
+			data: ["新增人数"]
+		},
+		xAxis: [{
+
+			type: "value",
+			name: "人数"
+		}],
+		yAxis: [{
+			type: "category",
+			name: "日期",
+			splitLine: {show: true},
+			data: date
+		}],
+		toolbox: {
+			show: false,
+			feature: 
+			{
+				/* mark: {
+				show: true
+				},
+				dataView: {
+					show: true,
+					readOnly: true
+				},
+				saveAsImage: {
+					show: true
+				},*/
+				restore: {
+					show: false
+				}
+			}
+		},
+		calculable: true,
+		series: [{
+			name: "新增人数",
+			type: "bar",
+			data: count,
+			color:'#6e7074',
+			animation:true,
+			
+		}]
+	};
+	//使用制定的配置项和数据显示图表
+	myChart.setOption(option); 
+}
+initMyChartData();
+</script>
+[#include "/common/cms_footer.html"]

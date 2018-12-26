@@ -1,0 +1,85 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('noticeId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td align="center">公告序号</td>
+   		<td align="center">公告类型</td>
+   		<td align="center">公告内容</td>
+   		<td align="center">开始时间</td>
+   		<td align="center">结束时间</td>
+   		<td >操作</td>
+   	</tr>
+   	[#if noticeList?? && noticeList?size > 0]
+	   	[#list noticeList as notice]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="noticeId" id="${notice.id}" >
+					<label class="el-checkbox-style" for="${notice.id}"></label>
+				</div>
+		   	</td>
+		   	<td align="center" valign="middle">${notice.id!""}</td>
+	   		<td align="center" valign="middle">
+	   			[#if notice.noticeType??]
+	   				[#if notice.noticeType == 1]
+	   					<button type="button" class="btn btn-success btn-xs">工人</button>
+	   				[#elseif notice.noticeType == '2']
+	   					<button type="button" class="btn btn-primary btn-xs">工头</button>
+	   				[#elseif notice.noticeType == '3']
+	   					<button type="button" class="btn btn-info btn-xs">推广</button>
+	   				[#elseif notice.noticeType == '4']
+	   					<button type="button" class="btn btn-danger btn-xs">其他</button>
+	   				[/#if]
+	   			[#else]
+	   				<button type="button" class="btn btn-primary btn-xs">未知</button>
+	   			[/#if]
+	   		</td>
+	   		<td align="center" valign="middle" style="width: 400px;">${notice.noticeContent!""}</td>
+	   		<td align="center" valign="middle">${(notice.startTime?string("yyyy-MM-dd HH:mm:ss"))!''}</td>
+	   		<td align="center" valign="middle">${(notice.endTime?string("yyyy-MM-dd HH:mm:ss"))!""}</td>
+	   		<td>
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   						[@shiro.hasPermission name="system:notice:edit"]
+				   			<li>
+				   				<a onclick="updateNotice(${notice.id})">编辑</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+				   		[@shiro.hasPermission name="system:notice:delete"]
+				   			<li>
+				   				<a onclick="confirmDeleteNotice(${notice.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryNoticeList(pagination.pageNumber);
+		}
+	});
+}
+</script>

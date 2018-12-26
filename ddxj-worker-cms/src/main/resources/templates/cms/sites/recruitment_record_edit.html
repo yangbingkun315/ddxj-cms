@@ -1,0 +1,143 @@
+<div class="cms-edit">
+	<form action="${base}/sites/recruitment/edit.htm"  method="post" id="recruitment_edit_form">
+		<input type="hidden" name="siteRecruit.id" value="${(siteRecruit.id)!""}" />
+		<div class="item clear" >
+			<div class="title">
+			职位图片：
+			</div>
+			<div class="content">
+				<input type="hidden" id="imgUrl" name="siteRecruit.recruitImg"  value="${siteRecruit.recruitImg!''}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=creditLogoUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${siteRecruit.recruitImg!""}">
+					<img  src="${siteRecruit.recruitImg!""}" width="100%" id="creditLogo_preview" height="100%"  [#if !siteRecruit?? || !siteRecruit.recruitImg] style="display:none;"[/#if]/>
+				</a>
+				
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				职位名称：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="siteRecruitRecruitName" name="siteRecruit.recruitName" isRequired="true" placeholder="必填，最大12个字符" value="${(siteRecruit.recruitName)!""}" maxLength="12">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				岗位要求：
+			</div>
+			<div class="content">
+				<textarea class="form-control " rows="5" cols="30" id="siteRecruitRecruitDemand"  maxLength="512" name="siteRecruit.recruitDemand"  placeholder="请输入岗位要求">${(siteRecruit.recruitDemand)!""}</textarea>
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				岗位职责：
+			</div>
+			<div class="content">
+				<textarea class="form-control " rows="5" cols="30" id="siteRecruitRecruitDuties"  maxLength="512" name="siteRecruit.recuritDuties"  placeholder="请输入岗位职责">${(siteRecruit.recuritDuties)!""}</textarea>
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				任职要求：
+			</div>
+			<div class="content">
+				<textarea class="form-control " rows="5" cols="30" id="siteRecruitRecruitTenure"  maxLength="512" name="siteRecruit.recruitTenure"  placeholder="请输入任职要求">${(siteRecruit.recruitTenure)!""}</textarea>
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				联系人姓名：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="siteRecruitName" name="siteRecruit.name" isRequired="true" placeholder="请输入联系人姓名" value="${(siteRecruit.name)!""}" maxLength="12">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				联系人电话：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="siteRecruitPhone" name="siteRecruit.phone" isRequired="true" placeholder="请输入联系人电话" value="${(siteRecruit.phone)!""}" maxLength="36">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				联系人邮箱：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="siteRecruitEmail" name="siteRecruit.email" isRequired="true" placeholder="请输入联系人邮箱" value="${(siteRecruit.email)!""}" maxLength="36">
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#recruitment_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#recruitment_edit_form').validate())
+		{
+			if(!isNotNull($("#imgUrl").val()))
+			{
+				alertTip("请上传图片",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryUserList(1);
+		 }
+	}
+});
+function creditLogoUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#imgUrl").val("${storageUrl}" + data);
+		$("#creditLogo_preview").attr("src","${storageUrl}" + data).show();
+		$("#creditLogo_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#recruitment_edit_form').configValidate();
+});
+</script>

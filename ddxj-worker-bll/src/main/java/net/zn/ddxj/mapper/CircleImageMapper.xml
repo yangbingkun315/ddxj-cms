@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CircleImageMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CircleImage" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="circle_id" property="circleId" jdbcType="INTEGER" />
+        <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, circle_id, picture_url, create_time, update_time, flag
+    </sql>
+
+	<!-- 根据圈子ID查询所有图片 -->
+    <select id="getCircleImage" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select * from zn_circle_image
+        where circle_id = #{circleId} and flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_circle_image
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_circle_image
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CircleImage" >
+        insert into zn_circle_image (id, circle_id, picture_url, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{circleId,jdbcType=INTEGER}, #{pictureUrl,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CircleImage" >
+        insert into zn_circle_image
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="circleId != null" >
+                circle_id,
+            </if>
+            <if test="pictureUrl != null" >
+                picture_url,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="circleId != null" >
+                #{circleId,jdbcType=INTEGER},
+            </if>
+            <if test="pictureUrl != null" >
+                #{pictureUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CircleImage" >
+        update zn_circle_image
+        <set >
+            <if test="circleId != null" >
+                circle_id = #{circleId,jdbcType=INTEGER},
+            </if>
+            <if test="pictureUrl != null" >
+                picture_url = #{pictureUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CircleImage" >
+        update zn_circle_image
+        set circle_id = #{circleId,jdbcType=INTEGER},
+            picture_url = #{pictureUrl,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+   <delete id="deleteCricleImage" parameterType="java.lang.Integer" >
+       <!--  delete from zn_circle_image
+        where id = #{id,jdbcType=INTEGER} -->
+        DELETE from zn_circle_image where circle_id in (SELECT ce.id from zn_circle ce where ce.user_id = #{userId})       
+    </delete>
+    <!-- 删除圈子image -->
+    <delete id="delUserCircleImage" parameterType="java.lang.Integer" >
+    	DELETE  from zn_circle_image where circle_id in (SELECT ce.id from zn_circle ce where ce.user_id = #{userId}) 
+    </delete>
+</mapper>

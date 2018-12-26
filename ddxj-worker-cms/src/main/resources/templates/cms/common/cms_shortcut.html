@@ -1,0 +1,21 @@
+ <div class="bar">
+ 	<div class="cms-site-search">
+ 		<input type="text" placeholder="首字母、拼音关键字" id="cmsSiteSearch" class="cmsSiteSearch"/>
+ 		<i class="iconfont">&#xe63b;</i>
+ 	</div>
+ 	<div id="top-bar" class="top-bar">
+	  <div class="navbox">
+	    <div class="navbox-tiles">
+	    	
+	    </div>
+	  </div>
+</div>
+  <!--  <a id="navbox-trigger" href="javascript:;" class="navbox-trigger"><i class="iconfont">&#xe616;</i></a> -->
+ </div>
+<script id="my_resource_list" type="text/html">
+<%for(var i in data){%>
+	<a href="${base}<%=data[i].resourceUrl%>" class="tile">
+		<div class="icon"><i class="iconfont"><%=data[i].icon%></i></div><span class="title"><%=data[i].resourceName%></span>
+	</a>
+<%}%>
+</script>

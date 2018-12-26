@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CreditContactsImageMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CreditContactsImage" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_credit_id" property="recruitCreditId" jdbcType="INTEGER" />
+        <result column="contract_image" property="contractImage" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_credit_id, contract_image, create_time, update_time, flag
+    </sql>
+
+    <select id="getImageListById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit_contacts_image
+        where recruit_credit_id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit_contacts_image
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_credit_contacts_image
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CreditContactsImage" >
+        insert into zn_credit_contacts_image (id, recruit_credit_id, contract_image, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{recruitCreditId,jdbcType=INTEGER}, #{contractImage,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CreditContactsImage" >
+        insert into zn_credit_contacts_image
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitCreditId != null" >
+                recruit_credit_id,
+            </if>
+            <if test="contractImage != null" >
+                contract_image,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitCreditId != null" >
+                #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="contractImage != null" >
+                #{contractImage,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CreditContactsImage" >
+        update zn_credit_contacts_image
+        <set >
+            <if test="recruitCreditId != null" >
+                recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="contractImage != null" >
+                contract_image = #{contractImage,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CreditContactsImage" >
+        update zn_credit_contacts_image
+        set recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            contract_image = #{contractImage,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 删除授信图片 -->
+   <delete id="delCreditContactsImageRecord" parameterType="java.lang.Integer" >
+        delete from zn_credit_contacts_image  WHERE recruit_credit_id in(SELECT id FROM zn_recruit_credit WHERE user_id=#{userId}) 
+   </delete>
+   <!-- 删除授信记录的图片 -->
+   <delete id="deleteImages" parameterType="java.lang.Integer" >
+        delete from zn_credit_contacts_image
+        where recruit_credit_id = #{id}
+    </delete>
+</mapper>

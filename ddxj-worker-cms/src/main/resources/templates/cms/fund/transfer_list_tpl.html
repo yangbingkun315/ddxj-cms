@@ -1,0 +1,491 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('userTransferIdList')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>订单号</td>
+   		<td>转账人姓名</td>
+   		<td>转账人电话</td>
+   		<td>转账金额</td>
+   		<td>收款人姓名</td>
+   		<td>收款人电话</td>
+   		<td>转账方式</td>
+   		<td>转账描述</td>
+   		<td>转账类型</td>
+   		<td>交易时间</td>
+   	</tr>
+   	[#if userTransferList?? && userTransferList?size > 0]
+	   	[#list userTransferList as userTransfer]
+	   	<tr class="pointer [#if userTransfer.transferWay == '1']warning[/#if]">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="userTransferIdList" id="${userTransfer.id}" >
+					<label class="el-checkbox-style" for="${userTransfer.id}"></label>
+				</div>
+		   	</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.orderNo!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.fromUser.realName!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.fromUser.phone!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.money?string('currency')}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.toUser.realName!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.toUser.phone!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">
+	   			[#if userTransfer.transferWay == '1']
+	   				<button type="button" class="btn btn-primary btn-xs">授信支付</button>
+	   			[#elseif userTransfer.transferWay == '2']
+	   				<button type="button" class="btn btn-danger btn-xs" >余额支付</button>
+   				[#elseif userTransfer.transferWay == '3']
+   					<button type="button" class="btn btn-success btn-xs">银行卡支付</button>
+   				[#else]
+   					<button type="button" class="btn btn-primary btn-xs">其他方式</button>
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.transferDesc!""}</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">
+	   			[#if userTransfer.transferType == '1']
+	   				<button type="button" class="btn btn-success btn-xs">转账</button>
+	   			[#elseif userTransfer.transferType == '2']
+	   				<button type="button" class="btn btn-info btn-xs">结算</button>
+	   			[#elseif userTransfer.transferType == '3']
+	   				<button type="button" class="btn btn-default btn-xs">充值</button>
+	   			[#elseif userTransfer.transferType == '4']
+	   				<button type="button" class="btn btn-danger btn-xs">提现</button>
+	   			[#elseif userTransfer.transferType == '5']
+	   				<button type="button" class="btn btn-primary btn-xs">系统发放</button>
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('userTransferList_detail_${userTransfer.id}');">${userTransfer.createTime?string("yyyy-MM-dd")}</td>
+	   	</tr>
+	   	<tr id="userTransferList_detail_${userTransfer.id}" class="cms_list_detail none" item="detail">
+			<td colspan="14" tdType="orderItemDetail">
+				<table class="table table-hover table-striped table-bordered draggable sortable order_item_detail">
+					<tbody>
+						[#if userTransfer.transferType == '3']
+							<tr>
+								<td class="firstTd">商家订单号：</td>
+								<td>${userTransfer.payment.outTradeNo!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">微信支付订单号：</td>
+								<td>${userTransfer.payment.transactionId!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">用户openId：</td>
+								<td>${userTransfer.payment.openid!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">交易类型：</td>
+								<td>${userTransfer.payment.tradeType!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">付款途径：</td>
+								<td>${userTransfer.payment.bankType!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">订单金额：</td>
+								<td>${userTransfer.payment.totalFee?string('currency')}元</td>
+							</tr>
+							<tr>
+								<td class="firstTd">支付完成时间：</td>
+								<td>${userTransfer.payment.timeEnd!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">用户姓名：</td>
+								<td>${userTransfer.payment.user.realName!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">用户电话：</td>
+								<td>${userTransfer.payment.user.phone!""}</td>
+							</tr>
+							<tr>
+								<td class="firstTd">支付状态：</td>
+								<td>
+						   			[#if userTransfer.payment.payStatus == '1']
+						   				<button type="button" class="btn btn-default btn-xs">未支付</button>
+					   				[#elseif userTransfer.payment.payStatus == '2']
+					   				<button type="button" class="btn btn-success btn-xs">支付成功</button>
+						   			[/#if]
+						   		</td>
+							</tr>
+							<tr>
+								<td class="firstTd">创建时间：</td>
+								<td>
+						   			${userTransfer.payment.createTime?string("yyyy-MM-dd HH:mm:ss")}
+						   		</td>
+							</tr>
+							<tr>
+								<td class="firstTd">更新时间：</td>
+								<td>
+						   			${userTransfer.payment.updateTime?string("yyyy-MM-dd HH:mm:ss")}
+						   		</td>
+							</tr>
+							[#elseif userTransfer.transferType == '2']
+								<tr>
+									<td class="firstTd">订单号：</td>
+									<td>${userTransfer.orderNo!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人姓名：</td>
+									<td>${userTransfer.fromUser.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人电话：</td>
+									<td>${userTransfer.fromUser.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">结算单位：</td>
+									<td>${userTransfer.unit!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">结算数量：</td>
+									<td>${userTransfer.count!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">结算单价：</td>
+									<td>${userTransfer.price?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账金额：</td>
+									<td>${userTransfer.money?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账描述：</td>
+									<td>${userTransfer.transferDesc!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人姓名：</td>
+									<td>${userTransfer.toUser.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人电话：</td>
+									<td>${userTransfer.toUser.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人剩余金额：</td>
+									<td>${userTransfer.toOverplusBalance?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人剩余金额：</td>
+									<td>${userTransfer.fromOverplusBalance?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">项目编号：</td>
+									<td>${userTransfer.recruit.projectNumber!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘标题：</td>
+									<td class="font_red">${userTransfer.recruit.recruitTitle!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘工种：</td>
+									<td>
+							   			[#if userTransfer.recruit.categoryList?? && userTransfer.recruit.categoryList?size > 0]
+							   				[#list userTransfer.recruit.categoryList as category]
+							   					<label href="javascript:;" class="label label-warning" >${category.categoryName}</label>
+							   				[/#list]
+							   			[/#if]
+							   		</td>
+								</tr>
+								[#if userTransfer.recruit.coverImage??]
+								<tr>
+									<td class="firstTd">封面图片：</td>
+									<td>
+							   			<a class="label label-default galpop-single openImage" href="${userTransfer.recruit.coverImage!''}" >查看图片</a>
+						   			</td>
+								</tr>
+								[/#if]
+								[#if (userTransfer.recruit.bannerList)?? && userTransfer.recruit.bannerList?size > 0]
+								<tr>
+									<td class="firstTd">招聘图片：</td>
+									<td>
+									   	[#list userTransfer.recruit.bannerList as banner]
+									   		<a class="galpop-info label label-default [#if banner_index != 0]none[/#if]" data-galpop-group="banner_${userTransfer.recruit.id}" href="${banner.bannerUrl!''}">查看图片</a>
+									   	[/#list]
+						   			</td>
+								</tr>
+								[/#if]
+								<tr>
+									<td class="firstTd">招聘人姓名：</td>
+									<td>${userTransfer.recruit.user.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘人电话：</td>
+									<td>${userTransfer.recruit.user.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘内容：</td>
+									<td>${userTransfer.recruit.recruitContent!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">工资范围：</td>
+									<td>￥${userTransfer.recruit.startPrice?c!0} - ￥${userTransfer.recruit.endPrice?c!0}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">工资结算单位：</td>
+									<td>${userTransfer.recruit.balanceWay!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘人数：</td>
+									<td>${userTransfer.recruit.recruitPerson!0}人</td>
+								</tr>
+								[#if userTransfer.recruit.validateStatus == '3']
+								<tr>
+									<td class="firstTd">已报名人数：</td>
+									<td>
+										${userTransfer.recruit.enlistNumber!0}人
+										[@shiro.hasPermission name="system:recruit:delete"]
+											 <a href="${base}/recruit/apply/user/list.htm?recruitId=${userTransfer.recruit.id}" class="">查看详情</a>						
+							   			[/@shiro.hasPermission]
+									</td>
+								</tr>
+								<tr>
+									<td class="firstTd">正在进行中人数：</td>
+									<td>${userTransfer.recruit.underwayNum!0}人</td>
+								</tr>
+								[/#if]
+								<tr>
+									<td class="firstTd">省（开工地址）：</td>
+									<td>${userTransfer.recruit.recruitProvince!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">市（开工地址）：</td>
+									<td>${userTransfer.recruit.recruitCity!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">区（开工地址）：</td>
+									<td>${userTransfer.recruit.recruitArea!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">详细地址：</td>
+									<td>${userTransfer.recruit.recruitAddress!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">经度：</td>
+									<td>${userTransfer.recruit.recruitLong!0} </td>
+								</tr>
+								<tr>
+									<td class="firstTd">纬度：</td>
+									<td> ${userTransfer.recruit.recruitLat!0}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">开工时间：</td>
+									<td>${userTransfer.recruit.startTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">完工时间：</td>
+									<td>${userTransfer.recruit.endTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">报名截止时间：</td>
+									<td>${userTransfer.recruit.stopTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">审核状态：</td>
+									<td>
+							   			[#if userTransfer.recruit.validateStatus == '1']
+							   				<button type="button" class="btn btn-primary btn-xs">审核中</button>
+							   			[#elseif userTransfer.recruit.validateStatus == '2']
+							   				<button type="button" class="btn btn-danger btn-xs">审核失败</button>
+						   				[#elseif userTransfer.recruit.validateStatus == '3']
+						   				<button type="button" class="btn btn-success btn-xs">审核成功</button>
+							   			[/#if]
+							   		</td>
+								</tr>
+								<tr>
+									<td class="firstTd">招聘状态：</td>
+									<td>
+							   			[#if userTransfer.recruit.recruitStatus == '0']
+							   				<button type="button" class="btn btn-default btn-xs">未开始</button>
+							   			[#elseif userTransfer.recruit.recruitStatus == '1']
+							   				<button type="button" class="btn btn-danger btn-xs">进行中</button>
+						   				[#elseif userTransfer.recruit.recruitStatus == '2']
+						   				<button type="button" class="btn btn-success btn-xs">已结束</button>
+							   			[/#if]
+							   		</td>
+								</tr>
+								<tr>
+									<td class="firstTd">是否置顶：</td>
+									<td>
+							   			[#if userTransfer.recruit.stick == '1']
+							   				<button type="button" class="btn btn-danger  btn-xs">置顶</button>
+							   			[#elseif userTransfer.recruit.stick == '2']
+							   				<button type="button" class="btn btn-default btn-xs">不置顶</button>
+							   			[/#if]
+							   		</td>
+								</tr>
+					   			[#if userTransfer.recruit.validateCause??]
+								<tr>
+									<td class="firstTd">审核失败原因：</td>
+									<td>
+							   				${userTransfer.recruit.validateCause}
+							   		</td>
+								</tr>
+					   			[/#if]
+								<tr>
+									<td class="firstTd">创建时间：</td>
+									<td>
+							   			${userTransfer.recruit.createTime?string("yyyy-MM-dd HH:mm:ss")}
+							   		</td>
+								</tr>
+							[#elseif userTransfer.transferType == '4']
+								<tr>
+									<td class="firstTd">提现人姓名：</td>
+									<td>${userTransfer.withdraw.user.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">提现人电话：</td>
+									<td>${userTransfer.withdraw.user.phone!""}</td>
+								</tr>
+								[#if userTransfer.withdraw.money??]
+								<tr>
+									<td class="firstTd">金额：</td>
+									<td>${userTransfer.withdraw.money?string('currency')}</td>
+								</tr>
+								[/#if]
+								<tr>
+									<td class="firstTd">提现卡号：</td>
+									<td>${userTransfer.withdraw.bankOn!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">银行名称：</td>
+									<td>${userTransfer.withdraw.bankName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">银行卡类型：</td>
+									<td>${userTransfer.withdraw.bankType!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">提现状态：</td>
+									<td>
+										[#if userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 0]
+								   				<button type="button" class="btn btn-danger  btn-xs">提现中</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 1]
+								   				<button type="button" class="btn btn-danger  btn-xs">客服审核成功</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 2]
+								   				<button type="button" class="btn btn-danger  btn-xs">客服审核失败</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 3]
+								   				<button type="button" class="btn btn-danger  btn-xs">财务审核成功</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 4]
+								   				<button type="button" class="btn btn-danger  btn-xs">财务审核失败</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 5]
+								   				<button type="button" class="btn btn-danger  btn-xs">财经审核成功</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 6]
+								   				<button type="button" class="btn btn-danger  btn-xs">财经审核失败</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 7]
+								   				<button type="button" class="btn btn-danger  btn-xs">boss审核成功</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 8]
+								   				<button type="button" class="btn btn-danger  btn-xs">boss审核失败</button>
+								   			[#elseif userTransfer.withdraw.withdrawStatus?? && userTransfer.withdraw.withdrawStatus == 9]
+								   				<button type="button" class="btn btn-danger  btn-xs">出纳打款</button>
+								   		[/#if]
+									</td>
+								</tr>
+								[#if userTransfer.withdraw.createTime??]
+								<tr>
+									<td class="firstTd">创建时间：</td>
+									<td>
+							   			${userTransfer.withdraw.createTime?string("yyyy-MM-dd HH:mm:ss")}
+							   		</td>
+								</tr>
+								<tr>
+									<td class="firstTd">更新时间：</td>
+									<td>
+							   			${userTransfer.withdraw.updateTime?string("yyyy-MM-dd HH:mm:ss")}
+							   		</td>
+								</tr>
+								[/#if]
+								[#elseif userTransfer.transferType == '1']
+								<tr>
+									<td class="firstTd">订单号：</td>
+									<td>${userTransfer.orderNo!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人姓名：</td>
+									<td>${userTransfer.fromUser.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人电话：</td>
+									<td>${userTransfer.fromUser.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账金额：</td>
+									<td>${userTransfer.money?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账描述：</td>
+									<td>${userTransfer.transferDesc!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人姓名：</td>
+									<td>${userTransfer.toUser.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人电话：</td>
+									<td>${userTransfer.toUser.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人剩余金额：</td>
+									<td>${userTransfer.toOverplusBalance?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账人剩余金额：</td>
+									<td>${userTransfer.fromOverplusBalance?string('currency')}</td>
+								</tr>
+								[#elseif userTransfer.transferType == '5']
+								<tr>
+									<td class="firstTd">订单号：</td>
+									<td>${userTransfer.orderNo!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账金额：</td>
+									<td>${userTransfer.money?string('currency')}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">转账描述：</td>
+									<td>${userTransfer.transferDesc!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人姓名：</td>
+									<td>${userTransfer.toUser.realName!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人电话：</td>
+									<td>${userTransfer.toUser.phone!""}</td>
+								</tr>
+								<tr>
+									<td class="firstTd">收款人剩余金额：</td>
+									<td>${userTransfer.toOverplusBalance?string('currency')}</td>
+								</tr>
+						[/#if]
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="15" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryTransferList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop({callback:imagePageCallback});
+$('.openImage').galpop();
+</script>

@@ -1,0 +1,129 @@
+[#assign title="点点小匠-招聘报名记录列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="recruitList">
+	<div class="content_tip font_red"> 注：此表为招聘报名记录列表! </div>
+	<form method="post" id="recruit_apply_form" action="${base}/recruit/apply/user/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<input id="recruitId" type="hidden" name="recruitId" value="${recruitId}"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search_title">招聘标题：</label >
+			  <input type="text" name="recruitTitle" id="recruitTitle"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+			<div class="search-item">
+			  <label  class="search_title">招聘姓名：</label >
+			  <input type="text" name="realName" id="realName"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label  class="search_title">招聘电话：</label >
+			  <input type="text" name="phone" id="phone"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		    <div class="search-item">
+			  <label  class="search_title">截止时间：</label >
+			  <input type="text" name="stopTime" id="stopTime"   class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="截止时间" autocomplete="off" > 
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryUserApplyList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/recruit/recruit_apply_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<!-- 模态框（Modal） -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<input type="hidden" id="recordId" name="recordId" />
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                <h4 class="modal-title" id="myModalLabel">报名审核</h4>
+	            </div>
+	            <div class="modal-body">
+		            <div class="cms-search">
+		            	<div class="search-item">
+						  <label  class="search_title">拒绝原因：</label >
+						  <input type="text" name="refuseCause" id="refuseCause" isRequired="true"  > 
+					  	</div>
+		            </div>
+	            </div>
+	            <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                <button type="button" class="btn btn-primary" onclick="updateApplyStatus(null,2)">保存</button>
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal -->
+	</div>
+<script type="text/javascript">
+$('#recruit_apply_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserApplyList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#recruit_apply_form').submit();
+}
+
+queryUserApplyList(1);
+
+function updateApplyStatus(id,type)
+{
+	var enlistStatus,refuseCause;
+	if(type ==1)//
+	{
+		enlistStatus=2;
+	}
+	else
+	{
+		id = $("#recordId").val();
+		refuseCause=$("#refuseCause").val();
+		enlistStatus=3;
+		
+	}
+	doPost("${base}/recruit/apply/user/update/status.htm",{recordId:id,enlistStatus:enlistStatus,refuseCause:refuseCause},function(data){
+		if(data.response)
+		{
+			queryUserApplyList(1);
+		}
+	});
+}
+function confirmDeleteUser(id)
+{
+	showConfirmDialog({message : "确认要删除此用户报名吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/recruit/apply/user/delete.htm",{recordId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryUserApplyList();
+			}
+		});
+	});
+}
+function addReviewFailureValue(id)
+{
+	$("#recordId").val(id);
+}
+</script>
+[#include "/common/cms_footer.html"]

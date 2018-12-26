@@ -1,0 +1,47 @@
+[#if storageList?? && storageList?size > 0]
+<ul>
+[#list storageList as uploadImage]
+	<li id="upload_Image_${uploadImage.id}">
+		<div class="img-c">
+			<img src="${storageUrl}${(uploadImage.storageKey)!""}" data-src="${(uploadImage.storageKey)!""}" />
+		</div>
+		<div class="tpsd">${uploadImage.storageKey}</div>
+		<div class="selected_image_overlay"></div>
+		<div class="selected_image"></div>
+	</li>
+[/#list]
+</ul>
+[#else]
+<div style="line-height:40px;text-align:center;">
+	暂无图片
+</div>
+[/#if]
+<script type="text/javascript">
+var page = "${currentPage}" * 1;
+if(page > 1)
+{
+	$("a[name='previewSelectorPage']").show();
+}
+else
+{
+	$("a[name='previewSelectorPage']").hide();
+}
+$("a[name='previewSelectorPage']").unbind("click").click(function(){
+	var prePage = page - 1;
+	prePage = prePage < 1 ? 1 : prePage;
+	queryUploadImageList(prePage);
+});
+$("a[name='nextSelectorPage']").unbind("click").click(function(){
+	$("#selector_currentPage").val(page + 1);
+	queryUploadImageList(page + 1);
+});
+$("#image_selector .images-info li").click(function(){
+	
+	$("#selectedImage").val($(this).find("img").attr("data-src"));
+	
+	$(".selected_image_overlay,.selected_image").hide();
+	$(this).find(".selected_image_overlay,.selected_image").show();	
+});
+$("#imageSelectorPager,#selector_query_data").show();
+$("#selector_system_icon").hide();
+</script>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.RealAuthMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.RealAuth" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="id_card_front" property="idCardFront" jdbcType="VARCHAR" />
+        <result column="id_card_opposite" property="idCardOpposite" jdbcType="VARCHAR" />
+        <result column="id_card_number" property="idCardNumber" jdbcType="VARCHAR" />
+        <result column="id_card_hand" property="idCardHand" jdbcType="VARCHAR" />
+        <result column="real_status" property="realStatus" jdbcType="INTEGER" />
+        <result column="id_card_address" property="idCardAddress" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="validate_data" property="validateData" jdbcType="VARCHAR" />
+        <!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail" ></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, real_name, id_card_front, id_card_opposite, id_card_number, id_card_hand, 
+        real_status, id_card_address, create_time, update_time, flag,validate_data
+    </sql>
+
+	<!-- 根据UserId查询认证信息 -->
+    <select id="queryUserRealAuth" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+         <include refid="Base_Column_List" />
+         from zn_real_auth where user_id = #{userId} and flag = 1
+    </select>
+    <!-- 根据idCardNumber查询认证信息 -->
+    <select id="queryUserRealAuthByIdCard" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+         <include refid="Base_Column_List" />
+         from zn_real_auth where id_card_number = #{idCardNumber} and flag = 1 and real_status=3
+    </select>
+    <!-- 查询实名认证数量 -->
+     <select id="queryUserRealAuthCount" resultType="java.lang.Integer"  parameterType="java.lang.String" >
+        select count(id_card_number) from zn_real_auth where id_card_number = #{idCardNumber} and flag = 1
+    </select>
+	<!-- 根据UserId查询认证信息 -->
+    <select id="queryRealAuthList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo" >
+        select * from zn_real_auth 
+        where flag = 1
+        <if test="realName != null and realName !=''">
+        	and real_name like concat(concat('%', #{realName}), '%')
+        </if>
+         <if test="idCardNumber != null and idCardNumber !=''">
+        	and id_card_number = #{idCardNumber}
+        </if>
+         <if test="realStatus != null and realStatus !=''">
+        	and real_status  = #{realStatus}
+        </if>
+        order by create_time desc
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_real_auth
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_real_auth
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.RealAuth" >
+        insert into zn_real_auth (id, user_id, real_name, 
+            id_card_front, id_card_opposite, id_card_number, 
+            id_card_hand, real_status, id_card_address, 
+            create_time, update_time, flag,validate_data
+            )
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{realName,jdbcType=VARCHAR}, 
+            #{idCardFront,jdbcType=VARCHAR}, #{idCardOpposite,jdbcType=VARCHAR}, #{idCardNumber,jdbcType=VARCHAR}, 
+            #{idCardHand,jdbcType=VARCHAR}, #{realStatus,jdbcType=INTEGER}, #{idCardAddress,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER},#{validateData,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.RealAuth" >
+        insert into zn_real_auth
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="realName != null" >
+                real_name,
+            </if>
+            <if test="idCardFront != null" >
+                id_card_front,
+            </if>
+            <if test="idCardOpposite != null" >
+                id_card_opposite,
+            </if>
+            <if test="idCardNumber != null" >
+                id_card_number,
+            </if>
+            <if test="idCardHand != null" >
+                id_card_hand,
+            </if>
+            <if test="realStatus != null" >
+                real_status,
+            </if>
+            <if test="idCardAddress != null" >
+                id_card_address,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="validateData != null" >
+                validate_data,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="realName != null" >
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardFront != null" >
+                #{idCardFront,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardOpposite != null" >
+                #{idCardOpposite,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardNumber != null" >
+                #{idCardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardHand != null" >
+                #{idCardHand,jdbcType=VARCHAR},
+            </if>
+            <if test="realStatus != null" >
+                #{realStatus,jdbcType=INTEGER},
+            </if>
+            <if test="idCardAddress != null" >
+                #{idCardAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="validateData != null" >
+                #{validateData,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.RealAuth" >
+        update zn_real_auth
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="realName != null" >
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardFront != null" >
+                id_card_front = #{idCardFront,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardOpposite != null" >
+                id_card_opposite = #{idCardOpposite,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardNumber != null" >
+                id_card_number = #{idCardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="idCardHand != null" >
+                id_card_hand = #{idCardHand,jdbcType=VARCHAR},
+            </if>
+            <if test="realStatus != null" >
+                real_status = #{realStatus,jdbcType=INTEGER},
+            </if>
+            <if test="idCardAddress != null" >
+                id_card_address = #{idCardAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+             <if test="validateData != null" >
+                validate_data = #{validateData,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.RealAuth" >
+        update zn_real_auth
+        set user_id = #{userId,jdbcType=INTEGER},
+            real_name = #{realName,jdbcType=VARCHAR},
+            id_card_front = #{idCardFront,jdbcType=VARCHAR},
+            id_card_opposite = #{idCardOpposite,jdbcType=VARCHAR},
+            id_card_number = #{idCardNumber,jdbcType=VARCHAR},
+            id_card_hand = #{idCardHand,jdbcType=VARCHAR},
+            real_status = #{realStatus,jdbcType=INTEGER},
+            id_card_address = #{idCardAddress,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+            validate_data = #{validateData,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <!-- 更新实名认证状态 -->
+    <update id="updateRealAuthStatus" parameterType="java.lang.Integer" >
+        update zn_real_auth
+        set real_status = #{status}
+        where id = #{realId}
+    </update>
+    
+    <!-- 删除实名认证信息 -->
+    <update id="deleteRealAuth" parameterType="java.lang.Integer" >
+        delete from zn_real_auth
+        where id = #{realId}
+    </update>
+    
+    <!-- 查询是否实名认证 -->
+    <select id="selectAuthByUserId" resultType="java.lang.Integer">
+    	select count(1) from zn_real_auth where user_id = #{id} and real_status = 3 and flag = 1
+    </select>
+    <!-- 删除用户实名认证信息 -->
+    <delete id="delUserAuthRecord" parameterType="java.lang.Integer">
+    	delete from zn_real_auth
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+    <select id="findRealAuthCount" resultType="java.lang.Integer">
+    select count(id) from zn_real_auth where real_status = 3 and flag = 1
+    </select>
+</mapper>

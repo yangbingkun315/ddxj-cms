@@ -1,0 +1,171 @@
+[#assign title="点点小匠-官网招聘信息列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/city_data.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=cAug9KFXQeIkRM3v77Mb30l1OiRYw8PN"></script>
+<div class="cms-content" id="webRecruitList">
+	<div class="alert alert-warning" >注：查询官网所有招聘信息，点击列表可展开详情</div>
+	<form method="post" id="web_recruit_list_form" action="${base}/web/recruit/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search-title">招聘标题：</label >
+			  <input type="text" name="recruitTitle" id="recruitTitle" placeholder="标题关键字"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+			<div class="search-item">
+			  <label  class="search-title">招聘姓名：</label >
+			  <input type="text" name="realName" id="realName" maxLength="5" placeholder="招聘姓名关键字"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label  class="search-title">招聘电话：</label >
+			  <input type="text" name="phone" id="phone" placeholder="发布人号码" maxLength="11" minLength="11"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		    <div class="search-item">
+			  <label  class="search-title">截止时间：</label >
+			  <input type="text" name="stopTime" id="stopTime"   class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="截止时间" autocomplete="off" > 
+		  	</div>
+		  	<div class="search-item">
+				<label class="search-title">开工地:</label>
+				<div class="input-field clearfix">
+					 <select class="form-control " id="recruitProvince" name="recruitProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control " id="recruitCity" name="recruitCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control " id="recruitArea" name="recruitArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+		  	<div class="search-item">
+			  	<label class="search-title">审核状态：</label>
+			    <select class="form-control" id="validateStatus" name="validateStatus" >
+					<option  value="">全部</option>
+					<option value="1">审核中</option>
+					<option value="2">审核失败</option>
+					<option value="3">审核成功</option>
+				</select>
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryWebRecruitList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:web:recruit:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="window.location.href='${base}/web/recruit/edit.htm'">添加</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/sites/web_recruit_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#web_recruit_list_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+/**
+ * 监听模态框
+ */
+$('#recruitValidateFail').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget) // Button that triggered the modal
+	  var modal = $(this)
+	  modal.find('#recruitId').val(button.attr("data-id"))
+	  modal.find('.modal-body #validateCause').val("")
+})
+function queryWebRecruitList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#web_recruit_list_form').submit();
+}
+queryWebRecruitList(1);
+changeProvinceText("#recruitProvince","${(recruitProvince)!'null'}","${(recruitCity)!'null'}","${(recruitArea)!'null'}");
+
+function confirmDeleteWebRecruit(id)
+{
+	showConfirmDialog({message : "确认要删除此招聘吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/web/recruit/delete.htm",{recruitId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryWebRecruitList();
+			}
+		});
+	});
+}
+function confirmDisableRecruit(id,stick)
+{
+	var message = "";
+	if(stick == 2)
+	{
+		message = "确认要取消置顶该招聘吗？";
+	}
+	else if(stick==1)
+	{
+		message = "确认要置顶该招聘吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/recruit/recruit/record/stick.htm",{id:id,type:stick},function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryWebRecruitList();
+			}
+		});
+	});
+}
+function openRecruitAddressMap(lng,lat)
+{
+	var url = "${base}/recruit/address/map.htm?lat=" + lat+"&lng="+lng;
+	TB_show({"url":url,"title": "项目具体地址" ,"width":600,"height":600});
+}
+
+function confirmDisableRecruit(id,stick)
+{
+	var message = "";
+	if(stick == 2)
+	{
+		message = "确认要取消置顶该招聘吗？";
+	}
+	else if(stick==1)
+	{
+		message = "确认要置顶该招聘吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/web/recruit/record/stick.htm",{id:id,type:stick},function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryWebRecruitList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

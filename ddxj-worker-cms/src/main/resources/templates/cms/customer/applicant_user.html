@@ -1,0 +1,159 @@
+[#assign title="点点小匠-申请工头列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<link href="${base!}/assets/cms/css/user/skin.css?[@cmsVersion /]" rel="stylesheet">
+<div class="cms-content" id="applyForemanList">
+	<div class="alert alert-warning" >注：以下是点点小匠申请工头列表 </div>
+	<form method="post" id="apply_foreman_form" action="${base}/customer/user/foreman/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">用户名：</label>
+		    	<input type="text" id="realName" name="realName" class="form-control search-input" placeholder="请输入用户名" autoComplete="off">
+			</div>
+			<div class="search-item">
+				<label class="search-title">手机号码：</label>
+		    	<input type="text" id="phone" name="phone" class="form-control search-input" placeholder="请输入手机号" autoComplete="off" >
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">审核状态：</label>
+			    <select class="form-control" id="validateStatus" name="validateStatus" >
+					<option  value="">请选择审核状态</option>
+					<option value="1">审核中</option>
+		          	<option value="3">审核成功</option>
+		          	<option value="2">审核失败</option>
+
+				</select>
+		  	</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryApplyForemanList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/customer/applicant_user_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+		<!-- 模态框（Modal） -->
+<div class="modal fade" id="applyForemanValidateFail" tabindex="-1" role="dialog" aria-labelledby="recruitValidateFailLabel" aria-hidden="true">
+	<input type="hidden" id="foremanId" name="foremanId" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">申请工头审核</h4>
+            </div>
+            <div class="modal-body">
+	            <div class="cms-search">
+	            	<div class="search-item">
+	            	<label  class="search_title" style="width:100px">失败原因：</label >
+					<textarea class="form-control"  name="validateCause"  rows="3" cols="50"  id="validateCause"  maxLength="512" placeholder="最大512个字符">"${(foreman.validateCause)!''}"</textarea>
+				  	</div>
+	            </div>
+            </div>
+            <div class="modal-footer">
+                   <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="updateApplyForemanStatus(null,2)">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script type="text/javascript">
+$('#apply_foreman_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+		
+	}
+});
+/**
+ * 监听模态框
+ */
+$('#applyForemanValidateFail').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget) // Button that triggered the modal
+	  var modal = $(this)
+	  modal.find('#foremanId').val(button.attr("data-id"))
+	  modal.find('.modal-body #validateCause').val("")
+})
+function queryApplyForemanList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#apply_foreman_form').submit();
+}
+
+queryApplyForemanList(1);
+
+function updateApplyForemanStatus(foremanId,type)
+{
+	//debugger;
+	var validateStatus,validateCause;
+	if(type == 3)//成功
+	{
+		validateStatus = 3;
+	}
+	else//失败
+	{
+		if($("#validateCause").val()==null || $("#validateCause").val()=='')
+		{
+			
+			alertTip("失败原因必填",2);
+			return;
+		}
+		
+		foremanId = $("#foremanId").val();
+		validateCause = $("#validateCause").val();
+		validateStatus = 2;
+	}
+	var news = "";
+	if(type==3)
+	{
+		message="审核通过";
+	}
+	else
+	{	
+		message="拒绝通过";
+	}
+	var news="确定要"+"<font color='red'>"+message+"</font>吗？";
+	showConfirmDialog({message : news,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/customer/user/foreman/update.htm",{foremanId:foremanId,validateStatus:validateStatus,validateCause:validateCause},function(data){
+			if(data.response)
+			{
+				queryApplyForemanList();
+				$('#applyForemanValidateFail').modal('hide');
+			}
+			
+		});
+	});
+
+	
+}
+function deleteApplyForeman(id)
+{
+	showConfirmDialog({message : "确认要删除此申请记录吗？",height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/customer/user/foreman/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryApplyForemanList();
+			}
+		});
+	});
+}
+
+
+</script>
+[#include "/common/cms_footer.html"]

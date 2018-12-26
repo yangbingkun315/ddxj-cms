@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.RecruitMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Recruit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_title" property="recruitTitle" jdbcType="VARCHAR" />
+        <result column="recruit_content" property="recruitContent" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="recruit_province" property="recruitProvince" jdbcType="VARCHAR" />
+        <result column="recruit_city" property="recruitCity" jdbcType="VARCHAR" />
+        <result column="recruit_area" property="recruitArea" jdbcType="VARCHAR" />
+        <result column="recruit_long" property="recruitLong" jdbcType="VARCHAR" />
+        <result column="recruit_lat" property="recruitLat" jdbcType="VARCHAR" />
+        <result column="recruit_address" property="recruitAddress" jdbcType="VARCHAR" />
+        <result column="recruit_person" property="recruitPerson" jdbcType="INTEGER" />
+        <result column="contractor" property="contractor" jdbcType="VARCHAR" />
+        <result column="cover_image" property="coverImage" jdbcType="VARCHAR" />
+        <result column="balance_way" property="balanceWay" jdbcType="VARCHAR" />
+        <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+        <result column="end_price" property="endPrice" jdbcType="DECIMAL" />
+        <result column="validate_status" property="validateStatus" jdbcType="INTEGER" />
+        <result column="balance_type" property="balanceType" jdbcType="INTEGER" />
+        <result column="recruit_status" property="recruitStatus" jdbcType="INTEGER" />
+        <result column="stick" property="stick" jdbcType="INTEGER" />
+        <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+        <result column="validate_cause" property="validateCause" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="is_request" property="isRequest" jdbcType="INTEGER" />
+        <result column="project_number" property="projectNumber" jdbcType="VARCHAR" />
+        <!-- 已报名人数配置 -->
+    	<association property="enlistNumber" column="id" select="net.zn.ddxj.mapper.RecruitRecordMapper.selectByUserIdAndRecruitId" javaType="java.lang.Integer"></association>
+    	<!-- 正在进行中的人数 -->
+        <association property="underwayNum" column="id" select="net.zn.ddxj.mapper.RecruitRecordMapper.countSingUp" javaType="java.lang.Integer"></association>
+    	<!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryUserDetail" ></association>
+        <!-- 一对多关系 -->
+        <collection property="bannerList"  column="id" select="net.zn.ddxj.mapper.RecruitBannerMapper.queryRecruitBannerByRecruitId"></collection>
+        <!-- 一对多关系 -->
+        <collection property="categoryList"  column="id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryByRecruit"></collection>
+       
+    </resultMap>
+		<resultMap id="BaseResultMap1" type="net.zn.ddxj.entity.Recruit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_title" property="recruitTitle" jdbcType="VARCHAR" />
+        <result column="recruit_content" property="recruitContent" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="recruit_province" property="recruitProvince" jdbcType="VARCHAR" />
+        <result column="recruit_city" property="recruitCity" jdbcType="VARCHAR" />
+        <result column="recruit_area" property="recruitArea" jdbcType="VARCHAR" />
+        <result column="recruit_long" property="recruitLong" jdbcType="VARCHAR" />
+        <result column="recruit_lat" property="recruitLat" jdbcType="VARCHAR" />
+        <result column="recruit_address" property="recruitAddress" jdbcType="VARCHAR" />
+        <result column="recruit_person" property="recruitPerson" jdbcType="INTEGER" />
+        <result column="contractor" property="contractor" jdbcType="VARCHAR" />
+        <result column="cover_image" property="coverImage" jdbcType="VARCHAR" />
+        <result column="balance_way" property="balanceWay" jdbcType="VARCHAR" />
+        <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+        <result column="end_price" property="endPrice" jdbcType="DECIMAL" />
+        <result column="validate_status" property="validateStatus" jdbcType="INTEGER" />
+        <result column="balance_type" property="balanceType" jdbcType="INTEGER" />
+        <result column="recruit_status" property="recruitStatus" jdbcType="INTEGER" />
+        <result column="stick" property="stick" jdbcType="INTEGER" />
+        <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+        <result column="validate_cause" property="validateCause" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="is_request" property="isRequest" jdbcType="INTEGER" />
+        <result column="project_number" property="projectNumber" jdbcType="VARCHAR" />
+        <result column="distance" property="distance" jdbcType="VARCHAR" />
+    	<!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail" ></association>
+        <!-- 一对多关系 -->
+        <collection property="bannerList"  column="id" select="net.zn.ddxj.mapper.RecruitBannerMapper.queryRecruitBannerByRecruitId"></collection>
+        <!-- 一对多关系 -->
+        <collection property="categoryList"  column="id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryByRecruit"></collection>
+       
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, recruit_title, recruit_content, user_id, start_time, end_time, recruit_province, 
+        recruit_city, recruit_area, recruit_long, recruit_lat, recruit_address, recruit_person, 
+        contractor, cover_image, balance_way, start_price, end_price, validate_status, balance_type, 
+        recruit_status, stick, stop_time, validate_cause, create_time, update_time, flag, project_number
+    </sql>
+    
+    <sql id="Base_project_status">
+        ,CASE
+			WHEN (r.validate_status = 3 and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.start_time,'%Y-%m-%d %H:%i:%S') AND r.recruit_status = 1) THEN '1'
+			WHEN (r.validate_status = 3 AND (
+					SELECT count(rd.id) FROM zn_recruit_record rd
+						WHERE rd.recruit_id = r.id AND rd.worker_status = 2 AND rd.foreman_status = 2 AND rd.flag = 1 ) &gt;
+						0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.end_time,'%Y-%m-%d %H:%i:%S')) THEN '2'
+			WHEN (r.validate_status = 3 AND (
+					SELECT count(rd.id) FROM zn_recruit_record rd
+					WHERE rd.recruit_id = r.id AND rd.worker_status = 2 AND rd.foreman_status = 2 AND rd.flag = 1) &lt;= 0
+					AND DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(r.end_time,'%Y-%m-%d %H:%i:%S')) THEN '3'
+			ELSE
+				'0'
+			END AS projectStatus
+    </sql>
+
+    <!-- 更新用户收藏状态  -->
+    <update id="updateUserCollectionById" parameterType="java.lang.Integer">
+    	UPDATE zn_user_collection SET flag = #{flag} WHERE id = #{collectionId} and from_user_id = #{userId} and collection_type = 2
+    </update>
+    
+    <!-- 根据ID查询此项目已招人数  -->
+    <select id="findRecruitPersonById" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        select (
+        select count(rr.id) from zn_recruit_record rr where rr.recruit_id = zr.id 
+        and ((rr.foreman_status = 2 and rr.worker_status = 2) or (rr.foreman_status = 3 and rr.worker_status = 3))) as var
+        from zn_recruit zr
+        where zr.id = #{recruitId} and zr.flag = 1
+    </select>
+    
+    <!-- 根据ID查询工人进行中项目  -->
+    <select id="findRecruitByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        SELECT count(rr.id) FROM zn_recruit_record rr 
+        inner join zn_recruit as zn on zn.id = rr.recruit_id
+        where 
+        rr.worker_status = 2 
+        and rr.foreman_status = 2 
+        and rr.user_id = #{userId}
+        and rr.flag = 1
+    </select>
+    
+    <!-- 查询工头在招职位数量  -->
+    <select id="queryUserRecruitPersonCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        SELECT count(r.id) FROM zn_recruit r
+		WHERE
+			r.user_id = #{userId}
+		AND r.validate_status = 3
+		AND r.recruit_status = 1
+		AND r.flag = 1
+		AND ((SELECT count(rr.id) FROM zn_recruit_record rr WHERE rr.recruit_id = r.id
+		AND rr.worker_status = 2
+		AND rr.foreman_status = 2
+		AND r.validate_status = 3
+		AND rr.flag = 1) &gt; 0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.end_time, '%Y-%m-%d %H:%i:%S'))
+    </select>
+    
+    <!-- 查询工头在招职位  -->
+    <select id="queryUserRecruitPersonList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   	    SELECT  r.id, r.recruit_title, r.recruit_content, r.user_id, r.start_time, r.end_time, r.recruit_province, 
+        r.recruit_city, r.recruit_area, r.recruit_long, r.recruit_lat, r.recruit_address, r.recruit_person, 
+        r.contractor, r.cover_image, r.balance_way, r.start_price, r.end_price, r.validate_status, r.balance_type, 
+        r.recruit_status, r.stick, r.stop_time, r.validate_cause, r.create_time, r.update_time, r.flag, r.project_number FROM zn_recruit r
+		WHERE
+			r.user_id = #{userId}
+		AND r.validate_status = 3
+		AND r.recruit_status = 1
+		AND r.flag = 1
+		AND ((SELECT count(rr.id) FROM zn_recruit_record rr WHERE rr.recruit_id = r.id
+		AND rr.worker_status = 2
+		AND rr.foreman_status = 2
+		AND r.validate_status = 3
+		AND rr.flag = 1) &gt;0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.end_time, '%Y-%m-%d %H:%i:%S'))
+    	order by r.create_time desc
+    </select>
+    
+    <select id="selectRecruitCount" resultType="java.lang.Integer">
+    	select count(1) from zn_recruit zn
+    	where zn.user_id = #{userId} 
+    	<if test="validateStatus != null and validateStatus == 1">
+    		and (zn.validate_cause != null or zn.validate_cause != '')
+    	</if>
+    	<if test="validateStatus != null and validateStatus == 2">
+    		and zn.validate_status = 1 and zn.recruit_status = 0
+    	</if>
+    	and flag = 1
+    </select>
+    
+    <select id="selectRecruitStatusCount" resultType="java.lang.Integer">
+    	select count(1) from zn_recruit zn
+    	where zn.user_id = #{userId} 
+        <if test="recruitStatus != null and recruitStatus == 1" >
+            and zn.validate_status = 3
+            and ((SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &gt; 0 
+            or DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S'))
+        </if>
+        <if test="recruitStatus != null and recruitStatus == 2" >
+			and zn.validate_status = 3
+			and (SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &lt;= 0
+			and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S')
+        </if>
+        and zn.flag = 1 order by zn.create_time desc
+    </select>
+    
+    <select id="selectRecruitStatusOver" resultType="java.lang.Integer">
+    	select count(1) from zn_recruit zn
+    	where zn.user_id = #{userId} 
+    	and zn.recruit_status = #{recruitStatus}
+    	and zn.validate_status = 3
+		and (SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &lt;= 0
+		and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S')
+        and zn.flag = 1
+    </select>
+    
+    <!-- 查询用户发布的招聘数量  -->
+    <select id="queryRecruitByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        select count(id)
+        from zn_recruit
+        where user_id = #{userId} and flag = 1
+    </select>
+    
+    <!-- 查询我发布的招聘，是否被邀请过  -->
+    <select id="queryMyReleaseWork" resultMap="BaseResultMap" >
+    	select zn.*,
+    	((SELECT count(st.id) FROM zn_user_request st where st.recruit_id = zn.id and st.accept_user_id = #{toUserId} and st.flag = 1) or (select count(zrr.id) from zn_recruit_record zrr where zrr.recruit_id = zn.id and zrr.user_id =  #{toUserId} and zrr.flag = 1)) as is_request
+        from zn_recruit zn
+        where zn.user_id = #{fromUserId} and zn.flag = 1 and zn.validate_status = 3
+		AND ((SELECT count(rr.id) FROM zn_recruit_record rr WHERE rr.recruit_id = zn.id
+		AND rr.worker_status = 2
+		AND rr.foreman_status = 2
+		AND zn.validate_status = 3
+		AND rr.flag = 1) &gt;0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.end_time, '%Y-%m-%d %H:%i:%S'))
+    	order by zn.create_time desc
+    </select>
+    
+    <!-- 查询附近的工作  -->
+    <select id="queryMyNearRecruit" resultMap="BaseResultMap">
+    	select distinct zn.*,
+   		ROUND(acos(cos(#{latitude} * pi()/180 ) * cos(zn.recruit_lat * pi()/180) * cos(#{longitude} * pi()/180 - zn.recruit_long * pi()/180)+sin(#{latitude} * pi()/180 ) * sin(zn.recruit_lat * pi()/180))*6370996.81/1000 ) as distance,
+   		CASE
+			WHEN (zn.validate_status = 3 AND DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.start_time,'%Y-%m-%d %H:%i:%S') AND zn.recruit_status = 1) THEN '1'
+			WHEN (zn.validate_status = 3 AND (
+					SELECT count(rd.id) FROM zn_recruit_record rd
+						WHERE rd.recruit_id = zn.id AND rd.worker_status = 2 AND rd.foreman_status = 2 AND rd.flag = 1 ) &gt;
+						0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.end_time,'%Y-%m-%d %H:%i:%S')) THEN '2'
+			WHEN (zn.validate_status = 3 AND (
+					SELECT count(rd.id) FROM zn_recruit_record rd
+					WHERE rd.recruit_id = zn.id AND rd.worker_status = 2 AND rd.foreman_status = 2 AND rd.flag = 1) &lt;= 0
+					AND DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(zn.end_time,'%Y-%m-%d %H:%i:%S')) THEN '3'
+			ELSE
+				'0'
+			END AS projectStatus
+   		from zn_recruit zn where zn.recruit_province = #{provice} and zn.flag = 1 and zn.validate_status = 3
+   		order by distance asc
+    </select>
+    
+    <!-- 查询我发布的招聘  -->
+    <select id="queryMyRecruitList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select distinct zn.*
+        from zn_recruit zn
+        where zn.user_id = #{userId}
+        <if test="recruitStatus != null and recruitStatus == 1" >
+            and (zn.validate_cause != null or zn.validate_cause != '')
+        </if>
+        <if test="recruitStatus != null and recruitStatus == 2" >
+            and zn.validate_status = 1 and zn.recruit_status = 0
+        </if>
+        <if test="recruitStatus != null and recruitStatus == 3" >
+            and zn.validate_status = 3
+            and ((SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &gt; 0 
+            or DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S'))
+        </if>
+        <if test="recruitStatus != null and recruitStatus == 4" >
+			and zn.validate_status = 3
+			and (SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &lt;= 0
+			and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S')
+        </if>
+        and zn.flag = 1 order by zn.create_time desc
+    </select>
+    
+    <!-- 查询招聘审核失败原因   -->
+    <select id="queryRecruitReason" resultType="java.lang.String" parameterType="java.lang.Integer" >
+        select zn.validate_cause
+        from zn_recruit zn
+        where zn.user_id = #{userId} and zn.id = #{recruitId} and flag = 1 and validate_status = 2
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_recruit
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    <select id="queryRecruitByIdCut" resultMap="BaseResultMap1" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_recruit
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_recruit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Recruit" >
+        insert into zn_recruit (id, recruit_title, recruit_content, 
+            user_id, start_time, end_time, 
+            recruit_province, recruit_city, recruit_area, 
+            recruit_long, recruit_lat, recruit_address, 
+            recruit_person, contractor, cover_image, 
+            balance_way, start_price, end_price, 
+            validate_status, balance_type, recruit_status, 
+            stick, stop_time, validate_cause, 
+            create_time, update_time, flag, project_number
+            )
+        values (#{id,jdbcType=INTEGER}, #{recruitTitle,jdbcType=VARCHAR}, #{recruitContent,jdbcType=VARCHAR}, 
+            #{userId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+            #{recruitProvince,jdbcType=VARCHAR}, #{recruitCity,jdbcType=VARCHAR}, #{recruitArea,jdbcType=VARCHAR}, 
+            #{recruitLong,jdbcType=VARCHAR}, #{recruitLat,jdbcType=VARCHAR}, #{recruitAddress,jdbcType=VARCHAR}, 
+            #{recruitPerson,jdbcType=INTEGER}, #{contractor,jdbcType=VARCHAR}, #{coverImage,jdbcType=VARCHAR}, 
+            #{balanceWay,jdbcType=VARCHAR}, #{startPrice,jdbcType=DECIMAL}, #{endPrice,jdbcType=DECIMAL}, 
+            #{validateStatus,jdbcType=INTEGER}, #{balanceType,jdbcType=INTEGER}, #{recruitStatus,jdbcType=INTEGER}, 
+            #{stick,jdbcType=INTEGER}, #{stopTime,jdbcType=TIMESTAMP}, #{validateCause,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER},
+            #{projectNumber,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Recruit" useGeneratedKeys="true" keyProperty="id" >
+        insert into zn_recruit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitTitle != null" >
+                recruit_title,
+            </if>
+            <if test="recruitContent != null" >
+                recruit_content,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="startTime != null" >
+                start_time,
+            </if>
+            <if test="endTime != null" >
+                end_time,
+            </if>
+            <if test="recruitProvince != null" >
+                recruit_province,
+            </if>
+            <if test="recruitCity != null" >
+                recruit_city,
+            </if>
+            <if test="recruitArea != null" >
+                recruit_area,
+            </if>
+            <if test="recruitLong != null" >
+                recruit_long,
+            </if>
+            <if test="recruitLat != null" >
+                recruit_lat,
+            </if>
+            <if test="recruitAddress != null" >
+                recruit_address,
+            </if>
+            <if test="recruitPerson != null" >
+                recruit_person,
+            </if>
+            <if test="contractor != null" >
+                contractor,
+            </if>
+            <if test="coverImage != null" >
+                cover_image,
+            </if>
+            <if test="balanceWay != null" >
+                balance_way,
+            </if>
+            <if test="startPrice != null" >
+                start_price,
+            </if>
+            <if test="endPrice != null" >
+                end_price,
+            </if>
+            <if test="validateStatus != null" >
+                validate_status,
+            </if>
+            <if test="balanceType != null" >
+                balance_type,
+            </if>
+            <if test="recruitStatus != null" >
+                recruit_status,
+            </if>
+            <if test="stick != null" >
+                stick,
+            </if>
+            <if test="stopTime != null" >
+                stop_time,
+            </if>
+            <if test="validateCause != null" >
+                validate_cause,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="projectNumber != null" >
+                project_number,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitTitle != null" >
+                #{recruitTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitContent != null" >
+                #{recruitContent,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null" >
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recruitProvince != null" >
+                #{recruitProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitCity != null" >
+                #{recruitCity,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitArea != null" >
+                #{recruitArea,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLong != null" >
+                #{recruitLong,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLat != null" >
+                #{recruitLat,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitAddress != null" >
+                #{recruitAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitPerson != null" >
+                #{recruitPerson,jdbcType=INTEGER},
+            </if>
+            <if test="contractor != null" >
+                #{contractor,jdbcType=VARCHAR},
+            </if>
+            <if test="coverImage != null" >
+                #{coverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceWay != null" >
+                #{balanceWay,jdbcType=VARCHAR},
+            </if>
+            <if test="startPrice != null" >
+                #{startPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="endPrice != null" >
+                #{endPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="validateStatus != null" >
+                #{validateStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceType != null" >
+                #{balanceType,jdbcType=INTEGER},
+            </if>
+            <if test="recruitStatus != null" >
+                #{recruitStatus,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="stopTime != null" >
+                #{stopTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateCause != null" >
+                #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="projectNumber != null" >
+                #{projectNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Recruit" >
+        update zn_recruit
+        <set >
+            <if test="recruitTitle != null" >
+                recruit_title = #{recruitTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitContent != null" >
+                recruit_content = #{recruitContent,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null" >
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recruitProvince != null" >
+                recruit_province = #{recruitProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitCity != null" >
+                recruit_city = #{recruitCity,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitArea != null" >
+                recruit_area = #{recruitArea,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLong != null" >
+                recruit_long = #{recruitLong,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitLat != null" >
+                recruit_lat = #{recruitLat,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitAddress != null" >
+                recruit_address = #{recruitAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitPerson != null" >
+                recruit_person = #{recruitPerson,jdbcType=INTEGER},
+            </if>
+            <if test="contractor != null" >
+                contractor = #{contractor,jdbcType=VARCHAR},
+            </if>
+            <if test="coverImage != null" >
+                cover_image = #{coverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceWay != null" >
+                balance_way = #{balanceWay,jdbcType=VARCHAR},
+            </if>
+            <if test="startPrice != null" >
+                start_price = #{startPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="endPrice != null" >
+                end_price = #{endPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="validateStatus != null" >
+                validate_status = #{validateStatus,jdbcType=INTEGER},
+            </if>
+            <if test="balanceType != null" >
+                balance_type = #{balanceType,jdbcType=INTEGER},
+            </if>
+            <if test="recruitStatus != null" >
+                recruit_status = #{recruitStatus,jdbcType=INTEGER},
+            </if>
+            <if test="stick != null" >
+                stick = #{stick,jdbcType=INTEGER},
+            </if>
+            <if test="stopTime != null" >
+                stop_time = #{stopTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateCause != null" >
+                validate_cause = #{validateCause,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="projectNumber != null" >
+                project_number = #{projectNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Recruit" >
+        update zn_recruit
+        set recruit_title = #{recruitTitle,jdbcType=VARCHAR},
+            recruit_content = #{recruitContent,jdbcType=VARCHAR},
+            user_id = #{userId,jdbcType=INTEGER},
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            end_time = #{endTime,jdbcType=TIMESTAMP},
+            recruit_province = #{recruitProvince,jdbcType=VARCHAR},
+            recruit_city = #{recruitCity,jdbcType=VARCHAR},
+            recruit_area = #{recruitArea,jdbcType=VARCHAR},
+            recruit_long = #{recruitLong,jdbcType=VARCHAR},
+            recruit_lat = #{recruitLat,jdbcType=VARCHAR},
+            recruit_address = #{recruitAddress,jdbcType=VARCHAR},
+            recruit_person = #{recruitPerson,jdbcType=INTEGER},
+            contractor = #{contractor,jdbcType=VARCHAR},
+            cover_image = #{coverImage,jdbcType=VARCHAR},
+            balance_way = #{balanceWay,jdbcType=VARCHAR},
+            start_price = #{startPrice,jdbcType=DECIMAL},
+            end_price = #{endPrice,jdbcType=DECIMAL},
+            validate_status = #{validateStatus,jdbcType=INTEGER},
+            balance_type = #{balanceType,jdbcType=INTEGER},
+            recruit_status = #{recruitStatus,jdbcType=INTEGER},
+            stick = #{stick,jdbcType=INTEGER},
+            stop_time = #{stopTime,jdbcType=TIMESTAMP},
+            validate_cause = #{validateCause,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            project_number = #{projectNumber,jdbcType=VARCHAR},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 查询招聘信息 -->
+    <select id="queryAllRecruitLists" resultMap="BaseResultMap" parameterType="java.util.Map">
+	 	SELECT 
+	 		DISTINCT
+			r.*,
+			c.category_id,
+			c.recruit_id
+			<include refid="Base_project_status" />
+		FROM
+		zn_recruit AS r
+		INNER JOIN zn_recruit_category AS c ON  c.recruit_id=r.id
+		WHERE r.flag = 1 and r.validate_status != 2 and r.validate_status = 3
+		<if test="recruitTitle !=null and recruitTitle !=''">
+			and r.recruit_title LIKE CONCAT(CONCAT('%', #{recruitTitle}), '%')
+		</if>
+		<if test=" city !=null and city != ''">
+			and r.recruit_city=#{city}
+		</if>
+		<if test="categoryId !=null and categoryId !=''">
+			and c.category_id =  #{categoryId}
+		</if>
+	 	<if test="categoryId ==''">
+			and c.category_id IS NOT NULL
+		</if> 
+		<if test="projectType != null and projectType != '' and projectType == 1">
+			and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.start_time,'%Y-%m-%d %H:%i:%S') AND r.recruit_status = 1
+		</if>
+		<if test="projectType != null and projectType != '' and projectType == 2">
+            and ((SELECT count(rd.id) FROM zn_recruit_record rd where rd.recruit_id = r.id and rd.worker_status = 2 and rd.foreman_status = 2 and rd.flag = 1) &gt; 0 
+            or DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.end_time , '%Y-%m-%d %H:%i:%S'))
+		</if>
+		<if test="projectType != null and projectType != '' and projectType == 3">
+			and (SELECT count(rd.id) FROM zn_recruit_record rd where rd.recruit_id = r.id and rd.worker_status = 2 and rd.foreman_status = 2 and rd.flag = 1) &lt;= 0
+			and DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &gt; DATE_FORMAT(r.end_time , '%Y-%m-%d %H:%i:%S')
+		</if>
+		<trim prefix="order by" suffix="" suffixOverrides=",">
+			r.stick asc ,r.update_time DESC, 
+			<if test="startTimeOrderBy == 0 ">
+				r.start_time asc,
+			</if>
+			<if test="startTimeOrderBy == 1">
+				r.stop_time asc,
+			</if>
+			<if test="startTimeOrderBy == 2 ">
+				r.stop_time DESC,
+			</if>
+			r.id
+		</trim>
+    </select>
+    
+    <update id="updateRecruitCancelById">
+    	update zn_recruit set flag = 2 where id = #{recruitId} and user_id = #{userId}
+    </update>
+    
+    <update id="updateEndTimeById">
+    	update zn_recruit set stop_time = #{stopTime} where id = #{recruitId} and user_id = #{userId} and flag = 1 
+    </update>
+    <!-- 查询邀请列表 -->
+   	 <select id="queryMyReceivedRecruitList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		SELECT
+			r.*
+			<include refid="Base_project_status" />
+		FROM
+		zn_recruit r
+		INNER JOIN zn_user_request ur ON r.id = ur.recruit_id
+		WHERE r.validate_status=3 AND r.flag=1 and ur.flag = 1
+		 AND ur.accept_user_id = #{userId}   order BY ur.create_time DESC
+   	 </select>
+   	 <!-- 查询收藏的活动列表 -->
+	   <select id="queryCollectionList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	   	SELECT
+		r.*,
+		c.id,
+		c.from_user_id,
+		c.recruit_id,
+		c.to_user_id,
+		c.collection_type,
+		c.flag
+		<include refid="Base_project_status" />
+		FROM
+		zn_recruit AS r
+		INNER JOIN zn_user_collection AS c ON c.recruit_id = r.id 
+		WHERE
+		c.collection_type = 2 and c.from_user_id=#{userId} and c.flag=1 and r.flag = 1
+		order by c.create_time desc
+	   </select>
+	 <!-- 查询报名的活动列表 -->
+	 <select id="queryApplyList" resultMap="BaseResultMap" parameterType="java.lang.Integer"  >
+		SELECT
+		r.*,
+		rr.user_id,
+		rr.recruit_id,
+		rr.enlist_status,
+		rr.foreman_status,
+		rr.worker_status,
+		rr.worker_comment_status,
+		rr.foreman_comment_status,
+		rr.balance_status,
+		rr.refuse_cause,
+		rr.create_time,
+		rr.update_time,
+		rr.flag
+		<include refid="Base_project_status" />
+		FROM
+		zn_recruit AS r
+		INNER JOIN zn_recruit_record AS rr ON rr.recruit_id = r.id
+		WHERE
+		r.validate_status = 3 AND
+		r.recruit_status = 1 AND
+		r.flag = 1 AND rr.user_id=#{userId} and rr.flag = 1
+		order BY r.stop_time ASC
+	 </select>
+   	 <!-- 更新审核状态 -->
+   	 <update id="updateByRecruitId">
+   	 	update zn_recruit   
+   	 	SET
+   	 	<if test="validateStatus != null" >
+                validate_status = #{validateStatus},
+        </if>
+        <if test="validateCause != null" >
+              validate_cause = #{validateCause},
+        </if>
+        <if test="recruitStatus != null" >
+                recruit_status = #{recruitStatus},
+        </if>
+         update_time =NOW()
+          
+   	 	where id = #{recruitId} 
+   	 </update>
+   	 <!-- 删除招聘记录 -->
+   	 <update id="deleteByRecruitId" parameterType="java.lang.Integer">
+   	 	update zn_recruit set flag = 2 where id = #{recruitId} 
+   	 </update>
+   	 
+   	 <!-- 后台查询招聘列表 -->
+   	 <select id="findRecruitList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+   	 	SELECT DISTINCT r.* FROM zn_recruit r
+   	 	INNER JOIN zn_user AS ur on r.user_id = ur.id
+   	 	WHERE r.flag = 1 and ur.role = 2
+		<if test="recruitTitle != null and recruitTitle !=''">
+			and r.recruit_title like CONCAT(CONCAT('%', #{recruitTitle}), '%')
+		</if>
+		<if test="realName != null and realName !=''">
+			and ur.real_name like CONCAT(CONCAT('%', #{realName}), '%')
+		</if>
+		<if test="phone != null and phone !=''">
+			and ur.phone LIKE CONCAT(CONCAT('%', #{phone}), '%')
+		</if>
+		<if test="validateStatus != null and validateStatus !=''">
+			and r.validate_status = #{validateStatus}
+		</if>
+		<if test="recruitProvince != null and recruitProvince !=''">
+			and r.recruit_province = #{recruitProvince}
+		</if>
+		<if test="recruitCity != null and recruitCity !=''">
+			and r.recruit_city = #{recruitCity}
+		</if>
+		<if test="recruitArea != null and recruitArea !=''">
+			and r.recruit_area = #{recruitArea}
+		</if>
+		<if test="stopTime != null and stopTime !=''">
+			and DATE_FORMAT(r.stop_time, '%Y-%m-%d') = DATE_FORMAT(#{stopTime} , '%Y-%m-%d')
+		</if>
+		order by r.create_time desc 
+   	 </select>
+   	 <!-- 删除招聘活动 -->
+   	 <delete id="delUserRecruitRecord" parameterType="java.lang.Integer" >
+        delete from zn_recruit WHERE user_id=#{userId};
+   	 </delete>
+   	 <!-- 查询进行中的活动 -->
+   	 <select id="selectRecruitUnderway" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+   	 select distinct zn.*
+     from zn_recruit zn
+     where zn.user_id = #{userId}
+     and zn.validate_status = 3
+     and ((SELECT count(rr.id) FROM zn_recruit_record rr where rr.recruit_id = zn.id and rr.worker_status = 2 and rr.foreman_status = 2 and rr.flag = 1) &gt; 0 
+     or DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(zn.end_time , '%Y-%m-%d %H:%i:%S'))
+   	 </select>
+   	 <!-- 招聘置顶 -->
+   	 <update id="changeRecruitStick" >
+   	 	update zn_recruit set stick =#{type} ,update_time = NOW() where id=#{id}
+   	 </update>
+   	 <select id="findRecruitCount" resultType="java.util.HashMap">
+   	 	select recruit_long as recruitLong,recruit_lat as recruitLat,recruit_area as recruitArea,recruit_title as recruitTitle from zn_recruit where flag = 1
+   	 </select>
+</mapper>

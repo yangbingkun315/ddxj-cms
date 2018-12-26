@@ -1,0 +1,77 @@
+._j_black_overlay {
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 1001;
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+	filter: alpha(opacity = 60);
+}
+
+._j_overlay_content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 140px;
+	height: 100px;
+	margin-left:-70px; 
+	margin-top:-60px;
+	background: #ffffff url(../../images/preload.gif) no-repeat 50% 40%;
+	border: 6px solid #e3e3e3;
+	z-index: 2000;
+}
+._j_loading_overlay_content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 210px;
+	height: 50px;
+	margin-left:-75px; 
+	margin-top:-20px;
+	border: 6px solid #e3e3e3;
+	background: #ffffff;
+	z-index: 2000;
+}
+._j_overlay_response_msg {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 140px;
+	height: 100px;
+	margin-left:-70px; 
+	margin-top:-60px;
+	border: 6px solid #e3e3e3;
+	z-index: 9999999;
+	background: #ffffff;
+}
+._j_loading_overlay_content div
+{
+	font-size:14px;
+	position: absolute;
+	margin-left:auto; 
+	margin-top:auto;
+	color: #666;
+	left:15px;
+	line-height:40px; 
+}
+._j_overlay_content div
+{
+	
+	font-size:12px;
+	position: absolute;
+	margin-left:auto; 
+	margin-top:auto;
+	top:70%;
+	color: #666;
+	left:15px; 
+}
+._j_delete_bt_ {
+height: 15px;
+width: 20px;
+background: url(../../images/common/index_site_menu_bg.png);
+background-position: -61px -73px;
+display: inline-block;
+}

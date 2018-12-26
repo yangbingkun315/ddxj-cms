@@ -1,0 +1,272 @@
+[#assign title="点点小匠-基本设置"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/niceEdit/nicEdit.js?v=[@cmsVersion /]" type="text/javascript"></script>
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >注：被关注回复的意思就是，用户通过扫描二维码、搜索公众号名称，关注后回复的内容。 </div>
+	[#assign wechatTabActive = 1]
+	[#include "/wechat/wechat_tab.html"]
+	<div class="befollowed clear">
+		<form action="${base}/wechat/menu/setting.htm" method="post" id="wechat_menu_setting_form">
+			<input type="hidden" id="useSystemDefaultReply" name="useSystemDefaultReply" value="${useSystemDefaultReply!2}">
+			<div class="item" closeFlag="true">
+				<div class="label">系统回复：</div>
+				<div class="content">
+					<label class="el-switch el-switch-lg" style="margin-top: 5px;">
+						<input type="checkbox" id="stickReply" [#if useSystemDefaultReply?? && useSystemDefaultReply == 2]checked="checked"[/#if]>
+						<span class="el-switch-style"></span>
+					</label>
+					<script type="text/javascript">
+					$("#stickReply").change(function(){
+						if($(this).is(":checked"))
+						{
+							$("#useSystemDefaultReply").val(2);
+							$("#type_body_id").show();
+						}
+						else
+						{
+							$("#useSystemDefaultReply").val(1);
+							$("#type_body_id").hide();
+						}
+					});
+					</script>
+				</div>
+				<div class="tip red">
+					开启后您的公众号被关注时会发送自定义消息
+				</div>
+			</div>
+			<div id="type_body_id">
+				<div class="item">
+					<div class="label">回复类型：</div>
+					<div class="content">
+						<select class="form-control" id="replyType" name="replyType">
+							<option value="1" [#if !replyType?? || replyType == 1]selected="selected"[/#if]>文字信息</option>
+							<option value="2" [#if replyType?? && replyType == 2]selected="selected"[/#if]>图文信息</option>
+							<option value="3" [#if replyType?? && replyType == 3]selected="selected"[/#if]>回复图片</option>
+						</select>
+						<script>
+							$("#replyType").change(function(){
+								var select = $("#replyType").val();
+								if(select == 1)
+								{
+									$("#replayWords_id").show();
+									$("#imageTextList_id").hide();
+									$("#befollowedReplyImg_id").hide();
+								}
+								if(select == 2)
+								{
+									$("#imageTextList_id").show();
+									$("#befollowedReplyImg_id").hide();
+									$("#replayWords_id").hide();
+								}
+								if(select == 3)
+								{
+									$("#befollowedReplyImg_id").show();
+									$("#imageTextList_id").hide();
+									$("#replayWords_id").hide();
+								}
+							})
+						</script>
+					</div>
+				</div>
+				<div class="item [#if replyType?? && replyType == 1][#else]none[/#if]" id="replayWords_id">
+					<div class="label">回复内容：</div>
+					<div class="content" style="width:300px;">
+						<textarea class="form-control" name="replayWords" placeholder="最大512个字" isRequired="true" maxLength="512" id="replayWords" rows="3" cols="34" >${(replayWords)!""}</textarea>
+					</div>
+				</div>
+				<div class="item [#if replyType?? && replyType == 2][#else]none[/#if]" id="imageTextList_id">
+					<div class="label">图文信息：</div>
+					<div class="content">
+						<select class="form-control" id="imageTextList" name="imageTextList">
+							<option value="">请选择图文信息</option>
+							[#if newsList?? && newsList?size > 0]
+								[#list newsList as new]
+									<option value="${new.media_id}" [#if new?? && new.media_id == imageTextList]selected="selected"[/#if]>${new.title}</option>
+								[/#list]
+							[/#if]
+						</select>
+					</div>
+				</div>
+				<div class="item [#if replyType?? && replyType == 3][#else]none[/#if]" id="befollowedReplyImg_id">
+					<div class="label">回复图片：</div>
+					<div class="content">
+						<input type="hidden" id="imgEdit" name="befollowedReplyImg" value="${(befollowedReplyImg)!""}"/>
+						<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=imgUploadClick" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+						<a class="galpop-single upload-image openImage" href="${befollowedReplyImg!""}">
+							<img  src="${befollowedReplyImg!""}" width="100%" id="image_preview" height="100%"  [#if !befollowedReplyImg?? || !befollowedReplyImg] style="display:none;"[/#if]/>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="item">
+				<div class="label" style="line-height:initial">
+					&nbsp;
+				</div>
+				<div class="content" style="margin-top:15px;">
+					<input type="submit" value="保存设置" class="btn btn-warning">
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+$('#wechat_menu_setting_form').ajaxForm({
+	beforeSerialize : function(){
+		var content = getTextContent();
+		$("#replayWords").val(content);
+	},
+	beforeSubmit:function(){
+		if($('#wechat_menu_setting_form').validate())
+		{
+			var type = $("#replyType").val();
+			if(type == 1)
+			{
+				if(!isNotNull($("#replayWords").val()))
+				{
+					minAlert("请输入回复内容！",2);
+					return false;
+				}
+			}
+			else if(type == 2)
+			{
+				if(!isNotNull($("#imageTextList").val()))
+				{
+					minAlert("请选择图文信息！",2);
+					return false;
+				}
+			}
+			else if(type == 3)
+			{
+				if(!isNotNull($("#imgEdit").val()))
+				{
+					minAlert("请上传回复图片！",2);
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+		 }
+	}
+});
+function imgUploadClick(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#imgEdit").val("${storageUrl}" + data);
+		$("#image_preview").attr("src","${storageUrl}" + data).show();
+		$("#image_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+
+function replaceAllText(text,sub,replacement)
+{
+	text = text.replace(sub,replacement);
+	
+	if(text.indexOf(sub) > -1)
+	{
+		return replaceAllText(text,sub,replacement);
+	}
+	return text;
+}
+function getTextContent()
+{
+	if(typeof msgContentInstance == "undefined")
+	{
+		return "";
+	}
+	var text = msgContentInstance.getContent();
+	
+	text = replaceAllText(text,"<div>","<br>");
+	text = replaceAllText(text,"</div>","");
+	
+	var wrap = $("<div></div>").html(text);
+	
+	if(wrap.find("a").length > 0)
+	{
+		wrap.find("a").each(function(){
+			var list = [];
+			var attributes = this.attributes;
+			for(var i = 0;i < attributes.length;i++)
+			{
+				list.push(attributes[i].name);
+			}
+			
+			for(var i = 0;i < list.length;i++)
+			{
+				var attr = list[i];
+				if(attr != "href")
+				{
+					$(this).removeAttr(attr);
+				}
+			}
+		});
+	}
+	
+	var html = htmlDecode(wrap.html());
+	
+	html = html.replace(/<br\s*\/?>/gi,"\r\n");
+	
+	return html;
+}
+function htmlDecode(str)
+{  
+    var s = "";
+    if(str.length == 0) return "";
+    s = str.replace(/&amp;/g,"&");
+    s = s.replace(/&lt;/g,"<");
+    s = s.replace(/&gt;/g,">");
+    s = s.replace(/&nbsp;/g," ");
+    s = s.replace(/&#39;/g,"\'");
+    s = s.replace(/&quot;/g,"\"");
+    
+    s = s.replace(/<(?!a|\/a).*?>/g,"");
+    
+    return s;  
+}
+
+$(function(){
+	$('.openImage').galpop();
+	$('#wechat_menu_setting_form').configValidate();
+	new nicEditor({"buttonList":["link","unlink"]}).panelInstance('replayWords');
+	msgContentInstance = nicEditors.findEditor("replayWords");
+	
+	$("#stickReply").change();
+});
+</script>
+[#include "/common/cms_footer.html"]

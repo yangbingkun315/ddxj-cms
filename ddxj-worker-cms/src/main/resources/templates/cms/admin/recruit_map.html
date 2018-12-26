@@ -1,0 +1,117 @@
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+ <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=cAug9KFXQeIkRM3v77Mb30l1OiRYw8PN"></script>
+<div id="container"  style="width:100%; height: 800px;"></div>
+<script type="text/javascript">
+//初始化echarts实例
+var app = {};
+option = null;
+function initRecruitChartData()
+{
+
+	var myChart = echarts.init(document.getElementById('container'));
+	doPost("${base}/cms/recruit/count.htm",{},function(data){
+		if(data.response == true)
+		{
+			initRecruitChart(JSON.parse(data.data),myChart)
+		}
+	})
+}
+function initRecruitChart(dataMap,myChart)
+{
+	option = {
+		    backgroundImage:'[@resUrl /]/asstes/cms/images/bg_body.jpg',
+		    title: {
+		        text: '点点小匠《项目分布图》',
+		        subtext: '全国共'+dataMap.recruitList.length+"个项目",
+		        sublink: 'http://www.diandxj.com',
+		        x:'center',
+		        textStyle: {
+		            color: '#000000'
+		        }
+		    },
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: function (params) {
+		        	var html = "发布地区："+params.name+"<br />" + "项目名称："+params.value[2];
+		            return html;
+		        }
+		    },
+		    legend: {
+		        orient: 'vertical',
+		        y: 'bottom',
+		        x:'right',
+		        data:['项目分布点'],
+		        textStyle: {
+		            color: '#fff'
+		        }
+		    },
+		    geo: {
+		        map: 'china',
+		        roam: true,
+		        zoom:1.2,
+		        label: {
+		            emphasis: {
+		                show: true,
+		                color:'#000000',
+		                fontSize:16
+		            }
+		        },
+		        itemStyle: {
+		            normal: {
+		                areaColor: '#f5f3f0',
+		                borderColor: '#111'
+		            },
+		            emphasis: {
+		                areaColor: '#f5f3d0'
+		            }
+		        }
+		    },
+		    series: [
+		        {
+		            name: '',
+		            type: 'scatter',
+		            coordinateSystem: 'geo',
+		            data: convertData(dataMap.recruitList),
+		            symbol:'pin',
+		            symbolSize: 10,
+		            hoverAnimation:true,
+		            large:true,
+		            label: {
+		                normal: {
+		                    show: false
+		                },
+		                emphasis: {
+		                    show: false
+		                }
+		            },
+		            itemStyle: {
+		                emphasis: {
+		                    borderColor: '#fff',
+		                    borderWidth: 1
+		                }
+		            }
+		        }
+		    ]
+		}
+	if (option && typeof option === "object") {
+	    myChart.setOption(option, true);
+	}
+	
+	//使用制定的配置项和数据显示图表
+	myChart.setOption(option); 
+}
+initRecruitChartData();
+var convertData = function (data) {
+    var res = [];
+    for (var i = 0; i < data.length; i++) {
+    	var lngLatObj = [data[i].recruitLong,data[i].recruitLat,data[i].recruitTitle];
+            res.push({
+                name: data[i].recruitArea,
+                value: lngLatObj
+            });
+    }
+    return res;
+};
+
+</script>
+[#include "/common/cms_footer.html"]

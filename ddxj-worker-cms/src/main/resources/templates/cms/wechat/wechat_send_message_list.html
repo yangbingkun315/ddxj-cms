@@ -1,0 +1,88 @@
+[#assign title="点点小匠-群发列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="massMessageApp">
+	<div class="alert alert-warning" >注：查询所有端下的群发记录 </div>
+	[#assign appTabActive = 2]
+	[#include "/wechat/app_tab.html"]
+	<form method="post" id="send_message_list" action="${base}/wechat/send/message/List.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">群发类型：</label>
+		    	<select id="sendType" name="sendType" class="form-control" style="width:150px;">
+			        <option value="">请选择群发类型</option>
+					<option value="1">客服群发</option>
+					<option value="2">高级群发</option>
+					<option value="3">APP群发</option>
+				</select>
+			</div>
+			<div class="search-item">
+				<label class="search-title">发送类型：</label>
+			    <select id="massType" name="massType" class="form-control" style="width:150px;">
+					<option value="">请选择发送类型</option>
+					<option value="1">文字</option>
+					<option value="2">图文素材</option>
+					<option value="3">图片</option>
+				</select>
+			</div>
+			<div class="search-item">
+				<label class="search-title">创建时间</label>
+				<input type="text" name="startTime" id="startTime" class="form-control search-input" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+					placeholder="开始时间" autocomplete="off" >&nbsp;&nbsp;至&nbsp;&nbsp;
+				<input type="text" name="endTime" id="endTime" class="form-control search-input" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+					placeholder="结束时间" autocomplete="off" >
+			</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="querySendMessageList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_send_message_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#send_message_list').ajaxForm({
+	beforeSubmit:function(){
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+
+function querySendMessageList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#send_message_list').submit();
+}
+
+querySendMessageList(1);
+
+function deleteWechatSendMessage(id)
+{
+	showConfirmDialog({message : "确定要删除吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/wechat/send/message/delete.htm",{wechatId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				setTimeout(function(){
+					querySendMessageList(1);
+				},500);
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

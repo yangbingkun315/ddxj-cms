@@ -1,0 +1,72 @@
+[#assign title="点点小匠-投诉与建议"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="complainList">
+<div class="alert alert-warning" > 注：此列表记录着用户的一些投诉和建议 </div>
+	<form method="post" id="cms_complain_form" action="${base}/cms/complain/list.htm">
+	<input id="currentPage" type="hidden" name="currentPage"/>
+	<div class="cms-search">
+	    <div class="search-item">
+		  	<label class="search-title">投诉类型：</label>
+		    <select class="form-control" id="type" name="type" >
+				<option  value="">请选择类型</option>
+				<option value="1">投诉</option>
+				<option value="2">建议</option>
+				<option value="3">其它</option>
+			</select>
+	  	</div>
+		<div class="search-item">
+		  	<label class="search-title">是否处理：</label>
+		    <select class="form-control" id="status" name="status" >
+				<option  value="">请选择类型</option>
+				<option value="1">未受理</option>
+				<option value="2">已受理</option>
+			</select>
+	  	</div>
+	  <div class="search-item">
+		  <label class="search_title">用户电话：</label>
+		  <input type="text" name="phone" id="phone"   class="form-control search-input" placeholder="11位电话号码" autocomplete="off"> 
+	  </div>
+	  <div class="search-item">
+		  <label class="search_title">创建时间：</label>
+		  <input type="text" name="createTime" id="createTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="创建时间" autocomplete="off" >
+	  </div>
+	  <div class="search-button">
+	     <button type="submit" class="btn btn-warning" onclick="queryComplainList(1);">查询</button>
+	  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+	  [#include "/admin/cms_complain_tpl.html"]
+	</div>
+	 [#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_complain_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+function queryComplainList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_complain_form').submit();
+}
+queryComplainList(1);
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.VersionMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Version" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="max_version" property="maxVersion" jdbcType="VARCHAR" />
+        <result column="update_content" property="updateContent" jdbcType="VARCHAR" />
+        <result column="force_update" property="forceUpdate" jdbcType="VARCHAR" />
+        <result column="dowload_address" property="dowloadAddress" jdbcType="VARCHAR" />
+        <result column="mobile_source" property="mobileSource" jdbcType="VARCHAR" />
+        <result column="announce_time" property="announceTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, max_version, update_content, force_update, dowload_address, mobile_source, announce_time, 
+        create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_version
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_version
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Version" >
+        insert into zn_version (id, max_version, update_content, 
+            force_update, dowload_address, mobile_source, 
+            announce_time, create_time)
+        values (#{id,jdbcType=INTEGER}, #{maxVersion,jdbcType=VARCHAR}, #{updateContent,jdbcType=VARCHAR}, 
+            #{forceUpdate,jdbcType=VARCHAR}, #{dowloadAddress,jdbcType=VARCHAR}, #{mobileSource,jdbcType=VARCHAR}, 
+            #{announceTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Version" >
+        insert into zn_version
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="maxVersion != null" >
+                max_version,
+            </if>
+            <if test="updateContent != null" >
+                update_content,
+            </if>
+            <if test="forceUpdate != null" >
+                force_update,
+            </if>
+            <if test="dowloadAddress != null" >
+                dowload_address,
+            </if>
+            <if test="mobileSource != null" >
+                mobile_source,
+            </if>
+            <if test="announceTime != null" >
+                announce_time,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="maxVersion != null" >
+                #{maxVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="updateContent != null" >
+                #{updateContent,jdbcType=VARCHAR},
+            </if>
+            <if test="forceUpdate != null" >
+                #{forceUpdate,jdbcType=VARCHAR},
+            </if>
+            <if test="dowloadAddress != null" >
+                #{dowloadAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="mobileSource != null" >
+                #{mobileSource,jdbcType=VARCHAR},
+            </if>
+            <if test="announceTime != null" >
+                #{announceTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Version" >
+        update zn_version
+        <set >
+            <if test="maxVersion != null" >
+                max_version = #{maxVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="updateContent != null" >
+                update_content = #{updateContent,jdbcType=VARCHAR},
+            </if>
+            <if test="forceUpdate != null" >
+                force_update = #{forceUpdate,jdbcType=VARCHAR},
+            </if>
+            <if test="dowloadAddress != null" >
+                dowload_address = #{dowloadAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="mobileSource != null" >
+                mobile_source = #{mobileSource,jdbcType=VARCHAR},
+            </if>
+            <if test="announceTime != null" >
+                announce_time = #{announceTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Version" >
+        update zn_version
+        set max_version = #{maxVersion,jdbcType=VARCHAR},
+            update_content = #{updateContent,jdbcType=VARCHAR},
+            force_update = #{forceUpdate,jdbcType=VARCHAR},
+            dowload_address = #{dowloadAddress,jdbcType=VARCHAR},
+            mobile_source = #{mobileSource,jdbcType=VARCHAR},
+            announce_time = #{announceTime,jdbcType=TIMESTAMP},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="queryLastVersion"  resultMap="BaseResultMap">
+     select
+    	 <include refid="Base_Column_List" />
+        from zn_version
+        where mobile_source = #{mobileSource} and DATE_FORMAT(announce_time, '%Y-%m-%d %H:%i:%%s') &lt;=  DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%%s') order by max_version DESC LIMIT 1
+    </select>
+    <select id="queryNotExamineMaxVersion" resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List" />
+    	 from zn_version
+        where mobile_source = #{mobileSource} and announce_time IS NULL
+        order by max_version
+    </select>
+</mapper>

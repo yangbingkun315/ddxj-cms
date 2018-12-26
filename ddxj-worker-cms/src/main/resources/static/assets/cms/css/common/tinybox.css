@@ -1,0 +1,62 @@
+.zxx_list_content {
+	padding: 1em;
+}
+
+#tinybox {
+	position: absolute;
+	display: none;
+	padding: 10px;
+	background: #ffffff url(../../images/preload.gif) no-repeat 50% 50%;
+	border: 6px solid #e3e3e3;
+	z-index: 2000;
+}
+
+#tinymask {
+	position: fixed;
+	display: none;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: #000000;
+	z-index: 1500;
+}
+
+#tinycontent {
+	background: #ffffff;
+	font-size: 1.1em;
+}
+#tinyclosebt {
+	position: absolute;
+	z-index: 160000;
+	right: 0;
+	top: 0;
+	height: 47px;
+	line-height: 150px;
+	overflow: hidden;
+	width: 47px;
+	display:none;
+}
+
+#tinyclosebt a {
+	display: block;
+	height: 47px;
+	width: 47px;
+	overflow: hidden;
+	background-image:
+		url(../../images/common/tiny_scan_layer.png);
+	background-position: 0 0;
+	_background-image:
+		url(../../images/common/tiny_scan_layer-ie6.png);
+	_background-position: 0 0;
+	cursor: pointer
+}
+
+#tinyclosebt a:hover {
+	background-image:
+		url(../../images/common/tiny_scan_layer.png);
+	background-position: -48px 0;
+	_background-image:
+		url(../../images/common/tiny_scan_layer-ie6.png);
+	_background-position: -48px 0
+}

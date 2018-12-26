@@ -1,0 +1,88 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('authListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>真实姓名</td>
+   		<td>联系电话</td>
+   		<td>身份证号</td>
+   		<td>身份证信息</td>
+   		<td>审核状态</td>
+   		<td>身份证所在地</td>
+   		<td>申请时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if realAuthList?? && realAuthList?size > 0]
+	   	[#list realAuthList as authList]
+	   	<tr class="[#if authList.realStatus == '2']warning[/#if]">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="authListId" id="${authList.id}" >
+					<label class="el-checkbox-style" for="${authList.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${authList.realName!""}</td>
+	   		<td>${authList.user.phone!""}</td>
+	   		<td>${authList.idCardNumber!""}</td>
+	   		<td align="center">
+		   		[#if authList.idCardFront != '']
+		   			<a class="galpop-info label label-default"  data-galpop-group="info_${authList.id}" data-galpop-link="${authList.idCardFront!''}" data-galpop-link-title="查看大图" data-galpop-link-target="_blank" title="身份证正面-${authList.user.realName!""}-${authList.idCardNumber!""}-${authList.idCardAddress!""}" href="${authList.idCardFront!''}">查看证件</a>
+		   		[/#if]
+		   		[#if authList.idCardHand != '']
+		   		<a class="galpop-info hide"   data-galpop-group="info_${authList.id}" data-galpop-link="${authList.idCardHand!''}" data-galpop-link-title="查看大图" data-galpop-link-target="_blank" title="手持身份证-${authList.user.realName!""}-${authList.idCardNumber!""}-${authList.idCardAddress!""}" href="${authList.idCardHand!''}"></a>
+		   		[/#if]
+		   		[#if authList.idCardOpposite != '']
+		   			<a class="galpop-info hide"  data-galpop-group="info_${authList.id}" data-galpop-link="${authList.idCardOpposite!''}" data-galpop-link-title="查看大图" data-galpop-link-target="_blank" title="身份证反面-${authList.user.realName!""}" href="${authList.idCardOpposite!''}"></a>
+		   		[/#if]
+   			</td>
+	   		<td>
+	   		
+	   			[#if authList.realStatus == '1']
+	   				<button type="button" class="btn btn-primary btn-xs">审核中</button>
+	   			[#elseif authList.realStatus == '2']
+	   				<button type="button" class="btn btn-danger btn-xs">审核失败</button>
+   				[#elseif authList.realStatus == '3']
+   				<button type="button" class="btn btn-success  btn-xs">审核成功</button>
+	   			[/#if]
+	   		</td>
+	   		<td>${authList.idCardAddress!""}</td>
+	   		<td>${authList.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   		<td>
+			   	[#if authList.realStatus==1]
+				   	[@shiro.hasPermission name="system:auth:validate"]
+				  		<button type="button" class="btn btn-success" onclick="updateRealAuthTrue(${authList.id},3)">通过</button>
+				  		<button type="button" class="btn btn-warning" onclick="updateRealAuthTrue(${authList.id},2)">拒绝</button>
+			  		[/@shiro.hasPermission]
+		  		[/#if]
+		  		[@shiro.hasPermission name="system:auth:delete"]
+		   			<button type="button" class="btn btn-danger" onclick="confirmDeleteUser(${authList.id})">删除</button>
+		   		[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserAuthList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop({callback:imagePageCallback});
+</script>

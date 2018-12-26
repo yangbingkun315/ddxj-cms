@@ -1,0 +1,8 @@
+<ul class="nav nav-tabs">
+	[@shiro.hasPermission name="system:mass:message:app"]
+		<li [#if appTabActive == 1]class="active"[/#if]><a href="${base}/app/mass/message/send.htm">APP群发</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:mass:message:list"]
+		<li [#if appTabActive == 2]class="active"[/#if]><a href="${base}/wechat/send/message/List.htm">群发记录</a></li>
+	[/@shiro.hasPermission]
+	</ul>

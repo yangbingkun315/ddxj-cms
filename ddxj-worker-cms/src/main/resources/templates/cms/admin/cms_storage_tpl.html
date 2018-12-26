@@ -1,0 +1,63 @@
+     	[#if storageList?? && storageList?size>0]
+	     	[#list storageList as storage]
+	     	[#if storage.storageType?index_of("image/") > -1]
+	         <div class="cms-storage">
+	             <div class="box">
+	                 <img src="${storageUrl + storage.storageKey}">
+	                 <div class="box-content">
+	                 			<h5 class="title">创建日期：${storage.storageTime?string("yyyy-MM-dd")}</h5>
+	                           <span class="post">文件大小：${storage.storageSize}</span>
+	                     <ul class="icon">
+	                         <li class="galpop-single" href="${storageUrl + storage.storageKey}"><a href="#"><i class="fa fa-search"></i></a></li>
+	                         <li class="cms-storage-link" data-clipboard-text="${storageUrl + storage.storageKey}"><a href="javascript:;"><i class="fa fa-link"></i></a></li>
+	                         <li><a href="javascript:;"><i class="fa fa-trash-o fa-lg" onclick="confirmDeleteStorage(${storage.id},'${storage.storageKey}')"></i></a></li>
+	                     </ul>
+	                 </div>
+	             </div>
+	         </div>
+	         [#else]
+         	 	<div class="js-video">
+			        <video class="js-media">
+				          <source src="${storageUrl + storage.storageKey}" type="${storage.storageType}" />
+			        </video>
+			        <div class="cms-vedio-operate">
+				        <i class="iconfont cms-storage-link" title="复制" data-clipboard-text="${storageUrl + storage.storageKey}">&#xe68f;</i>
+				        <i class="iconfont" title="删除" onclick="confirmDeleteStorage(${storage.id},'${storage.storageKey}')">&#xe614;</i>
+			        </div>
+			        <i data-playPause class="playPause fa fa-play ui-icon"><span></span></i>
+			        <div class="ui">
+			          <div>
+			            <div data-progress class="progress">
+			              <div data-buffer class="progress-buffer"></div>
+			              <div data-time class="progress-time"></div>
+			            </div><!-- progress -->
+			          </div>
+			          <div>
+			            <span class="timeDisplay"><i data-currentTime>0:00</i> / <i data-duration>0:00</i></span>
+			          </div>
+			          <div>
+			            <i data-mute class="fa fa-volume-up ui-icon"></i>
+			          </div>
+			          <div>
+			            <div data-volume="100" class="volumeControl"><span class="ui-slider-handle"></span></div>
+			          </div>
+			        </div><!-- ui -->
+			        <i data-fullscreen class="fullscreen iconicfill-fullscreen iconfont " title="fullscreen">&#xe61e;</i>
+			      
+	
+			      
+			    </div><!-- js-video -->
+			    [/#if]
+	         [/#list]
+         [/#if]
+ <script>
+ 	function nextPage()
+ 	{
+ 		var currentPage = $("#currentPage").val();
+ 		queryStorageList(currentPage * 1 + 1);
+ 	}
+ 	$('.galpop-single').galpop();
+ </script>
+ 	<script src="http://cdn.bootcss.com/jqueryui/1.11.0/jquery-ui.min.js"></script>
+ <script src="[@resUrl /]/assets/cms/js/common/vedio.js?[@cmsVersion /]"></script>
+ 

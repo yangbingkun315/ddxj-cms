@@ -1,0 +1,103 @@
+[#assign title="点点小匠-分销-微信/微信朋友圈分享"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="inviteList">
+	<div class="alert alert-warning" >注：分销活动的微信/微信朋友圈分享，可以自定义标题、内容、链接、图片 </div>
+	<ul class="nav nav-tabs">
+			[@shiro.hasPermission name="system:invite:set"]
+			<li class="active"><a>分销设置</a></li>
+			[/@shiro.hasPermission]
+			[@shiro.hasPermission name="system:invite:manager"]
+			<li><a href="${base}/marketing/invite/manager.htm">分销管理</a></li>
+			[/@shiro.hasPermission]
+	</ul>
+	<form method="post" id="cms_invite_form" action="${base}/marketing/invite/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">分享标题：</label>
+		    	<input type="text" id="title" name="title" class="form-control search-input" placeholder="请输入标题">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">分享渠道：</label>
+			    <select class="form-control" id="type" name="type" style="width: 180px;">
+					<option  value="">请选择分享渠道</option>
+					<option value="1">微信好友</option>
+					<option value="2">微信朋友圈</option>
+				</select>
+		  	</div>
+			<div class="search-item">
+			  <label class="search-title">创建时间：</label>
+  			  <input type="text" name="createTime" id="createTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+					placeholder="创建时间" autocomplete="off" >
+		  	</div>
+
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryUserList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:invite:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateBanner()">添加分享</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/marketing/invite_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_invite_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_invite_form').submit();
+}
+
+queryUserList(1);
+function updateBanner(id)
+{
+	var url = "${base}/marketing/invite/edit.htm"
+	if(id)
+	{
+		url += "?inviteId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改分享" : "新增分享","width":450,"height":680});
+}
+function confirmSlideRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该条分享吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/marketing/invite/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryUserList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

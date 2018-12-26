@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/zTreeStyle.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/jquery.ztree.all.js" charset="utf-8"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/common/initUtils.js" type="text/javascript"></script>
+<title>角色管理列表</title>
+</head>
+  <style>
+  	.ztree li
+  	{
+  		margin:0!important;
+  	}
+  </style>
+<body ng-app="manager" ng-controller="roleManager">
+<div class="margin Competence_style" id="page_style">
+    <div class="operation clearfix mb15">
+    
+      <div class="order-search-item">
+		  <span class="search_title">角色名称：</span>
+		   <input type="text" name="roleName" id="roleName" ng-model="roleName"   class="input textinput-main width160"  placeholder="请输入角色名称关键字" /> 
+	  </div>
+     <div class="order-search-item">
+		  <button class="btn button_btn bg-deep-blue " ng-click="queryRolePageList()"  type="button"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+		   <button  ng-click="openRole()" id="administrator_add" class="btn button_btn bg-deep-blue" type="button"><i class="fa  fa-edit"></i>&nbsp;添加角色</button>
+	  </div>
+</div>
+<div class="compete_list" >
+       <table id="sample_table" class="table table_list table_striped table-bordered dataTable no-footer">
+		 <thead>
+			<tr>
+			  <th>ID</th>
+			  <th>角色名称</th>
+			  <th>角色简介</th>
+              <th>加入时间</th>
+			  <th class="hidden-480">操作</th>
+             </tr>
+		    </thead>
+             <tbody>
+			  <tr ng-if="roleList.length > 0 " ng-repeat="role in roleList track by $index">
+				<td ng-bind="role.id"></td>
+				<td ng-bind="role.roleName"></td>
+				<td ng-bind="role.roleDesc"></td>
+                <td ng-bind="role.createTime.time | date:'yyyy年MM月dd日'"></td>
+				<td class="td-manage">
+					<div class="btn_group">
+					<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+					<ul class="btn_group_item none">
+					<li><a title="编辑" ng-click="openRole(role.id)" href="javascript:;" >编辑</a></li> 
+					<li><a title="权限设置" ng-click="openRoleResource(role.id)" href="javascript:;" >权限设置</a> </li>
+					<li><a title="删除" href="javascript:;" ng-click="deleteRole(role.id)" >删除</a></li>
+					</ul>
+					</div>
+			   </tr>
+			   <tr ng-if="roleList.length == 0 ">
+			   	<td class="center" colspan="5">暂无数据</td>
+			   </tr>
+		      </tbody>
+	        </table>
+     </div>
+  <div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+ <!--添加管理员-->
+ <div id="add_role" class=" add_role" style="display:none">
+  <form ng-submit="updateRole()" >
+   <div class="add_style add_administrator_style">
+    <ul>
+     <li class="clearfix">
+	     <label class="label_name col-xs-2 col-lg-2"><i>*</i>角色名称：</label>
+	     <div class="formControls col-xs-6">
+	    	 <input type="text" class="input-text col-xs-12" value="" placeholder="请输入角色名称" ng-model="role.roleName">
+	     </div>
+     </li>
+     <li class="clearfix">
+	     <label class="label_name col-xs-2 col-lg-2"><i>*</i>角色简介：</label>
+	     <div class="formControls col-xs-6">
+	     <input type="text" class="input-text col-xs-12" value="" placeholder="请输入角色简介" ng-model="role.roleDesc" ></div>
+     </li>
+        <li class="clearfix col-xs-12 col-lg-12 align">
+	  <input class="btn button_btn bg-deep-blue btn_height" type="button"  value="保存" ng-click="updateRole()">
+		</li>
+    </ul>
+	 </div>
+    </form>
+   </div>
+   <div id="add_role_resource" class=" add_role_resource" style="display:none">
+  <form ng-submit="updateRoleResource()" >
+   <div class="add_style add_administrator_style">
+    <ul>
+    <li class="clearfix">
+      <label class="label_name col-xs-2 col-lg-2"><i class="c-red">*</i>资源设置：</label>
+      <div class="formControls col-xs-6"> <span class="select-box" style="width:150px;">
+			<ul id="tree" class="ztree"></ul>
+       </div>
+       <input type="hidden" ng-model="roleId" />
+     </li>
+        <li class="clearfix col-xs-12 col-lg-12 align">
+	  <input class="btn button_btn bg-deep-blue btn_height" type="button"  value="保存" ng-click="updateRoleResource()">
+		</li>
+    </ul>
+	 </div>
+    </form>
+   </div>
+</body>
+</html>
+<script>
+var setting = {
+		check : {
+			enable : true
+		},
+		data : {
+			simpleData : {
+				enable : true
+			}
+		}
+	};
+	setting.check.chkboxType = {
+		"Y" : "ps",
+		"N" : "s"
+	};
+var roleManager = angular.module('manager', []);
+roleManager.controller('roleManager', function($scope,$timeout) {
+	 $scope.roleName = "";
+	 $scope.pageNum = 1;
+	 $scope.pageSize = 20;
+	 $scope.queryRolePageList = function()//查询用户信息
+	 {
+		 
+
+			layui.use(['layer'], function(){
+				 var index =  layui.layer.load(3, {
+					  shade: [0.1,'#888'] //0.1透明度的白色背景
+					}); 
+				 Ajax.post({
+			         url: getRoot+'/manager/query/role/page/list.ddxj',
+			         data: {roleName:$scope.roleName,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+			         async: true,
+			         success: function(data) {
+			        	 layer.close(index)
+			             if(data.response == true)
+			             {
+			            	 $scope.total = data.data.roleList.total;
+			            	 //console.log(data.data);
+			               	 $scope.roleList = data.data.roleList.list;
+			               	 $scope.$apply();
+			               	 if(!$scope.initPageFlag)
+			               	 {
+			               		$scope.initPage();
+			               	 }
+			            	 
+			             }
+			         }
+			     }); 				
+			 })
+	 }
+	 $scope.initPage = function()
+	 {
+		 $scope.initPageFlag = true;
+		 layui.use(['laypage', 'layer'], function(){
+			  var laypage = layui.laypage
+			  ,layer = layui.layer;
+			  laypage.render({
+		      	    elem: 'list-page'
+		      	    ,count: $scope.total //数据总数
+		      	  	,limit:	20
+		      	    ,jump: function(obj,first){
+		      			$scope.pageNum = obj.curr;
+		      			$scope.pageSize = obj.limit;
+			      		if(!first)//一定要加此判断，否则初始时会无限刷新
+			      		{
+			      			$scope.queryRolePageList();
+	                    }
+		      	    }
+		      	  });
+		 });
+	 }
+	 $scope.queryRolePageList();
+	 $scope.deleteRole = function (id)
+	 {
+		 layer.confirm("确定要删除吗？",function(index){
+			 Ajax.post({
+		         url: getRoot+'/manager/delete/role.ddxj',
+		         data: {roleId:id},
+		         async: true,
+		         success: function(data) {
+		             if(data.response == true)
+		             {
+						 layer.msg('已删除!',{icon: 6,time:1000});
+		            	 $scope.queryRolePageList();
+		             }
+		         }
+		     }); 
+		});
+	 }
+	 $scope.openRole = function(roleId)//打开添加窗口
+	 {
+		 $scope.role ="";
+		 if(isNotNull(roleId))
+		 {
+			 Ajax.post({
+		         url: getRoot+'/manager/query/role/details.ddxj',
+		         data: {roleId:roleId},
+		         async: true,
+		         success: function(data) {
+		             if(data.response == true)
+		             {
+		            	 $scope.role = data.data.role;
+		            	 $scope.$apply();
+		             }
+		         }
+		     }); 
+		 }
+		 layer.open({
+			    type: 1,
+				title:roleId?'修改角色':'添加角色',
+				area: ['600px',''],
+				shadeClose: false,
+				content: $('#add_role'),
+				
+				});
+	 }
+	 $scope.updateRole = function()//
+	 {
+		 if(!isNotNull($scope.role.roleName))
+		 {
+			 layer.msg("请输入角色名称");
+			 return false;
+		 }
+		 if(!isNotNull($scope.role.roleDesc))
+		 {
+			 layer.msg("请输入角色简介");
+			 return false;
+		 }
+		 Ajax.post({
+	         url: getRoot+'/manager/update/role.ddxj',
+	         data: $scope.role,
+	         async: true,
+	         success: function(data) {
+	             if(data.response == true)
+	             {
+	            	 layer.closeAll();
+	            	 layer.msg(data.responseMsg);
+	            	 $scope.queryRolePageList();
+	             }
+	         }
+	     }); 
+		 
+	 }
+	 $scope.openRoleResource = function(id)//打开添加窗口
+	 {
+		$scope.initZTree(id);
+		$scope.roleId = id;
+		 layer.open({
+			    type: 1,
+				title:'设置权限',
+				area: ['600px',''],
+				shadeClose: false,
+				content: $('#add_role_resource'),
+				});
+	 }
+	 $scope.updateRoleResource = function()//更新角色资源
+	 {
+		 var treeObj = $.fn.zTree.getZTreeObj("tree");
+		 var nodes = treeObj.getCheckedNodes(true);
+		 if(nodes.length == 0)
+		 {
+			 layer.msg("请选择菜单");
+			 return false;
+		 }
+		 var selectIds="";
+		 for(var index in nodes){
+			var item=nodes[index];
+			selectIds+=item.id+",";
+		 } 
+		 Ajax.post({
+			    url: getRoot+'/manager/update/role/menu.ddxj',
+			    data: {roleId:$scope.roleId,menuIds:selectIds},
+			    success: function(data) {
+			        if(data.response == true)
+			        {
+			        	layer.closeAll();
+		            	layer.msg(data.responseMsg);
+		            	$scope.queryRolePageList();
+			        }
+			    },
+			    async:false
+			});
+	 }
+	 $scope.initZTree = function(id)//初始化树形图
+	 {
+		 Ajax.post({
+			    url: getRoot+'/manager/role/menu.ddxj',
+			    data: {roleId:id},
+			    success: function(data) {
+			        if(data.response == true)
+			        {
+			        	var menuListAll = data.data.menuListAll;
+			        	var roleMenuList = data.data.roleMenuList;
+			        	var menuzTree = [];
+			        	for(var c = 0;c<menuListAll.length;c++)
+			        	{
+			        		var menuzTreeObject = {}
+			        		menuzTreeObject.id = menuListAll[c].id;
+			        		menuzTreeObject.pId = menuListAll[c].pid;
+			        		menuzTreeObject.name = menuListAll[c].name;
+			        		for(var d = 0;d<roleMenuList.length;d++)
+		        			{
+				        		if(roleMenuList[d].id == menuListAll[c].id)
+				        		{
+				        			menuzTreeObject.checked=true;
+				        			break ;
+				        		}
+		        			}
+			        		menuzTree.push(menuzTreeObject);
+			        	}
+			        	$.fn.zTree.init($("#tree"), setting, menuzTree);
+			        }
+			    },
+			    async:false
+			});	
+	 }
+	 
+});
+</script>

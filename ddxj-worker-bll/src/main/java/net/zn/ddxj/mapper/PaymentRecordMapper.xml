@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.PaymentRecordMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.PaymentRecord" >
+        <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+        <result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+        <result column="openId" property="openid" jdbcType="VARCHAR" />
+        <result column="trade_type" property="tradeType" jdbcType="VARCHAR" />
+        <result column="bank_type" property="bankType" jdbcType="VARCHAR" />
+        <result column="total_fee" property="totalFee" jdbcType="DECIMAL" />
+        <result column="time_end" property="timeEnd" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="pay_status" property="payStatus" jdbcType="INTEGER" />
+         <!-- 一对一  -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail"></association>
+    </resultMap>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.PaymentRecord" >
+        insert into zn_payment_record (transaction_id, out_trade_no, openId, trade_type, 
+            bank_type, total_fee, 
+            time_end, user_id, create_time, 
+            update_time, flag,pay_status)
+        values (#{outTradeNo,jdbcType=VARCHAR}, #{transactionId,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, #{tradeType,jdbcType=VARCHAR}, 
+            #{bankType,jdbcType=VARCHAR}, #{totalFee,jdbcType=DECIMAL},
+            #{timeEnd,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, #{payStatus,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.PaymentRecord" >
+        insert into zn_payment_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="outTradeNo != null" >
+                out_trade_no,
+            </if>
+            <if test="transactionId != null" >
+                transaction_id,
+            </if>
+            <if test="openid != null" >
+                openId,
+            </if>
+            <if test="tradeType != null" >
+                trade_type,
+            </if>
+            <if test="bankType != null" >
+                bank_type,
+            </if>
+            <if test="totalFee != null" >
+                total_fee,
+            </if>
+            <if test="timeEnd != null" >
+                time_end,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="payStatus != null" >
+                pay_status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+         	<if test="outTradeNo != null" >
+                #{outTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionId != null" >
+                #{transactionId,jdbcType=VARCHAR},
+            </if>
+            <if test="openid != null" >
+                #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeType != null" >
+                #{tradeType,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="totalFee != null" >
+                #{totalFee,jdbcType=DECIMAL},
+            </if>
+            <if test="timeEnd != null" >
+                #{timeEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="payStatus != null" >
+                #{payStatus,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.PaymentRecord" >
+        update zn_payment_record
+        <set>
+			<if test="outTradeNo != null" >
+                 out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="transactionId != null" >
+                transaction_id = #{transactionId,jdbcType=VARCHAR},
+            </if>
+            <if test="openid != null" >
+                openId = #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeType != null" >
+                trade_type = #{tradeType,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                bank_type = #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="totalFee != null" >
+                total_fee = #{totalFee,jdbcType=DECIMAL},
+            </if>
+            <if test="timeEnd != null" >
+                time_end = #{timeEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="payStatus != null" >
+                pay_status = #{payStatus,jdbcType=INTEGER},
+            </if>
+         </set>
+        where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+    </update>
+    <select id="selectPayOutTradeNo"  resultMap="BaseResultMap">
+    	SELECT * FROM zn_payment_record WHERE out_trade_no=#{outTradeNo}    
+    </select>
+    
+    <select id="queryPayRecord" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+		SELECT
+		p.*,
+		u.real_name,
+		u.phone
+		FROM
+		zn_user AS u
+		INNER JOIN zn_payment_record AS p ON p.user_id = u.id
+		WHERE p.flag=1
+        <if test="realName != null" >
+              and  u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+        </if>
+        <if test="phone != null" >
+           and     u.phone  LIKE CONCAT(CONCAT('%', #{phone}), '%')
+        </if>
+        <if test="bankType != null" >
+           and     p.bank_type LIKE CONCAT(CONCAT('%', #{bankType}), '%')
+        </if>
+    	<if test="payStatus != null" >
+            and  p.pay_status = #{payStatus}
+        </if>
+         ORDER BY update_time DESC
+    </select>
+    <!-- 删除充值记录 -->
+    <delete id="delPayMentRecord" parameterType="java.lang.Integer">
+    	delete from zn_payment_record where user_id = #{userId} 
+    </delete>
+</mapper>

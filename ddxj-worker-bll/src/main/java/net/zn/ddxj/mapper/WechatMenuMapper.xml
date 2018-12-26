@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.WechatMenuMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.WechatMenu" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+        <result column="click_action" property="clickAction" jdbcType="INTEGER" />
+        <result column="index_number" property="indexNumber" jdbcType="INTEGER" />
+        <result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+        <result column="menu_key" property="menuKey" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="reply_text" property="replyText" jdbcType="VARCHAR" />
+        <result column="reply_image" property="replyImage" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <association property="parentMenu" column="parent_id" select="queryParentMenuById"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, menu_name, click_action, index_number, menu_url, menu_key, parent_id, reply_text, 
+        reply_image, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_wechat_menu
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_wechat_menu
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.WechatMenu" >
+        insert into zn_wechat_menu (id, menu_name, click_action, 
+            index_number, menu_url, menu_key, 
+            parent_id, reply_text, reply_image, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{clickAction,jdbcType=INTEGER}, 
+            #{indexNumber,jdbcType=INTEGER}, #{menuUrl,jdbcType=VARCHAR}, #{menuKey,jdbcType=VARCHAR}, 
+            #{parentId,jdbcType=INTEGER}, #{replyText,jdbcType=VARCHAR}, #{replyImage,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.WechatMenu" >
+        insert into zn_wechat_menu
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="menuName != null" >
+                menu_name,
+            </if>
+            <if test="clickAction != null" >
+                click_action,
+            </if>
+            <if test="indexNumber != null" >
+                index_number,
+            </if>
+            <if test="menuUrl != null" >
+                menu_url,
+            </if>
+            <if test="menuKey != null" >
+                menu_key,
+            </if>
+            <if test="parentId != null" >
+                parent_id,
+            </if>
+            <if test="replyText != null" >
+                reply_text,
+            </if>
+            <if test="replyImage != null" >
+                reply_image,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="menuName != null" >
+                #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="clickAction != null" >
+                #{clickAction,jdbcType=INTEGER},
+            </if>
+            <if test="indexNumber != null" >
+                #{indexNumber,jdbcType=INTEGER},
+            </if>
+            <if test="menuUrl != null" >
+                #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuKey != null" >
+                #{menuKey,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null" >
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="replyText != null" >
+                #{replyText,jdbcType=VARCHAR},
+            </if>
+            <if test="replyImage != null" >
+                #{replyImage,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.WechatMenu" >
+        update zn_wechat_menu
+        <set >
+            <if test="menuName != null" >
+                menu_name = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="clickAction != null" >
+                click_action = #{clickAction,jdbcType=INTEGER},
+            </if>
+            <if test="indexNumber != null" >
+                index_number = #{indexNumber,jdbcType=INTEGER},
+            </if>
+            <if test="menuUrl != null" >
+                menu_url = #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="menuKey != null" >
+                menu_key = #{menuKey,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null" >
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="replyText != null" >
+                reply_text = #{replyText,jdbcType=VARCHAR},
+            </if>
+            <if test="replyImage != null" >
+                reply_image = #{replyImage,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.WechatMenu" >
+        update zn_wechat_menu
+        set menu_name = #{menuName,jdbcType=VARCHAR},
+            click_action = #{clickAction,jdbcType=INTEGER},
+            index_number = #{indexNumber,jdbcType=INTEGER},
+            menu_url = #{menuUrl,jdbcType=VARCHAR},
+            menu_key = #{menuKey,jdbcType=VARCHAR},
+            parent_id = #{parentId,jdbcType=INTEGER},
+            reply_text = #{replyText,jdbcType=VARCHAR},
+            reply_image = #{replyImage,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="queryParentMenuById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+	   	select me.id,me.menu_name
+	   	from zn_wechat_menu me where me.id = #{parentId} and me.flag = 1
+    </select>
+    <!-- 查询父级菜单 -->
+     <select id="queryParentMenu" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+    	from zn_wechat_menu where parent_id = #{parentId} and flag=1
+     </select>
+    <!-- 查询所有的菜单 -->
+   	<select id="queryAllWeChatMenu" resultMap="BaseResultMap" >
+   		select 
+	   	<include refid="Base_Column_List" />
+	   	from zn_wechat_menu
+	   	where flag=1 
+    </select>
+    <delete id="deleteMeunByMenuId" parameterType="java.lang.Integer" >
+        update  zn_wechat_menu set flag=2
+        where id = #{menuId}
+    </delete>
+    <!--查询一级菜单 -->
+    <select id="queryOneLevelMenu" resultMap="BaseResultMap" >
+    	SELECT  * from zn_wechat_menu where parent_id =0 and  flag=1
+    </select>
+    <!-- 查询二级菜单 -->
+    <select id="querySecondMenu" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    	SELECT * FROM zn_wechat_menu WHERE  parent_id=#{parentId} AND flag=1
+    </select>
+    <select id="queryWechatMenuByKey" resultMap="BaseResultMap">
+    	select * from zn_wechat_menu where menu_key = #{key} and flag = 1;
+    </select>
+</mapper>

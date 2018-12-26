@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CreditMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Credit" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="credit_name" property="creditName" jdbcType="VARCHAR" />
+        <result column="credit_code" property="creditCode" jdbcType="VARCHAR" />
+        <result column="credit_logo" property="creditLogo" jdbcType="VARCHAR" />
+        <result column="credit_desc" property="creditDesc" jdbcType="VARCHAR" />
+        <result column="credit_address" property="creditAddress" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, credit_name, credit_code, credit_logo, credit_desc, credit_address, create_time, 
+        update_time, flag
+    </sql>
+
+	<!-- 查询所有授信机构 -->
+    <select id="queryCreditMCN" resultMap="BaseResultMap">
+        select 
+         <include refid="Base_Column_List" />
+         from zn_credit where flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_credit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Credit" >
+        insert into zn_credit (id, credit_name, credit_code, 
+            credit_logo, credit_desc, credit_address, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{creditName,jdbcType=VARCHAR}, #{creditCode,jdbcType=VARCHAR}, 
+            #{creditLogo,jdbcType=VARCHAR}, #{creditDesc,jdbcType=VARCHAR}, #{creditAddress,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Credit" >
+        insert into zn_credit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="creditName != null" >
+                credit_name,
+            </if>
+            <if test="creditCode != null" >
+                credit_code,
+            </if>
+            <if test="creditLogo != null" >
+                credit_logo,
+            </if>
+            <if test="creditDesc != null" >
+                credit_desc,
+            </if>
+            <if test="creditAddress != null" >
+                credit_address,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="creditName != null" >
+                #{creditName,jdbcType=VARCHAR},
+            </if>
+            <if test="creditCode != null" >
+                #{creditCode,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLogo != null" >
+                #{creditLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="creditDesc != null" >
+                #{creditDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="creditAddress != null" >
+                #{creditAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Credit" >
+        update zn_credit
+        <set >
+            <if test="creditName != null" >
+                credit_name = #{creditName,jdbcType=VARCHAR},
+            </if>
+            <if test="creditCode != null" >
+                credit_code = #{creditCode,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLogo != null" >
+                credit_logo = #{creditLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="creditDesc != null" >
+                credit_desc = #{creditDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="creditAddress != null" >
+                credit_address = #{creditAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Credit" >
+        update zn_credit
+        set credit_name = #{creditName,jdbcType=VARCHAR},
+            credit_code = #{creditCode,jdbcType=VARCHAR},
+            credit_logo = #{creditLogo,jdbcType=VARCHAR},
+            credit_desc = #{creditDesc,jdbcType=VARCHAR},
+            credit_address = #{creditAddress,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="getCreditByCreditId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	select * from zn_credit where id=#{creditId}
+    </select>
+    <!-- 查询授信机构 -->
+    <select id="findCreditList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+        select * from zn_credit 
+       	where flag=1
+	        <if test="creditName != null and creditName != '' " >
+	           and  credit_name like CONCAT(CONCAT('%', #{creditName}), '%')
+	        </if>
+	        <if test="creditCode != null and creditCode != '' " >
+	           and credit_code = #{creditCode}
+	        </if>
+	        <if test="creditAddress != null and creditAddress != '' " >
+	           and credit_address like CONCAT(CONCAT('%', #{creditAddress}), '%')
+	        </if>
+	         <if test="creditAddress != null and creditAddress != '' " >
+	           and credit_address like CONCAT(CONCAT('%', #{creditAddress}), '%')
+	        </if>
+        ORDER BY
+		create_time DESC
+    </select>
+    <!-- 删除授信机构 -->
+    <update id="deleteByCreditId" parameterType="java.lang.Integer">
+    	update zn_credit set flag=2 where id=#{creditId}
+    </update>
+</mapper>

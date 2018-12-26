@@ -1,0 +1,180 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('circleId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>圈子编号</td>
+   		<td>发布人</td>
+   		<td>发布位置</td>
+   		<td>发布城市</td>
+   		<td>机型</td>
+   		<td>点赞数量</td>
+   		<td>评论数量</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if circleList?? && circleList?size > 0]
+	   	[#list circleList as circle]
+	   	<tr class="pointer">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="circleId" id="${circle.id}" >
+					<label class="el-checkbox-style" for="${circle.id}"></label>
+				</div>
+		   	</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.circleNumber!""}</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.user.realName!""}</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">
+   				[#if circle.address != '']
+		   			${circle.address}	
+		   		[#else]
+		   			未知
+		   		[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">
+	   			[#if circle.city != '']
+		   			${circle.city}	
+		   		[#else]
+		   			未知
+		   		[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">
+	   			[#if circle.model != '']
+		   			${circle.model}	
+		   		[#else]
+		   			未知
+		   		[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.giveCount!""}次</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.commentCount!""}次</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.createTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('circle_record_${circle.id}');">${circle.updateTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+		 		[@shiro.hasPermission name="system:circle:delete"]
+		   		<button type="button" class="btn btn-danger" onclick="confirmDeleteCircle(${circle.id})">删除</button>
+		   		[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	<tr id="circle_record_${circle.id}" class="cms_list_detail none" item="detail">
+	   		<td></td>
+			<td colspan="11" tdType="orderItemDetail">
+				<table class="table table-hover table-striped table-bordered draggable sortable order_item_detail">
+					<tbody>
+						<tr>
+							<td class="firstTd">圈子编号：</td>
+							<td>${circle.circleNumber!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">发布人：</td>
+							<td><a onclick="queryUserDetails(${circle.user.id})" class="label label-warning">查看信息</a></td>
+						</tr>
+						<tr>
+							<td class="firstTd">发布内容：</td>
+							<td>
+								[#if circle.content != '']
+						   			${circle.content}	
+						   		[#else]
+						   			无
+						   		[/#if]
+							</td>
+						</tr>
+						[#if circle.circleImageList?? && circle.circleImageList?size>0]
+						<tr>
+							<td class="firstTd">发布图片：</td>
+							<td>
+							[#list circle.circleImageList as circleImage]
+						   		<a class="galpop-info label label-default [#if circleImage_index != 0]none[/#if]" data-galpop-group="circleImage_${circle.id}" href="${circleImage.pictureUrl!''}">查看图片</a>
+						   	[/#list]
+							</td>
+						</tr>
+						[/#if]
+						<tr>
+							<td class="firstTd">发布城市：</td>
+							<td>
+								[#if circle.city != '']
+						   			${circle.city}	
+						   		[#else]
+						   			未知
+						   		[/#if]
+							</td>
+						</tr>
+						<tr>
+							<td class="firstTd">发布位置：</td>
+							<td>
+								[#if circle.address != '']
+						   			${circle.address}	
+						   		[#else]
+						   			未知
+						   		[/#if]
+							</td>
+						</tr>
+						<tr>
+							<td class="firstTd">经度：</td>
+							<td>${circle.lng!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">纬度：</td>
+							<td>${circle.lat!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">发布IP：</td>
+							<td>${circle.ip!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">机型：</td>
+							<td>
+								[#if circle.model != '']
+						   			${circle.model}	
+						   		[#else]
+						   			未知
+						   		[/#if]
+							</td>
+						</tr>
+						<tr>
+							<td class="firstTd">点赞数量：</td>
+							<td>${circle.giveCount!""}次</td>
+						</tr>
+						<tr>
+							<td class="firstTd">评论数量：</td>
+							<td>${circle.commentCount!""}次</td>
+						</tr>
+						<tr>
+							<td class="firstTd">创建时间：</td>
+							<td>${circle.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">更新时间：</td>
+							<td>${circle.updateTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="12" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryCircleList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop({callback:imagePageCallback});
+</script>

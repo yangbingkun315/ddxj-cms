@@ -1,0 +1,230 @@
+[#assign title="点点小匠-编辑官网招聘信息"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link href="${base!}/assets/cms/css/user/skin.css?[@cmsVersion /]" rel="stylesheet">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/city_data.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="webRecruitList">
+	<div class="alert alert-warning" >注：编辑官网招聘信息时，请勿修改联系人和联系电话 </div>
+	<form method="post" id="web_recruit_edit_form" action="${base}/web/recruit/edit.htm">
+		<input id="userId" type="hidden" name="webRecruit.id" value="${webRecruit.id}"/>
+		<div class="bootstrap-widget-content">
+		<div class="order-search-item">
+				<label>封面图片</label>
+				<div class="input-field clearfix">
+					<input type="hidden" id="coverImage" name="webRecruit.coverImage"/>
+					<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=coverImageUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+					<a class="galpop-single upload-image" href="${webRecruit.coverImage!""}">
+						<img  src="${webRecruit.coverImage!""}" width="100%" id="coverImage_preview" height="100%"  [#if !webRecruit?? || !webRecruit.coverImage] style="display:none;"[/#if]/>
+					</a>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>招聘标题</label>
+				<div class="input-field clearfix">
+					<input type="text" id="recruitTitle" name="webRecruit.recruitTitle" value="${(webRecruit.recruitTitle)!''}" class="input textinput-main" isRequired="true" placeholder="招聘标题，必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>招聘人数</label>
+				<div class="input-field clearfix">
+					<input type="text" id="recruitPerson" name="webRecruit.recruitPerson" fieldType="number" isRequired="true" value="${(webRecruit.recruitPerson)!''}" class="input textinput-main">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工期开始时间</label>
+				<div class="input-field clearfix">
+					<input type="text" id="startTime" name="startTime" class="input textinput-main" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" showRightMsg="false"
+							placeholder="出生日期，必填" autocomplete="off" value="${(webRecruit.startTime?string('yyyy-MM-dd HH:mm:ss'))!""}" isRequired="true">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工期结束时间</label>
+				<div class="input-field clearfix">
+					<input type="text" id="endTime" name="endTime" class="input textinput-main" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" showRightMsg="false"
+							placeholder="出生日期，必填" autocomplete="off" value="${(webRecruit.endTime?string('yyyy-MM-dd HH:mm:ss'))!""}" isRequired="true">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>承包方<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="如“中建五局”">&#xe61f;</i></label>
+				<div class="input-field clearfix">
+					<input type="text" id="contractor" name="webRecruit.contractor" value="${(webRecruit.contractor)!''}" isRequired="true" class="input textinput-main" placeholder="承包方，必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工资结算方式</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="balanceWay" name="webRecruit.balanceWay">
+						<option value="">请选择结算方式</option>
+						<option value="平方" [#if webRecruit?? && webRecruit.balanceWay == '平方']selected="selected"[/#if]>平方</option>
+						<option value="米" [#if webRecruit?? && webRecruit.balanceWay == '米']selected="selected"[/#if]>米</option>
+						<option value="天" [#if webRecruit?? && webRecruit.balanceWay == '天']selected="selected"[/#if]>天</option>
+						<option value="小时" [#if webRecruit?? && webRecruit.balanceWay == '小时']selected="selected"[/#if]>小时</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>薪资（元）</label>
+				<div class="input-field clearfix">
+					<input type="text" id="price" name="webRecruit.price" value="${(webRecruit.price)!''}" class="input textinput-main" placeholder="薪资，必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>招聘截止时间</label>
+				<div class="input-field clearfix">
+					<input type="text" id="stopTime" name="stopTime" class="input textinput-main" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" showRightMsg="false"
+							placeholder="招聘截止时间，必填" autocomplete="off" value="${(webRecruit.stopTime?string('yyyy-MM-dd HH:mm:ss'))!""}" isRequired="true">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>联系人</label>
+				<div class="input-field clearfix">
+					<input type="text" id="contact" name="webRecruit.contact" value="${(webRecruit.contact)!''}" isRequired="true" class="input textinput-main" placeholder="联系人，必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>联系电话</label>
+				<div class="input-field clearfix">
+					<input type="text" id="phone" name="webRecruit.phone" value="${(webRecruit.phone)!''}" class="input textinput-main" placeholder="联系电话，必填" fieldType="number">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工种</label>
+				<div class="input-field clearfix" style="min-height:40px;">
+					<select class="form-control textinput-main" id="categoryId" name="webRecruit.categoryId" style="height:40px;" data-placeholder="请选择工种">
+						[#if categoryUserList?? && categoryUserList?size > 0]
+							[#list categoryUserList as category]
+								<option value="${category.id}" [#if webRecruit.categoryId?? && webRecruit.categoryId == category.id]selected="selected"[/#if]>${category.categoryName}</option>
+							[/#list]
+						[/#if]
+					</select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>工作所在地</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main provinceText" id="recruitProvince" name="webRecruit.recruitProvince" onchange="changeCityText(this)" style="width:30%;display: inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main cityText" id="recruitCity" name="webRecruit.recruitCity" style="width:30%;display: inline-block;" onchange="changeAreaText(this)" >
+						<option value="">请选择市</option>
+					 </select>
+					 <select class="form-control textinput-main areaText" id="recruitArea" name="webRecruit.recruitArea" style="width:30%;display: inline-block;"  >
+						<option value="">请选择区</option>
+					 </select>
+				</div>
+			</div>
+			<!-- <div class="order-search-item">
+				<label>是否置顶</label>
+				<div class="input-field clearfix">
+					<div class="cms-checkbox">
+						<label class="el-radio">
+							<input type="radio" name="webRecruit.stick" id="stick1" value="1" [#if webRecruit?? && webRecruit.stick == 1]checked="checked"[/#if]>
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">置顶</span>
+						</label>
+						<label class="el-radio">
+							<input type="radio" name="webRecruit.stick" id="stick2" value="2" [#if webRecruit?? && webRecruit.stick == 1][#else]checked="checked"[/#if]>
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">不置顶</span>
+						</label>
+					</div>
+				</div>
+			</div> -->
+			<div class="order-search-item">
+				<label>招聘内容</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="512" id="recruitContent" name="webRecruit.recruitContent" isRequired="true" placeholder="招聘内容，必填">${(webRecruit.recruitContent)!""}</textarea>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>详细地址</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="512" id="recruitAddress" name="webRecruit.recruitAddress" isRequired="true" placeholder="详细地址（招聘所在地），必填">${(webRecruit.recruitAddress)!""}</textarea>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>备注</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="512" id="remark" name="webRecruit.remark" isRequired="true" placeholder="备注，非必填">${(webRecruit.remark)!""}</textarea>
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="submit"  name="yt0">保存</button> </div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#web_recruit_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#web_recruit_edit_form').validate())
+		{
+			if($("#categoryId").val() == null)
+			{
+				alertTip("请选择工种！",2);
+				return false;
+			}
+			removeAllRightMessage();
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			setTimeout(function(){
+				window.location.href="${base}/web/recruit/list.htm"
+			},1500)
+		}
+	}
+});
+
+changeProvinceText("#recruitProvince","${(webRecruit.recruitProvince)!'null'}","${(webRecruit.recruitCity)!'null'}","${(webRecruit.recruitArea)!'null'}");
+
+setTimeout(function(){
+	$('#web_recruit_edit_form').configValidate();
+	$('a.upload-image').galpop();
+	$('img.galpop-info').galpop();
+},100);
+
+function coverImageUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#coverImage").val("${storageUrl}" + data);
+		$("#coverImage_preview").attr("src","${storageUrl}" + data).show();
+		$("#coverImage_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<script type="text/javascript" src="../../js/proTree.js" ></script>
+<style>
+.long-a
+{
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
+<title>轮播图列表</title>
+</head>
+<body ng-app="advert" ng-controller="advertBanner">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+	<div class="order-search-item">
+	  <span class="search_title">创建时间：</span>
+	  <input type="text" name="createTime" id="createTime" ng-model="createTime"   class="input textinput-main width160" placeholder="请输入创建时间"> 
+  	</div>
+    <div class="order-search-item clear" >
+	  <button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryAdvertBannerList ('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+	  <a  ng-href="advertBannerEdit.html"  id="administrator_add" class="btn button_btn bg-deep-blue"><i class="fa  fa-edit"></i>&nbsp;添加</a>
+  	</div>  
+	</div>
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>URL</th>
+						<th>跳转链接</th>
+						<th>类型</th>
+						<th>上架时间</th>
+						<th>下架时间</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="bannerList.length > 0 " ng-repeat="banner in bannerList track by $index">
+						<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td class="long-a"><a href="{{banner.bannerUrl}}">{{banner.bannerUrl}}</a></td>
+						<td ng-bind="banner.bannerLink ? banner.bannerLink : '暂无'"></td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="banner.bannerType == 1">图片</span>
+							<span class="label label-success radius" ng-if="banner.bannerType == 2">视频</span>
+						</td>
+						<td ng-bind="banner.startTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="banner.endTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="banner.createTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="banner.updateTime.time | date:'yyyy-MM-dd'"></td>
+						<td class="td-manage"> 
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="编辑" ng-href="advertBannerEdit.html?bannerId={{banner.id}}"   href="javascript:;" >编辑</a></li> 
+							<li><a title="删除" ng-click="deleteAdvertBanner(banner.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="bannerList == null || bannerList.length <= 0 ">
+						<td class="center" colspan="10">暂无数据</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+</body>
+</html>
+<script>
+var createTime = {
+		elem: '#createTime',
+		format: 'YYYY-MM-DD',
+		// min: laydate.now(), //设定最小日期为当前日期
+		max: '2099-06-16', //最大日期
+		istime: true,
+		istoday: false,
+		choose: function(datas){
+		}
+	};
+laydate(createTime)
+
+var advertBanner = angular.module('advert',[]);
+advertBanner.controller('advertBanner',function($scope,$timeout)
+{
+	$scope.createTime="";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryAdvertBannerList = function(type)//查询列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot + '/advert/banner/list.ddxj',
+				data: {createTime:$("#createTime").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.bannerList.total;
+						$scope.bannerList = data.data.bannerList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first)
+				{
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+					{
+						$scope.queryAdvertBannerList();
+					}
+	      	    }
+			});
+		});
+	}
+	$scope.queryAdvertBannerList();
+	$scope.deleteAdvertBanner = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/delete/advert/banner.ddxj',
+				data: {bannerId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryAdvertBannerList();
+					}
+				}
+			}); 
+		});
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+						
+});
+</script>

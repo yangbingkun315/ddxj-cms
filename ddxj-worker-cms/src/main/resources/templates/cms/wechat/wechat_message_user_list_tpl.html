@@ -1,0 +1,82 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('userListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>姓名</td>
+		<td>性别</td>
+		<td>年龄</td>
+		<td>联系电话</td>
+		<td>用户角色</td>
+		<td>是否认证</td>
+		<td>群发时间</td>
+		<td>是否成功</td>
+   	</tr>
+   	[#if sendMessageUserList?? && sendMessageUserList?size > 0]
+	   	[#list sendMessageUserList as user]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="userListId" id="${user.id}" >
+					<label class="el-checkbox-style" for="${user.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${(user.user.realName)!""}</td>
+	   		<td>
+	   			[#if user.user.sex == 'M']
+	   				男
+	   			[#else]
+	   				女
+	   			[/#if]
+	   		</td>
+	   		<td>${(user.user.age)!""}</td>
+	   		<td>${(user.user.phone)!""}</td>
+	   		<td>
+	   			[#if user.user.role == '1']
+	   				工人
+	   			[#else]
+	   				工头
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			[#if user.user.isAttestation == '1']
+	   				已认证
+	   			[#else]
+	   				未认证
+	   			[/#if]
+	   		</td>
+	   		<td>${user.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+	   		<td>
+	   			[#if user.sendType == 1]
+	   				成功
+	   			[#else]
+	   				失败
+	   			[/#if]
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="15" class="center">暂无数据</td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			querySendMessageUserList(pagination.pageNumber);
+		}
+	});
+}
+</script>

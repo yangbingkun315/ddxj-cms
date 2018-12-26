@@ -1,0 +1,94 @@
+[#assign title="点点小匠-预约咨询列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="bespeakList">
+	<div class="alert alert-warning" >注：预约咨询列表 </div>
+	<form method="post" id="bespeak_record_from" action="${base}/sites/bespeak/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label class="search_title">公司名称：</label>
+			  <input type="text" name="companyName" id="companyName" placeholder="公司关键字"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label class="search_title">联系电话：</label>
+			  <input type="text" name="phone" id="phone" placeholder="请输入联系电话"  class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  	<label class="search-title">受理状态：</label>
+			    <select class="form-control" id="status" name="status" >
+					<option  value="">受理状态</option>
+					<option value="1">未受理</option>
+					<option value="2">已受理</option>
+				</select>
+		  	</div>
+		  	<div class="search-item" style="width: 430px">
+			  <label class="search-title">咨询时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryBespeakList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/sites/bespeak_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#bespeak_record_from').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryBespeakList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#bespeak_record_from').submit();
+}
+
+queryBespeakList(1);
+function updateBespeakStatus(id)
+{
+	doPost("${base}/sites/bespeak/update.htm",{id:id},function(data){
+		if(data.response)
+		{
+			queryBespeakList();
+		}
+	})
+}
+function confirmBespeakRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该预约吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/sites/bespeak/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryBespeakList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

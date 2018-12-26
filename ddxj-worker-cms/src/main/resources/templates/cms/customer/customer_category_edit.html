@@ -1,0 +1,104 @@
+<div class="cms-edit">
+	<form action="${base}/customer/user/category/edit.htm" method="post" id="cms_category_edit">
+		<input type="hidden" id="categoryId" name="id" value="${(category.id)!0}" />
+		<div class="table-making">
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">工种排序：</div>
+						<div class="content">
+							<input type="text" value="${(category.categorySort)!""}" id="categorySort" name="categorySort" class="input textinput-main"  placeholder="请输入工种排序" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">上级工种：</div>
+						<div class="content">
+							<select class="form-control" id="categoryParentId" name="categoryParentId" >
+								[#if category.parentId?? && category.parentId != 0]
+								<option value="${categoryParent.id}" >${categoryParent.categoryName}</option>
+								[#else]
+								<option value="0">一级工种</option>
+								[/#if]
+								[#if categoryParentList?? && categoryParentList?size > 0]
+									[#if category.parentId?? && category.parentId != 0]
+										<option value="0">一级工种</option>
+										[#list categoryParentList as categoryParent]
+											<option value="${categoryParent.id}" >${categoryParent.categoryName}</option>
+										[/#list]
+									[#else]
+										[#list categoryParentList as categoryParent]
+											<option value="${categoryParent.id}" >${categoryParent.categoryName}</option>
+										[/#list]
+									[/#if]
+								[/#if]
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">工种名称：</div>
+						<div class="content">
+							<input type="text" value="${(category.categoryName)!""}" id="categoryName" name="categoryName" class="input textinput-main"  placeholder="请输入工种名称" required autocomplete="off" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div class="item clear">
+						<div class="title">包工类型：</div>
+						<div class="content">
+							<select class="form-control" id="categoryTypeId" name="categoryType" required autocomplete="off" isRequired="true">
+								[#if category??]
+									[#if category.categoryType == '1']
+										<option value="${category.categoryType}" >总包</option>
+										<option value="2" >分包</option>
+									[#elseif category.categoryType == '2']
+										<option value="${category.categoryType}" >分包</option>
+										<option value="1" >总包</option>
+									[/#if]
+								[#else]
+								<option value="">请选择包工类型</option>
+								<option value="1" >总包</option>
+								<option value="2" >分包</option>
+								[/#if]
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+	<div class="row">
+	  <div class="cell">
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	  </div>
+	</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#cms_category_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		return true;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 TINY.box.show("保存成功！",0,0,0,0,2);
+		 TB_remove();
+		 $('#cms_category_edit').submit();
+	}
+});
+</script>

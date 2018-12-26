@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<title>实名认证列表</title>
+</head>
+<body ng-app="realAuth" ng-controller="userRealAuth">
+<style>
+	.add_menber li .label_name, .member_content li .label_name{width:100px;}
+</style>
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+	
+	<div class="order-search-item">
+	  <span class="search_title">真实姓名：</span>
+	  <input type="text" name="realName" id="realName" ng-model="realName"   class="input textinput-main width160" placeholder="请输入用户姓名"> 
+  	</div>
+	<div class="order-search-item">
+	  <span class="search_title">身份证号：</span>
+	  <input type="text" name="idCardNumber" id="idCardNumber" ng-model="idCardNumber"   class="input textinput-main width160" placeholder="请输入身份证号"> 
+  	</div>
+	<div class="order-search-item">
+	  <span class="search_title">审核状态：</span>
+	  <select class="width160"  name="admin-role" size="1" ng-model="realStatus">
+			<option value="">请选择审核状态</option>
+			<option value="1">审核中</option>
+			<option value="2">审核失败</option>
+			<option value="3">审核成功</option>
+	 </select>
+  	</div>
+  	<div class="order-search-item">
+		<button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryRealAuthList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+  	</div>
+	</div>
+	<div class="bkg_List clearfix datatable_height confirm">
+		<table class="table  table_list table_striped table-bordered">
+			<thead>
+				<tr>
+				<th>真实姓名</th>
+				<th>联系电话</th>
+				<th style="width:100px">身份证正面</th>
+				<th style="width:100px" >身份证反面</th>
+				<th>身份证号</th>
+				<th style="width:100px">手持身份证</th>
+				<th>审核状态</th>
+				<th>身份证所在地</th>
+				<th>申请时间</th>
+				<th>操作</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr ng-if="realAuthList.length > 0 " ng-repeat="auth in realAuthList track by $index">
+					<td ng-bind="auth.realName"></td>
+					<td ng-bind="auth.user.phone"></td>
+					<td ><a href="javascript:;" ng-click="showBigImage(auth.idCardFront)" >点击查看</a></td>
+					<td ><a href="javascript:;" ng-click="showBigImage(auth.idCardOpposite)">点击查看</a></td>
+					<td ng-bind="auth.idCardNumber"></td>
+					<td ><a href="javascript:;" ng-click="showBigImage(auth.idCardHand)">点击查看</a></td>
+					<td ng-if="auth.realStatus == 1">
+						审核中
+					</td>
+					<td ng-if="auth.realStatus == 2">
+						审核失败
+					</td>
+					<td ng-if="auth.realStatus == 3">
+						审核成功
+					</td>
+					<td ng-bind="auth.idCardAddress"></td>
+					<td ng-bind="auth.createTime.time | date:'yyyy-MM-dd HH:mm'"></td>
+					<td class="td-manage">
+						<div class="btn_group">
+						<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+						<ul class="btn_group_item none">
+						<li><a title="审核通过" ng-click="updateRealAuthTrue(auth.id);" ng-if="auth.realStatus == 1" >审核通过</a> </li> 
+						<li><a title="拒绝通过" ng-click="updateRealAuthFalse(auth.id);" ng-if="auth.realStatus == 1" >拒绝通过</a></li>
+						<li><a title="删除" ng-click="deleteRecruitUser(auth.id)" >删除</a></li>
+						</ul>
+						</div>
+					</td>
+			    </tr>
+			    <tr ng-if="realAuthList == null || realAuthList.length <= 0 ">
+			   		<td class="center" colspan="13">暂无数据<b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+	<a class="close" ng-click="hideBigImage()"></a>
+	<div class="hide-layer" ng-click="hideBigImage()"></div>
+	<div class="add_style add_administrator_style">
+		<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+	</div>
+</div>
+</body>
+</html>
+<script>
+var realAuthMapper = angular.module('realAuth',[]);
+realAuthMapper.controller('userRealAuth', function($scope,$timeout){
+	$scope.realName="";
+	$scope.idCardNumber="";
+	$scope.realStatus="";
+	$scope.pageNum=1;
+	$scope.pageSize = 20;
+	$scope.queryRealAuthList = function(type)//查询招聘列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			});
+			Ajax.post({
+				url: getRoot+'/user/real/auth/list.ddxj',
+				data: {realName:$scope.realName,idCardNumber:$scope.idCardNumber,realStatus:$scope.realStatus,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.realAuthList.total;
+						$scope.realAuthList = data.data.realAuthList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.queryRealAuthList();
+                    }
+	      	    }
+			});
+		});
+	}
+	$scope.queryRealAuthList();
+	
+	$scope.deleteRecruitUser = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/user/realAuth/delete.ddxj',
+				data: {realId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryRealAuthList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRealAuthTrue = function(id)
+	{
+		layer.confirm("确定要审核通过吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/user/realAuth/update/status.ddxj',
+				data: {id:id,status:3},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.queryRealAuthList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRealAuthFalse = function(id)
+	{
+		layer.confirm("确定要拒绝通过吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/user/realAuth/update/status.ddxj',
+				data: {id:id,status:2},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.queryRealAuthList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+	
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+});
+
+
+</script>
+<script src="../../js/common/initUtils.js" type="text/javascript"></script>

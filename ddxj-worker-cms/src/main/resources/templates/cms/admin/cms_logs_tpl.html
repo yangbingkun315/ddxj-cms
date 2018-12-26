@@ -1,0 +1,38 @@
+ <div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td>操作用户</td>
+   		<td>操作内容</td>
+   		<td>操作IP</td>
+   		<td>操作时间</td>
+   	</tr>
+   	[#if cmsLogsList?? && cmsLogsList?size > 0]
+	   	[#list cmsLogsList as logsList]
+	   	<tr>
+	   		<td>${logsList.user.userName!""}</td>
+	   		<td>${logsList.logContent!""}</td>
+	   		<td>${logsList.logIpAddress!""}</td>
+	   		<td>${logsList.logTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="6" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryLogsList(pagination.pageNumber);
+		}
+	});
+}
+</script>

@@ -1,0 +1,72 @@
+[#assign title="点点小匠-微信用户列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<style>
+#replyText
+{
+	width:250px;
+	height:100px!important;
+}
+.textinput-main
+{
+	width:250px!important;
+}
+</style>
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >注：管理微信公众号中的所有粉丝，粉丝来源于关注过公众号的用户 </div>
+	[#assign wechatTabActive = 2]
+	[#include "/wechat/wechat_tab.html"]
+	<form method="post" id="cms_wechat_user_form" action="${base}/query/wechatUser/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search-title">用户昵称：</label >
+			  <input type="text" name="nickName" id="nickName" placeholder="用户昵称关键字"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label  class="search-title">关注时间：</label >
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning">查询</button>
+		  </div>
+		</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_user_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_wechat_user_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryWechatUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_wechat_user_form').submit();
+}
+
+queryWechatUserList(1);
+</script>
+[#include "/common/cms_footer.html"]

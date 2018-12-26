@@ -1,0 +1,228 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('recruitIdList')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>招聘标题</td>
+   		<td>招聘截止时间</td>
+   		<td>工期开始时间</td>
+   		<td>工期结束时间</td>
+   		<td>承包方</td>
+   		<td>薪资</td>
+   		<td>省</td>
+   		<td>市</td>
+   		<td>县</td>
+   		<td>工种</td>
+   		<td>姓名</td>
+   		<td>电话</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>审核状态</td>
+   		<td>是否置顶</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if webRecruitList?? && webRecruitList?size > 0]
+	   	[#list webRecruitList as recruitList]
+	   	<tr class="pointer [#if recruitList.validateStatus == '2']warning[/#if]">
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="recruitIdList" id="${recruitList.id}" >
+					<label class="el-checkbox-style" for="${recruitList.id}"></label>
+				</div>
+		   	</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.recruitTitle!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.stopTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.startTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.endTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.contractor!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">￥${recruitList.price!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.recruitProvince!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.recruitCity!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.recruitArea!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">
+	   			[#if recruitList.categoryName??]
+	   				<label href="javascript:;" class="label label-warning" >${recruitList.categoryName}</label>
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.contact!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.phone!""}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.createTime?string("yyyy-MM-dd   HH:mm:ss")}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">${recruitList.updateTime?string("yyyy-MM-dd   HH:mm:ss")}</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">
+	   			[#if recruitList.validateStatus == '1']
+	   				<button type="button" class="btn btn-primary btn-xs">审核中</button>
+	   			[#elseif recruitList.validateStatus == '2']
+	   				<button type="button" class="btn btn-danger btn-xs" >审核失败</button>
+   				[#elseif recruitList.validateStatus == '3']
+   				<button type="button" class="btn btn-success btn-xs">审核成功</button>
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('recruitList_detail_${recruitList.id}');">
+	   			[#if recruitList.stick == '1']
+	   				<button type="button" class="btn btn-success btn-xs">置顶</button>
+	   			[#elseif recruitList.stick == '2']
+	   				<button type="button" class="btn btn-default btn-xs">不置顶</button>
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   		[@shiro.hasPermission name="system:web:recruit:manager:group"]
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+   						[@shiro.hasPermission name="system:web:recruit:edit"]
+				   			<li>
+				   				<a href="${base}/web/recruit/edit.htm?id=${recruitList.id}">编辑</a>
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+				   		[@shiro.hasPermission name="system:web:recruit:stick"]
+				   			<li>
+				   				[#if recruitList.stick == 2]
+				   					<a onclick="confirmDisableRecruit(${recruitList.id},1)">置顶</a>
+				   				[#else]
+				   					<a onclick="confirmDisableRecruit(${recruitList.id},2)">取消置顶</a>
+				   				[/#if]
+				   			</li>
+				   			<li class="divider"></li>
+				   		[/@shiro.hasPermission]
+			   			[@shiro.hasPermission name="system:web:recruit:delete"]
+				   			<li>
+				   				<a onclick="confirmDeleteWebRecruit(${recruitList.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+		  	[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	<tr id="recruitList_detail_${recruitList.id}" class="cms_list_detail none" item="detail">
+	   	<td></td>
+			<td colspan="14" tdType="orderItemDetail">
+				<table class="table table-hover table-striped table-bordered draggable sortable order_item_detail">
+					<tbody>
+						<tr>
+							<td class="firstTd">招聘标题：</td>
+							<td class="font_red">${recruitList.recruitTitle!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">招聘内容：</td>
+							<td>${recruitList.recruitContent!""}</td>
+						</tr>
+						[#if recruitList.coverImage??]
+						<tr>
+							<td class="firstTd">封面图片：</td>
+							<td>
+					   			<a class="label label-default galpop-single openImage" href="${recruitList.coverImage!''}" >查看图片</a>
+				   			</td>
+						</tr>
+						[/#if]
+						<tr>
+							<td class="firstTd">联系人：</td>
+							<td>${recruitList.contact!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">联系方式：</td>
+							<td>${recruitList.phone!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">详细地址：</td>
+							<td>${recruitList.recruitAddress!""} <a href="javascript:;" onclick="openRecruitAddressMap(${recruitList.recruitLong!0},${recruitList.recruitLat!0})">查看地图</a></td>
+						</tr>
+						<tr>
+							<td class="firstTd">招聘人数：</td>
+							<td>${recruitList.recruitPerson!0}人</td>
+						</tr>
+						<tr>
+							<td class="firstTd">备注：</td>
+							<td>${recruitList.remark!""}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">工期开始时间：</td>
+							<td>${recruitList.startTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">工期结束时间：</td>
+							<td>${recruitList.endTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">招聘截止时间：</td>
+							<td>${recruitList.stopTime?string("yyyy-MM-dd  HH:mm:ss")}</td>
+						</tr>
+						<tr>
+							<td class="firstTd">审核状态：</td>
+							<td>
+					   			[#if recruitList.validateStatus == '1']
+					   				<button type="button" class="btn btn-primary btn-xs">审核中</button>
+					   			[#elseif recruitList.validateStatus == '2']
+					   				<button type="button" class="btn btn-danger btn-xs">审核失败</button>
+				   				[#elseif recruitList.validateStatus == '3']
+				   				<button type="button" class="btn btn-success btn-xs">审核成功</button>
+					   			[/#if]
+					   		</td>
+						</tr>
+						<tr>
+							<td class="firstTd">招聘状态：</td>
+							<td>
+					   			[#if recruitList.recruitStatus == '0']
+					   				<button type="button" class="btn btn-default btn-xs">未开始</button>
+					   			[#elseif recruitList.recruitStatus == '1']
+					   				<button type="button" class="btn btn-danger btn-xs">进行中</button>
+				   				[#elseif recruitList.recruitStatus == '2']
+				   				<button type="button" class="btn btn-success btn-xs">已结束</button>
+					   			[/#if]
+					   		</td>
+						</tr>
+						<tr>
+							<td class="firstTd">是否置顶：</td>
+							<td>
+					   			[#if recruitList.stick == '1']
+					   				<button type="button" class="btn btn-success btn-xs">置顶</button>
+					   			[#elseif recruitList.stick == '2']
+					   				<button type="button" class="btn btn-default btn-xs">不置顶</button>
+					   			[/#if]
+					   		</td>
+						</tr>
+						<tr>
+							<td class="firstTd">创建时间：</td>
+							<td>
+					   			${recruitList.createTime?string("yyyy-MM-dd HH:mm:ss")}
+					   		</td>
+						</tr>
+						<tr>
+							<td class="firstTd">更新时间：</td>
+							<td>
+					   			${recruitList.updateTime?string("yyyy-MM-dd HH:mm:ss")}
+					   		</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="20" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryWebRecruitList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop({callback:imagePageCallback});
+$('.openImage').galpop();
+</script>

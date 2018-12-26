@@ -1,0 +1,90 @@
+.hide-layer
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.8);
+}
+.big-img
+{
+	position: fixed;
+    top: 10%;
+    left: 40%;
+    max-width: 450px;
+    max-height: 450px;
+    z-index: 10000;
+}
+.close 
+{
+    z-index: 99993;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 49px;
+    height: 49px;
+    cursor: pointer;
+    background: transparent url(../../images/close_btn.png) no-repeat 50% 50%;
+    opacity: 1;
+    filter: alpha(opacity=100);
+    border-radius: 0 0 0 4px;
+}
+.top15
+{
+	margin-top: 15px;
+}
+.advertise-type
+{
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #b5b5b5;
+    text-align: center;
+    border-radius: 5px;
+}
+.type-item
+{
+    color: black;
+    width: 33%;
+    height: 29px;
+    line-height: 30px;
+}
+.type-item:nth-child(2)
+{
+	border-left: 1px solid #b5b5b5;
+	border-right: 1px solid #b5b5b5;
+}
+.advertise-type .on:nth-child(1)
+{
+	background-color: #60b878;
+	color: white;
+	border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.advertise-type .on:nth-child(2)
+{
+	background-color: #60b878;
+	color: white;
+}
+.advertise-type .on:nth-child(3)
+{
+	background-color: #60b878;
+	color: white;
+	border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.box-making
+{
+	display: box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    box-orient: horizontal;
+    position: relative;
+}
+.box-making .making-item
+{
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    box-flex: 1;
+}

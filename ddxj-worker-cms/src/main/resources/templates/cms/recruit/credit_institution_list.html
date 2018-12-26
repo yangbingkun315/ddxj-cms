@@ -1,0 +1,93 @@
+[#assign title="点点小匠-机构记录列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="creditInstList">
+	<div class="alert alert-warning" >注：授信机构列表 </div>
+	<form method="post" id="credit_org_form" action="${base}/recruit/credit/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search_title">机构名字：</label >
+			  <input type="text" name="creditName" id="creditName" placeholder="机构名称关键字"  class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+			<div class="search-item">
+			  <label  class="search_title">机构代码：</label >
+			  <input type="text" name="creditCode" id="creditCode"  placeholder="请输入机构代码" class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label  class="search_title">机构地址：</label >
+			  <input type="text" name="creditAddress" id="creditAddress" placeholder="地址关键字"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  <div class="search-button">
+		     <button type="button" class="btn btn-warning" onclick="queryCreditORGList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:credit:org:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateCreditInst()">添加授信机构</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/recruit/credit_institution_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#credit_org_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryCreditORGList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#credit_org_form').submit();
+}
+
+queryCreditORGList(1);
+function updateCreditInst(id)
+{
+	var url = "${base}/recruit/credit/org/edit.htm"
+	if(id)
+	{
+		url += "?creditId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改机构" : "新增机构","width":450,"height":680});
+}
+function confirmDeleteUser(id)
+{
+	showConfirmDialog({message : "确认要删除此授信机构吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/recruit/credit/delete.htm",{creditId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryCreditORGList();
+			}
+		});
+	});
+}
+function addReviewFailureValue(id)
+{
+	$("#recruitId").val(id);
+}
+</script>
+[#include "/common/cms_footer.html"]

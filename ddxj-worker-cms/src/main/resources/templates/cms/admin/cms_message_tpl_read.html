@@ -1,0 +1,87 @@
+ <div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('messageListId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>消息标题</td>
+   		<td>消息类型</td>
+   		<td>消息内容</td>
+   		<td>消息参数</td>
+   		<td>状态</td>
+   		<td>创建时间</td>
+   		
+   	</tr>
+   	[#if messageList?? && messageList?size > 0]
+	   	[#list messageList as messageList]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="messageListId" id="${messageList.id}" >
+					<label class="el-checkbox-style" for="${messageList.id}"></label>
+				</div>
+		   	</td>
+	   		<td>${messageList.messageTitle!""}</td>
+	   		<td>
+	   			[#if messageList.messageType??]
+	   				[#if messageList.messageType == '1']
+	   					发布审核
+	   				[#elseif messageList.messageType == '2']
+	   					实名认证
+	   				[#elseif messageList.messageType == '3']
+	   					提现通知
+	   				[#elseif messageList.messageType == '4']
+	   					申请工头
+	   				[#elseif messageList.messageType == '5']
+	   					项目报名
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${messageList.messageContent!""}</td>
+	   		<td>
+	   			[#if messageList.messageParameter??]
+	   			[#else]
+	   				暂无
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			[#if messageList.messageRead??]
+	   				[#if messageList.messageRead == '1']
+	   					未读
+	   				[#elseif messageList.messageRead == '2']
+	   					已读
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${messageList.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="8" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryMessageList(pagination.pageNumber);
+		}
+	});
+}
+
+</script>

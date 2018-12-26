@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="never">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>资讯列表</title>
+</head>
+<style>
+#content_detail img
+{
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
+<body ng-app="infor" ng-controller="information">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+		<div class="order-search-item">
+			<span class="search_title">资讯标题：</span>
+			<input type="text" name="infoTitle" id="infoTitle" ng-model="infoTitle"   class="input textinput-main width160" placeholder="请输入资讯标题"> 
+		</div>
+		<div class="order-search-item">
+			<span class="search_title">资讯标签：</span>
+			<select id="typeId" ng-model="typeId">
+           		<option value="">请选择资讯标签</option>
+           		<option value="{{type.id}}" ng-repeat="type in categoryTypeList">{{type.name}}</option>
+   			</select>
+		</div>
+		<div class="order-search-item">
+			<span class="search_title">创建时间：</span>
+			<input type="text" name="createTime" id="createTime" ng-model="createTime"   class="input textinput-main width160" > 
+		</div>
+		<div class="order-search-item clear" >
+			<button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryInformationList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+			<a ng-href="informationEdit.html"  type="button"  id="administrator_add" class="btn button_btn bg-deep-blue"><i class="fa  fa-edit"></i>&nbsp;新增资讯</a>	 
+		</div>
+	</div>   
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th>资讯标题</th>
+						<th>资讯类型</th>
+						<th>资讯分类</th>
+						<th>是否置顶</th>
+						<th>资讯简介</th>
+						<th>资讯内容</th>
+						<th>作者</th>
+						<th>图一</th>
+						<th>图二</th>
+						<th>图三</th>
+						<th>资讯标注</th>
+						<th>上架时间</th>
+						<th>下架时间</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>阅读人数</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="informationList.length > 0 " ng-repeat="infor in informationList track by $index">
+						<td><a href="javascript:" ng-click="queryTitleDetails('资讯标题',infor.infoTitle)">查看资讯标题</a></td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="infor.infoType == 1">纯文字</span>
+							<span class="label label-success radius" ng-if="infor.infoType == 2">多图模式</span>
+							<span class="label label-success radius" ng-if="infor.infoType == 3">视频模式</span>
+							<span class="label label-success radius" ng-if="infor.infoType == 4">单图模式</span>
+						</td>
+						<td class="td-status">
+							<b ng-if="infor.categoryList" ng-repeat="cate in infor.categoryList track by $index">
+								<b ng-if="$index == 0">
+									<span ng-bind="cate.name" class="label label-success radius"></span>
+								</b>
+								<b ng-if="$index > 0">
+									&nbsp;、&nbsp;<span ng-bind="cate.name" class="label label-success radius"></span>
+								</b>
+							</b>
+							<b ng-if="infor.categoryList == null || infor.categoryList.length <= 0">
+								<span class="btn btn-xs btn-delete">暂无</span>
+							</b>
+						</td>
+						<td class="td-status">
+							<span class="label label-success radius" ng-if="infor.stick == 1">置顶</span>
+							<span class="label label-success radius" ng-if="infor.stick == 2">不置顶</span>
+						</td>
+						<td><a href="javascript:" ng-click="queryTitleDetails('资讯简介',infor.infoSummary)">查看资讯简介</a></td>
+						<td><a href="javascript:" ng-click="queryTitleDetails('资讯内容',infor.infoContent)">查看资讯内容</a></td>
+						<td ng-bind="infor.author ? infor.author : '未知'"></td>
+						<td ng-if="infor.infoType == 3">
+							<span class="label label-success radius" ng-if="infor.infoType == 3">
+								<a ng-href="{{infor.imageOne}}" style="color:white;">点击播放</a>
+							</span>
+						</td>
+						<td ng-if="infor.infoType != 3">
+							<img style="width:100px;height:100px;" ng-click="showBigImage(infor.imageOne)" ng-src="{{infor.imageOne}}" ng-if="infor.imageOne"/>
+						</td>
+						<td><img style="width:100px;height:100px;" ng-click="showBigImage(infor.imageTwo)" ng-src="{{infor.imageTwo}}" ng-if="infor.imageTwo"/></td>
+						<td><img style="width:100px;height:100px;" ng-click="showBigImage(infor.imageThree)" ng-src="{{infor.imageThree}}" ng-if="infor.imageThree"/></td>
+						<td ng-bind="infor.infoLabel ? infor.infoLabel : '暂无'"></td>
+						<td ng-bind="infor.startTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="infor.endTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="infor.createTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="infor.updateTime.time | date:'yyyy-MM-dd'"></td>
+						<td ng-bind="infor.readPeople ? infor.readPeople : '0'"></td>
+						<td class="td-manage">
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="编辑" ng-href="informationEdit.html?inforId={{infor.id}}"   href="javascript:;" >编辑</a></li> 
+							<li><a title="删除" ng-click="deleteInformation(infor.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div> 
+						</td>
+					</tr>
+					<tr ng-if="informationList == null || informationList.length <= 0 ">
+						<td class="center" colspan="19">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+	<a class="close" ng-click="hideBigImage()"></a>
+	<div class="hide-layer" ng-click="hideBigImage()"></div>
+	<div class="add_style add_administrator_style">
+		<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+	</div>
+</div>
+
+<div class="userinfo_style" id="content_detail" style="display: none">
+	<div class="member_show" >
+		<div class="member_content">
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+<script>
+
+function imageDataUrl()
+{
+	$("img").each(function(){
+		var dataSrc = $(this).attr("data-src")
+		if(isNotNull(dataSrc))
+		{
+			$(this).attr("src",dataSrc);
+		}
+	});
+}
+
+var createTime = {
+		elem: '#createTime',
+		format: 'YYYY-MM-DD',
+		// min: laydate.now(), //设定最小日期为当前日期
+		max: '2099-06-16', //最大日期
+		istime: true,
+		istoday: false,
+		choose: function(datas){
+		}
+	};
+laydate(createTime)
+
+var infor = angular.module('infor',[]);
+infor.controller('information',function($scope,$timeout)
+{
+	$scope.typeId = null;
+	$scope.createTime="";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryInformationList = function(type)//查询列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot + '/info/mation/list.ddxj',
+				data: {typeId:$("#typeId").val(),infoTitle:$("#infoTitle").val(),createTime:$("#createTime").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.informationList.total;
+						$scope.informationList = data.data.informationList.list;
+						$scope.categoryTypeList = data.data.categoryList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first)
+				{
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+					{
+						$scope.queryInformationList();
+					}
+	      	    }
+			});
+		});
+	}
+	$scope.queryInformationList();
+	$scope.deleteInformation = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/delete/info/mation.ddxj',
+				data: {inforId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryInformationList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+	
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+	
+	$scope.queryTitleDetails = function(title,content)//查询用户详情
+	{
+		layer.open({
+			type: 1,
+			title: title,
+			maxmin: true, 
+			shadeClose:false, //点击遮罩关闭层
+			area : ['400px' , '90%'],
+			content:$('#content_detail'),
+		})
+		
+		$(".member_content").html(content);
+		imageDataUrl();
+	}
+	
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+						
+});
+</script>

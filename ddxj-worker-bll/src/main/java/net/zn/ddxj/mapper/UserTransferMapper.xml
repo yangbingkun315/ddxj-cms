@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.UserTransferMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.UserTransfer" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_id" property="recruitId" jdbcType="INTEGER" />
+        <result column="withdraw_id" property="withdrawId" jdbcType="INTEGER" />
+        <result column="wehat_pay_no" property="wehatPayNo" jdbcType="VARCHAR" />
+        <result column="from_user_id" property="fromUserId" jdbcType="INTEGER" />
+        <result column="money" property="money" jdbcType="DECIMAL" />
+        <result column="to_user_id" property="toUserId" jdbcType="INTEGER" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="transfer_way" property="transferWay" jdbcType="INTEGER" />
+        <result column="transfer_desc" property="transferDesc" jdbcType="VARCHAR" />
+        <result column="transfer_type" property="transferType" jdbcType="INTEGER" />
+        <result column="unit" property="unit" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="to_overplus_balance" property="toOverplusBalance" jdbcType="DECIMAL" />
+        <result column="from_overplus_balance" property="fromOverplusBalance" jdbcType="DECIMAL" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!-- 一对一 关系 -->
+        <association property="toUser" column="to_user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail"></association>
+        <association property="fromUser" column="from_user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail"></association>
+        <association property="recruit" column="recruit_id" select="net.zn.ddxj.mapper.RecruitMapper.queryRecruitByIdCut"></association>
+        <association property="withdraw" column="withdraw_id" select="net.zn.ddxj.mapper.UserWithdrawMapper.selectByPrimaryKey"></association>
+        <association property="payment" column="wehat_pay_no" select="net.zn.ddxj.mapper.PaymentRecordMapper.selectPayOutTradeNo"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_id, withdraw_id, wehat_pay_no, from_user_id, money, to_user_id, order_no, 
+        transfer_way, transfer_desc, transfer_type, unit, count, price, to_overplus_balance, from_overplus_balance,
+        create_time, update_time, flag
+    </sql>
+    
+    <!-- 根据订单编号查找记录  -->
+    <select id="selectByOutTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    	select * from zn_user_transfer where wehat_pay_no = #{outTradeNo} and flag = 1
+    </select>
+    
+    <!-- 查询收入资金记录 -->
+    <select id="queryUserToUserMoneyLog" resultType="map" parameterType="java.lang.Integer" >
+        select DISTINCT(select sum(money) from zn_user_transfer zut0 where zut0.to_user_id = #{userId} and zut0.transfer_type = 1 and zut0.flag = 1) as zongjiSR,
+		(select sum(money) from zn_user_transfer zut1 where zut1.to_user_id = #{userId} and zut1.transfer_type = 1 and zut1.flag = 1 and to_days(zut1.create_time) = to_days(now())) as todaySR,
+		(select sum(money) from zn_user_transfer zut2 where zut2.to_user_id = #{userId} and zut2.transfer_type = 1 and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= date(zut2.create_time)) as weekSR, 
+		(select sum(money) from zn_user_transfer zut3 where zut3.to_user_id = #{userId} and zut3.transfer_type = 1 and DATE_FORMAT(zut3.create_time,'%Y-%m') = DATE_FORMAT(CURDATE(),'%Y-%m')) as monthSR 
+		FROM zn_user_transfer zut where zut.to_user_id = #{userId} and zut.flag = 1
+    </select>
+	
+	<!-- 查询所有的资金变动 -->
+    <select id="totalMoneyByType" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+        select 
+        sum(money)
+        from zn_user_transfer
+        where 
+        <if test="toUser != null and toUser == 1">
+	        from_user_id = #{userId} 
+        </if>
+        <if test="toUser != null and toUser == 2">
+	        to_user_id = #{userId}
+        </if>
+        and transfer_type = #{type} and flag = 1
+    </select>
+    
+    <!-- 查询今天的资金变动 -->
+    <select id="sumMoneyByTypeAndToday" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+        select 
+        sum(money)
+        from zn_user_transfer
+        where 
+        <if test="toUser != null and toUser == 1">
+	        from_user_id = #{userId} 
+        </if>
+        <if test="toUser != null and toUser == 2">
+	        to_user_id = #{userId}
+        </if>
+        and transfer_type = #{type} and to_days(create_time) = to_days(now()) and flag = 1
+    </select>
+    
+    <!-- 查询本周的资金变动 -->
+    <select id="sumMoneyByTypeAndWeek" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+        select 
+        sum(money)
+        from zn_user_transfer
+        where 
+        <if test="toUser != null and toUser == 1">
+	        from_user_id = #{userId} 
+        </if>
+        <if test="toUser != null and toUser == 2">
+	        to_user_id = #{userId}
+        </if> 
+        and transfer_type = #{type} and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= date(create_time) and flag = 1
+    </select>
+    
+    <!-- 查询本月的资金变动 -->
+    <select id="sumMoneyByTypeAndMonth" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+        select 
+        sum(money)
+        from zn_user_transfer
+        where
+        <if test="toUser != null and toUser == 1">
+	        from_user_id = #{userId} 
+        </if>
+        <if test="toUser != null and toUser == 2">
+	        to_user_id = #{userId}
+        </if> 
+		and transfer_type = #{type} and DATE_FORMAT(create_time,'%Y-%m') = DATE_FORMAT(CURDATE(),'%Y-%m')  and flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user_transfer
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <select id="selectByWithdrawId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user_transfer
+        where withdraw_id = #{withdrawId,jdbcType=INTEGER} and flag = 1
+    </select>
+	
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_user_transfer
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.UserTransfer" >
+        insert into zn_user_transfer (id, recruit_id, withdraw_id, 
+            wehat_pay_no, from_user_id, money, 
+            to_user_id, order_no, transfer_way, 
+            transfer_desc, transfer_type, unit, 
+            count, price, to_overplus_balance, from_overplus_balance,
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{recruitId,jdbcType=INTEGER}, #{withdrawId,jdbcType=INTEGER}, 
+            #{wehatPayNo,jdbcType=VARCHAR}, #{fromUserId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, 
+            #{toUserId,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{transferWay,jdbcType=INTEGER}, 
+            #{transferDesc,jdbcType=VARCHAR}, #{transferType,jdbcType=INTEGER}, #{unit,jdbcType=VARCHAR}, 
+            #{count,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},#{toOverplusBalance,jdbcType=DECIMAL},#{fromOverplusBalance,jdbcType=DECIMAL},
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.UserTransfer" useGeneratedKeys="true" keyProperty="id">
+        insert into zn_user_transfer
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="withdrawId != null" >
+                withdraw_id,
+            </if>
+            <if test="wehatPayNo != null" >
+                wehat_pay_no,
+            </if>
+            <if test="fromUserId != null" >
+                from_user_id,
+            </if>
+            <if test="money != null" >
+                money,
+            </if>
+            <if test="toUserId != null" >
+                to_user_id,
+            </if>
+            <if test="orderNo != null" >
+                order_no,
+            </if>
+            <if test="transferWay != null" >
+                transfer_way,
+            </if>
+            <if test="transferDesc != null" >
+                transfer_desc,
+            </if>
+            <if test="transferType != null" >
+                transfer_type,
+            </if>
+            <if test="unit != null" >
+                unit,
+            </if>
+            <if test="count != null" >
+                count,
+            </if>
+            <if test="price != null" >
+                price,
+            </if>
+            <if test="toOverplusBalance != null" >
+               to_overplus_balance,
+            </if>
+            <if test="fromOverplusBalance != null" >
+               from_overplus_balance,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="withdrawId != null" >
+                #{withdrawId,jdbcType=INTEGER},
+            </if>
+            <if test="wehatPayNo != null" >
+                #{wehatPayNo,jdbcType=VARCHAR},
+            </if>
+            <if test="fromUserId != null" >
+                #{fromUserId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="toUserId != null" >
+                #{toUserId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null" >
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="transferWay != null" >
+                #{transferWay,jdbcType=INTEGER},
+            </if>
+            <if test="transferDesc != null" >
+                #{transferDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="transferType != null" >
+                #{transferType,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null" >
+                #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                #{count,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="toOverplusBalance != null" >
+               #{toOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="fromOverplusBalance != null" >
+              #{fromOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.UserTransfer" >
+        update zn_user_transfer
+        <set >
+            <if test="recruitId != null" >
+                recruit_id = #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="withdrawId != null" >
+                withdraw_id = #{withdrawId,jdbcType=INTEGER},
+            </if>
+            <if test="wehatPayNo != null" >
+                wehat_pay_no = #{wehatPayNo,jdbcType=VARCHAR},
+            </if>
+            <if test="fromUserId != null" >
+                from_user_id = #{fromUserId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="toUserId != null" >
+                to_user_id = #{toUserId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null" >
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="transferWay != null" >
+                transfer_way = #{transferWay,jdbcType=INTEGER},
+            </if>
+            <if test="transferDesc != null" >
+                transfer_desc = #{transferDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="transferType != null" >
+                transfer_type = #{transferType,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null" >
+                unit = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                count = #{count,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="toOverplusBalance != null" >
+               to_overplus_balance = #{toOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="fromOverplusBalance != null" >
+               from_overplus_balance = #{fromOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.UserTransfer" >
+        update zn_user_transfer
+        set recruit_id = #{recruitId,jdbcType=INTEGER},
+            withdraw_id = #{withdrawId,jdbcType=INTEGER},
+            wehat_pay_no = #{wehatPayNo,jdbcType=VARCHAR},
+            from_user_id = #{fromUserId,jdbcType=INTEGER},
+            money = #{money,jdbcType=DECIMAL},
+            to_user_id = #{toUserId,jdbcType=INTEGER},
+            order_no = #{orderNo,jdbcType=VARCHAR},
+            transfer_way = #{transferWay,jdbcType=INTEGER},
+            transfer_desc = #{transferDesc,jdbcType=VARCHAR},
+            transfer_type = #{transferType,jdbcType=INTEGER},
+            unit = #{unit,jdbcType=VARCHAR},
+            count = #{count,jdbcType=VARCHAR},
+            price = #{price,jdbcType=DECIMAL},
+            to_overplus_balance = #{toOverplusBalance,jdbcType=DECIMAL},
+            from_overplus_balance = #{fromOverplusBalance,jdbcType=DECIMAL},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <insert id="addUserWithdraw" parameterType="net.zn.ddxj.entity.UserTransfer" >
+        insert into zn_user_transfer
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="withdrawId != null" >
+                withdraw_id,
+            </if>
+            <if test="wehatPayNo != null" >
+                wehat_pay_no,
+            </if>
+            <if test="fromUserId != null" >
+                from_user_id,
+            </if>
+            <if test="money != null" >
+                money,
+            </if>
+            <if test="toUserId != null" >
+                to_user_id,
+            </if>
+            <if test="orderNo != null" >
+                order_no,
+            </if>
+            <if test="transferWay != null" >
+                transfer_way,
+            </if>
+            <if test="transferDesc != null" >
+                transfer_desc,
+            </if>
+            <if test="transferType != null" >
+                transfer_type,
+            </if>
+            <if test="unit != null" >
+                unit,
+            </if>
+            <if test="count != null" >
+                count,
+            </if>
+            <if test="price != null" >
+                price,
+            </if>
+            <if test="toOverplusBalance != null" >
+                to_overplus_balance ,
+            </if>
+            <if test="fromOverplusBalance != null" >
+                from_overplus_balance ,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="withdrawId != null" >
+                #{withdrawId,jdbcType=INTEGER},
+            </if>
+            <if test="wehatPayNo != null" >
+                #{wehatPayNo,jdbcType=VARCHAR},
+            </if>
+            <if test="fromUserId != null" >
+                #{fromUserId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="toUserId != null" >
+                #{toUserId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNo != null" >
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="transferWay != null" >
+                #{transferWay,jdbcType=INTEGER},
+            </if>
+            <if test="transferDesc != null" >
+                #{transferDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="transferType != null" >
+                #{transferType,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null" >
+                #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                #{count,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="toOverplusBalance != null" >
+                #{toOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="fromOverplusBalance != null" >
+                #{fromOverplusBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="queryCapitalChangeRecord" resultMap="BaseResultMap">
+    	SELECT <include refid="Base_Column_List" /> FROM zn_user_transfer WHERE (from_user_id =#{userId} or to_user_id=#{userId}) and flag = 1 order by create_time desc
+    </select>
+    <select id="queryCapitalChangeRecordByType" resultMap="BaseResultMap">
+    	SELECT <include refid="Base_Column_List" /> FROM zn_user_transfer WHERE (from_user_id =#{userId} or to_user_id=#{userId}) and transfer_type=#{transferType} and flag = 1 order by create_time desc
+    </select>
+    <!-- 查询转账,结算的记录 -->
+ 	<select id="querySettlementAndTransfer" resultMap="BaseResultMap" >
+    	SELECT 
+    	 <include refid="Base_Column_List" />
+    	FROM 
+    	zn_user_transfer 
+    	WHERE  flag=1     	
+    	<if test="transferId !=null and transferId !=''">
+    	 and id=#{transferId}
+    	</if>
+    	<if test="transferType != null and transferType !=''">
+    	and transfer_type=#{transferType}
+    	</if>
+    </select> 
+    
+    <select id="queryAllTransfer" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+    	SELECT 
+    	 <include refid="Base_Column_List" />
+    	FROM 
+    	zn_user_transfer 
+    	WHERE  flag=1 
+    	order by update_time desc
+    </select>
+    <!-- 查询结算记录 -->
+    <select id="queryPayrollList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+	SELECT DISTINCT r.recruit_title,t.* FROM zn_user_transfer AS t INNER JOIN zn_recruit AS r ON t.recruit_id = r.id ,zn_user AS u
+    where r.flag=1 and t.flag=1 and u.flag=1
+  	<if test="recruitTitle !=null and recruitTitle !='' ">
+		 AND r.recruit_title LIKE CONCAT(CONCAT('%', #{recruitTitle}), '%')
+	</if>
+    <if test="fromName !=null and fromName !='' ">
+		 AND u.real_name LIKE CONCAT(CONCAT('%', #{fromName}), '%')
+	</if>
+    <if test="fromPhone !=null and fromPhone !='' ">
+		 AND u.phone=#{fromPhone}
+	</if>
+    <if test="transferWay != null" >
+          AND t.transfer_way=#{transferWay}
+    </if>
+    <if test="transferType != null" >
+        AND t.transfer_type=#{transferType}
+    </if>
+    </select>
+    <!-- 查询转账记录 -->
+    <select id="queryTransferLists" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+		SELECT DISTINCT
+		t.id,
+		t.recruit_id,
+		t.withdraw_id,
+		t.wehat_pay_no,
+		t.from_user_id,
+		t.money,
+		t.to_user_id,
+		t.order_no,
+		t.transfer_way,
+		t.transfer_desc,
+		t.transfer_type,
+		t.unit,
+		t.count,
+		t.price,
+		t.to_overplus_balance,
+		t.from_overplus_balance,
+		t.create_time,
+		t.update_time,
+		t.flag,
+		u.real_name,
+		u.phone
+		FROM
+		zn_user_transfer AS t
+		INNER JOIN zn_user AS u ON t.from_user_id = u.id
+		WHERE t.flag=1 and u.flag=1
+    <if test="fromName !=null and fromName !='' ">
+		 AND   u.real_name LIKE CONCAT(CONCAT('%', #{fromName}), '%')
+	</if>
+    <if test="fromPhone !=null and fromPhone !='' ">
+		 AND u.phone=#{fromPhone}
+	</if>
+    <if test="transferWay != null" >
+          AND t.transfer_way=#{transferWay}
+    </if>
+    <if test="transferType != null" >
+        AND t.transfer_type=#{transferType}
+    </if>
+    </select>
+    <!-- 查询提现记录 -->
+    <select id="selectWithdrawList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+		SELECT
+		DISTINCT
+		t.*,
+		w.user_id,
+		w.bank_on,
+		w.bank_name,
+		w.bank_type,
+		w.withdraw_status,
+		u.real_name,
+		u.phone
+		FROM
+		zn_user_withdraw AS w
+		INNER JOIN zn_user_transfer AS t ON t.withdraw_id = w.id
+		INNER JOIN zn_user AS u ON t.from_user_id = u.id
+		WHERE
+		t.flag=1 and w.flag=1	and u.flag=1
+    <if test="withdrawName !=null and withdrawName !='' ">
+		 AND u.real_name LIKE CONCAT(CONCAT('%', #{withdrawName}), '%')
+	</if>
+    <if test="withdrawPhone !=null and withdrawPhone !='' ">
+		 AND u.phone=#{withdrawPhone}
+	</if>
+    <if test="transferType != null" >
+        AND t.transfer_type=#{transferType}
+    </if>
+    <if test="withdrawStatus != null" >
+        AND w.withdraw_status=#{withdrawStatus}
+    </if>
+    </select>
+    <!-- 查询充值记录 -->
+    <select id="querypaymentRecordList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+		SELECT
+		t.id,
+		t.recruit_id,
+		t.withdraw_id,
+		t.wehat_pay_no,
+		t.from_user_id,
+		t.money,
+		t.to_user_id,
+		t.order_no,
+		t.transfer_way,
+		t.transfer_desc,
+		t.transfer_type,
+		t.unit,
+		t.count,
+		t.price,
+		t.to_overplus_balance,
+		t.from_overplus_balance,
+		t.create_time,
+		t.update_time,
+		t.flag,
+		u.id,
+		u.real_name,
+		u.phone
+		FROM
+		zn_user_transfer AS t
+		INNER JOIN zn_payment_record AS p ON t.wehat_pay_no = p.transaction_id
+		INNER JOIN zn_user AS u ON t.from_user_id = p.transaction_id
+		WHERE t.flag=1 and u.flag=1 and p.flag=1
+    <if test="payMentName !=null and payMentName !='' ">
+		  AND u.real_name LIKE CONCAT(CONCAT('%', #{payMentName}), '%')
+	</if>
+    <if test="payMentPhone !=null and payMentPhone !='' ">
+		 AND u.phone=#{payMentPhone}
+	</if>
+	<if test="payStatus != null" >
+        AND  p.pay_status = #{payStatus}
+    </if>
+    <if test="transferWay != null" >
+          AND t.transfer_way=#{transferWay}
+    </if>
+    <if test="transferType != null" >
+        AND t.transfer_type=#{transferType}
+    </if>
+    </select>
+    <!-- 查询转账记录 -->
+    <select id="queryUserTransferDetails" resultMap="BaseResultMap" parameterType="java.util.Map">
+    	SELECT 
+		t.*
+		FROM
+		zn_user_transfer t
+		WHERE t.flag=1
+		<if test="fromUserId != null and fromUserId !=''" >
+           AND t.from_user_id=#{fromUserId}
+        </if>
+		
+		<if test="toUserId != null and toUserId !=''" >
+           AND t.to_user_id=#{toUserId}
+        </if>
+		<if test="orderNo != null and orderNo !=''" >
+           AND t.orderNo=#{orderNo}
+        </if>
+		<if test="userName != null and userName !=''" >
+           AND u.real_name=#{userName}
+        </if>
+        <if test="phone != null and phone !=''" >
+           AND u.phone=#{phone}
+        </if>
+		<if test="transferWay != null and transferWay != ''" >
+          AND t.transfer_way=#{transferWay}
+	    </if>
+	    <if test="transferType != null and transferType != ''" >
+	        AND t.transfer_type=#{transferType}
+	    </if>
+		<if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(t.update_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 and DATE_FORMAT(t.update_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+        GROUP BY t.id
+        order by t.update_time desc
+		
+    </select>
+
+    
+    <update id="deleteUserTransfer" parameterType="java.lang.Integer" >
+    	 update zn_user_transfer set flag=2
+        where to_user_id = #{userId}
+    </update>
+    <!-- 删除转账记录 -->
+    <delete id="delUserTransferRecord" parameterType="java.lang.Integer" >
+        delete from zn_user_transfer
+        where from_user_id=#{userId} OR to_user_id=#{userId}    	
+    </delete>
+    <!-- 统计转账次数 -->
+    <select id="countUserTransferTimes" resultType="java.lang.Integer">
+    	SELECT
+		Count(1)
+		FROM
+		zn_user_transfer AS t
+		WHERE
+		t.from_user_id = #{userId} AND
+		t.transfer_type = #{transferType} AND
+		DATE_FORMAT(now(), '%Y-%m-%d') =  DATE_FORMAT(t.create_time ,'%Y-%m-%d') 
+    </select>
+    <!-- 统计转账金额 -->
+    <select id="totalUserTransferMoney" resultType="java.math.BigDecimal" parameterType="java.lang.Integer">
+    	SELECT
+		SUM(money)
+		FROM
+		zn_user_transfer AS t
+		WHERE
+		t.from_user_id = #{userId} AND
+		t.transfer_type = #{transferType} AND
+		DATE_FORMAT(now(), '%Y-%m-%d') =  DATE_FORMAT(t.create_time ,'%Y-%m-%d')
+    </select>
+    <select id="findRegisterAwardMoneyCount" resultType="java.math.BigDecimal" >
+    	select SUM(money) from zn_user_transfer  where from_user_id = 1 and flag = 1
+    </select>
+    <select id="findUserTransferRecord" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	SELECT 
+    	DISTINCT
+		t.*,
+		u.real_name,
+		u.phone
+		FROM
+		zn_user_transfer t
+		INNER JOIN zn_user AS u ON t.to_user_id = u.id
+		WHERE t.flag=1 and u.flag = 1  AND (t.to_user_id=#{userId}  OR t.from_user_id=#{userId})  order by t.update_time desc   
+    </select>
+</mapper>

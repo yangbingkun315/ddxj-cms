@@ -1,0 +1,1203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.UserMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="age" property="age" jdbcType="INTEGER" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="VARCHAR" />
+        <result column="user_portrait" property="userPortrait" jdbcType="VARCHAR" />
+        <result column="role" property="role" jdbcType="INTEGER" />
+        <result column="openId" property="openid" jdbcType="VARCHAR" />
+        <result column="wx_name" property="wxName" jdbcType="VARCHAR" />
+        <result column="unionid" property="unionid" jdbcType="VARCHAR" />
+        <result column="remainder_money" property="remainderMoney" jdbcType="DECIMAL" />
+        <result column="standing" property="standing" jdbcType="VARCHAR" />
+        <result column="registered_province" property="registeredProvince" jdbcType="VARCHAR" />
+        <result column="registered_city" property="registeredCity" jdbcType="VARCHAR" />
+        <result column="registered_area" property="registeredArea" jdbcType="VARCHAR" />
+        <result column="registered_address" property="registeredAddress" jdbcType="VARCHAR" />
+        <result column="work_province" property="workProvince" jdbcType="VARCHAR" />
+        <result column="work_city" property="workCity" jdbcType="VARCHAR" />
+        <result column="work_area" property="workArea" jdbcType="VARCHAR" />
+        <result column="work_address" property="workAddress" jdbcType="VARCHAR" />
+        <result column="person_desc" property="personDesc" jdbcType="VARCHAR" />
+        <result column="last_ip" property="lastIp" jdbcType="VARCHAR" />
+        <result column="current_ip" property="currentIp" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="current_date_time" property="currentDateTime" jdbcType="TIMESTAMP" />
+        <result column="register_channel" property="registerChannel" jdbcType="INTEGER" />
+        <result column="login_status" property="loginStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="birth_date" property="birthDate" jdbcType="TIMESTAMP" />
+        <result column="validate_message" property="validateMessage" jdbcType="VARCHAR" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="contract_type" property="contractType" jdbcType="INTEGER" />
+        <result column="recruit_count" property="recruitCount" jdbcType="INTEGER" />
+        <result column="app_user_token" property="appUserToken" jdbcType="VARCHAR" />
+        <result column="current_device" property="currentDevice" jdbcType="VARCHAR" />
+        <result column="last_device" property="lastDevice" jdbcType="VARCHAR" />
+        <result column="staff_num" property="staffNum" jdbcType="VARCHAR" />
+        <!-- 一对一 是否认证配置 -->
+        <association property="isAttestation" column="id" select="net.zn.ddxj.mapper.RealAuthMapper.selectAuthByUserId"></association>
+        <!-- 一对一 评分总数量配置 -->
+        <association property="count" column="id" select="net.zn.ddxj.mapper.UserCommentMapper.countComment" javaType="java.lang.Integer"></association>
+        <association property="loginPasswordStatus" column="id" select="net.zn.ddxj.mapper.UserPasswordMapper.queryLoginPasswordStatus" javaType="java.lang.Integer"></association>
+        <association property="payPasswordStatus" column="id" select="net.zn.ddxj.mapper.UserPasswordMapper.queryPayPasswordStatus" javaType="java.lang.Integer"></association>
+        <!-- 一对一 分数配置 -->
+        <association property="score" column="id" select="net.zn.ddxj.mapper.UserCommentMapper.countCommentsScore" javaType="java.lang.String"></association>
+        <!-- 一对一 在职状态 -->
+        <association property="status" column="id" select="net.zn.ddxj.mapper.RecruitRecordMapper.queryUserJobStatusCount" javaType="java.lang.Integer"></association>
+        <!-- 一对一 环信用户信息 -->
+        <association property="easemobUser" column="id" select="net.zn.ddxj.mapper.EasemobUserMapper.queryEasemobUserByUserId"></association>
+        <!-- 一对多关系 -->
+        <collection property="categoryList"  column="id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryByUserId"></collection>
+         <!-- 一对多关系 -->
+        <collection property="bankList"  column="id" select="net.zn.ddxj.mapper.UserBankMapper.findUserBankList"></collection>
+    </resultMap>
+     <resultMap id="BaseResultMap1" type="net.zn.ddxj.entity.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="age" property="age" jdbcType="INTEGER" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="VARCHAR" />
+        <result column="user_portrait" property="userPortrait" jdbcType="VARCHAR" />
+        <result column="role" property="role" jdbcType="INTEGER" />
+        <result column="openId" property="openid" jdbcType="VARCHAR" />
+        <result column="wx_name" property="wxName" jdbcType="VARCHAR" />
+        <result column="unionid" property="unionid" jdbcType="VARCHAR" />
+        <result column="remainder_money" property="remainderMoney" jdbcType="DECIMAL" />
+        <result column="standing" property="standing" jdbcType="VARCHAR" />
+        <result column="registered_province" property="registeredProvince" jdbcType="VARCHAR" />
+        <result column="registered_city" property="registeredCity" jdbcType="VARCHAR" />
+        <result column="registered_area" property="registeredArea" jdbcType="VARCHAR" />
+        <result column="registered_address" property="registeredAddress" jdbcType="VARCHAR" />
+        <result column="work_province" property="workProvince" jdbcType="VARCHAR" />
+        <result column="work_city" property="workCity" jdbcType="VARCHAR" />
+        <result column="work_area" property="workArea" jdbcType="VARCHAR" />
+        <result column="work_address" property="workAddress" jdbcType="VARCHAR" />
+        <result column="person_desc" property="personDesc" jdbcType="VARCHAR" />
+        <result column="last_ip" property="lastIp" jdbcType="VARCHAR" />
+        <result column="current_ip" property="currentIp" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="current_date_time" property="currentDateTime" jdbcType="TIMESTAMP" />
+        <result column="register_channel" property="registerChannel" jdbcType="INTEGER" />
+        <result column="login_status" property="loginStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="birth_date" property="birthDate" jdbcType="TIMESTAMP" />
+        <result column="validate_message" property="validateMessage" jdbcType="VARCHAR" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="contract_type" property="contractType" jdbcType="INTEGER" />
+        <result column="recruit_count" property="recruitCount" jdbcType="INTEGER" />
+        <result column="app_user_token" property="appUserToken" jdbcType="VARCHAR" />
+        <result column="current_device" property="currentDevice" jdbcType="VARCHAR" />
+        <result column="last_device" property="lastDevice" jdbcType="VARCHAR" />
+        <result column="staff_num" property="staffNum" jdbcType="VARCHAR" />
+        <!-- 一对一 是否认证配置 -->
+        <association property="isAttestation" column="id" select="net.zn.ddxj.mapper.RealAuthMapper.selectAuthByUserId"></association>
+        <!-- 一对一 在职状态 -->
+        <association property="status" column="id" select="net.zn.ddxj.mapper.RecruitRecordMapper.queryUserJobStatusCount" javaType="java.lang.Integer"></association>
+        <!-- 一对多关系 -->
+        <collection property="categoryList"  column="id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryByUserId"></collection>
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="net.zn.ddxj.entity.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="age" property="age" jdbcType="INTEGER" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="VARCHAR" />
+        <result column="user_portrait" property="userPortrait" jdbcType="VARCHAR" />
+        <result column="role" property="role" jdbcType="INTEGER" />
+        <result column="openId" property="openid" jdbcType="VARCHAR" />
+        <result column="wx_name" property="wxName" jdbcType="VARCHAR" />
+        <result column="unionid" property="unionid" jdbcType="VARCHAR" />
+        <result column="remainder_money" property="remainderMoney" jdbcType="DECIMAL" />
+        <result column="standing" property="standing" jdbcType="VARCHAR" />
+        <result column="registered_province" property="registeredProvince" jdbcType="VARCHAR" />
+        <result column="registered_city" property="registeredCity" jdbcType="VARCHAR" />
+        <result column="registered_area" property="registeredArea" jdbcType="VARCHAR" />
+        <result column="registered_address" property="registeredAddress" jdbcType="VARCHAR" />
+        <result column="work_province" property="workProvince" jdbcType="VARCHAR" />
+        <result column="work_city" property="workCity" jdbcType="VARCHAR" />
+        <result column="work_area" property="workArea" jdbcType="VARCHAR" />
+        <result column="work_address" property="workAddress" jdbcType="VARCHAR" />
+        <result column="person_desc" property="personDesc" jdbcType="VARCHAR" />
+        <result column="last_ip" property="lastIp" jdbcType="VARCHAR" />
+        <result column="current_ip" property="currentIp" jdbcType="VARCHAR" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="current_date_time" property="currentDateTime" jdbcType="TIMESTAMP" />
+        <result column="register_channel" property="registerChannel" jdbcType="INTEGER" />
+        <result column="login_status" property="loginStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="birth_date" property="birthDate" jdbcType="TIMESTAMP" />
+        <result column="validate_message" property="validateMessage" jdbcType="VARCHAR" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="contract_type" property="contractType" jdbcType="INTEGER" />
+        <result column="recruit_count" property="recruitCount" jdbcType="INTEGER" />
+        <result column="app_user_token" property="appUserToken" jdbcType="VARCHAR" />
+        <result column="current_device" property="currentDevice" jdbcType="VARCHAR" />
+        <result column="last_device" property="lastDevice" jdbcType="VARCHAR" />
+        <result column="staff_num" property="staffNum" jdbcType="VARCHAR" />
+        <!-- 一对多关系 -->
+        <collection property="categoryList"  column="id" select="net.zn.ddxj.mapper.CategoryMapper.getCategoryByUserId"></collection>
+    </resultMap>
+    
+    <resultMap id="BaseResultMap3" type="net.zn.ddxj.entity.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="user_portrait" property="userPortrait" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, user_name, real_name, age, phone, sex, user_portrait, role, openId, wx_name, unionid,
+        remainder_money, standing, registered_province, registered_city, registered_area, 
+        registered_address, work_province, work_city, work_area, work_address, person_desc, 
+        last_ip, current_ip, last_time, current_date_time, register_channel, login_status, 
+        create_time, update_time, flag, birth_date, validate_message, contract_type,app_user_token,current_device,last_device,staff_num
+    </sql>
+    
+    <!-- 根据环信ID查询用户头像和姓名 -->
+    <select id="queryUserByEasemobName" resultMap="BaseResultMap3" parameterType="java.lang.String">
+        select u.id,u.real_name,u.user_portrait
+        ,(select uc.flag from zn_user_collection uc where uc.collection_type = 1 and uc.from_user_id = #{userId} and uc.to_user_id = #{easemobId}) as flag
+        from zn_user u
+        inner join zn_easemob_user as eu on eu.user_id = u.id and eu.flag = 1 and eu.user_name = #{easemobId}
+        where u.flag = 1
+    </select>
+    
+    <!-- 查询用户OpenId -->
+    <select id="queryUserFollowerByTerm" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+        select u.id,u.openId,u.last_device,u.app_user_token from zn_user u
+		<if test="categoryId1 != null and categoryId1 !=''">
+		INNER JOIN zn_user_category uc on u.id = uc.user_id
+        INNER JOIN zn_category AS c ON uc.category_id = c.id
+		and uc.category_id in
+		(
+			#{categoryId1}
+			<if test="categoryId2 != null and categoryId2 !=''">
+				,#{categoryId2}
+			</if>
+			<if test="categoryId3 != null and categoryId3 !=''">
+				,#{categoryId3}
+			</if>
+		)
+		</if>
+        where u.flag = 1
+        <if test="openType == null">
+        	and u.openId is not null and u.openId != ''
+        </if>
+        <if test="openType != null and openType == 1 ">
+        	and u.app_user_token is not null and u.app_user_token != ''
+        </if>
+        <if test="massPlatform != null and massPlatform == 1">
+        	and u.last_device = 'IOS'
+        </if>
+        <if test="massPlatform != null and massPlatform == 2">
+        	and u.last_device = 'Android'
+        </if>
+        <if test="massPlatform != null and massPlatform == 4">
+        	and u.last_device = 'JSAPI'
+        </if>
+        <if test="province != null and province != ''">
+        	and u.work_province = #{province}
+        </if>
+        <if test="city != null and city != ''">
+        	and u.work_city = #{city}
+        </if>
+        <if test="role != null and role != ''">
+        	and u.role = #{role}
+        </if>
+        <if test="sex != null and sex != ''">
+        	and u.sex = #{sex}
+        </if>
+        <if test="startAge != null and startAge != ''">
+        	and DATE_FORMAT(u.birth_date, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startAge}, '%Y-%m-%d')
+        </if>
+        <if test="endAge != null and startAge != ''">
+        	and DATE_FORMAT(u.birth_date, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endAge}, '%Y-%m-%d')
+        </if>
+        <if test="startTime != null and startTime != ''">
+        	and DATE_FORMAT(u.create_time, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        </if>
+        <if test="endTime != null and endTime != ''">
+        	and DATE_FORMAT(u.create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime}, '%Y-%m-%d')
+        </if>
+    </select>
+    
+    <!-- 查询工头列表 -->
+    <select id="queryForemanUserList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo" >
+        SELECT u.*, (SELECT count(r.id) FROM zn_recruit r
+		WHERE
+			r.user_id = u.id
+		AND r.validate_status = 3
+		AND r.recruit_status = 1
+		AND r.flag = 1
+		AND ((SELECT count(rr.id) FROM zn_recruit_record rr WHERE rr.recruit_id = r.id
+				AND rr.worker_status = 2
+				AND rr.foreman_status = 2
+				AND r.validate_status = 3
+				AND rr.flag = 1) &gt; 0 OR DATE_FORMAT(now(), '%Y-%m-%d %H:%i:%S') &lt; DATE_FORMAT(r.end_time, '%Y-%m-%d %H:%i:%S'))) AS recruit_count
+		FROM
+			zn_user u
+		WHERE
+			u.role = 2
+		AND u.flag = 1
+        <if test="city != null and city != ''">
+        	and u.work_city like concat(concat('%', #{city}), '%')
+        </if>
+        <if test="workerName != null and workerName != ''">
+        	and u.real_name like concat(concat('%', #{workerName}), '%')
+        </if>
+        <if test="contractType != null and contractType != ''">
+        	and u.contract_type = #{contractType}
+        </if>
+        <if test="contractType == 0 and contractType =='0'">
+        	and u.contract_type is not null
+        </if>
+		<trim prefix="ORDER BY " suffix="" suffixOverrides="," >
+			 <if test="scoreSort !=null and scoreSort =='checked' ">
+			   IFNULL((select FORMAT(sum(uco1.level)/count(uco1.id),1) as score from zn_user_comment uco1 where uco1.to_user_id = u.id ),5.0) DESC,
+			 </if>
+			 <if test="scoreSort == null or scoreSort == ''">
+			   (SELECT count(ra.id) FROM zn_real_auth ra where ra.real_status= 3 and ra.user_id = u.id and ra.flag = 1) desc,u.create_time DESC,
+			 </if>
+	 	</trim>
+    </select>
+    
+    <!-- 查询最近一个月每天的注册量 -->
+    <select id="queryMonthEveryDay" resultType="java.util.HashMap">
+        SELECT DATE_FORMAT(register_left_count.date,'%m-%d') as date,IFNULL(user_count.register_count,'0') as count
+		FROM 
+		(SELECT date_sub(CURDATE(),interval @i:=@i+1 day) as date 
+		from (select 1 union select 1 union select 1 union select 1 union select 1 union select 1 union select 1 union select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1 union all select 1) as tmp,(select @i:= -1) t) as register_left_count
+		LEFT JOIN 
+		(SELECT truncate(count(*),2) as register_count,DATE_FORMAT(u.create_time,'%Y-%m-%d') as register_date 
+		from zn_user u 
+		where DATE(u.create_time)&gt;=DATE_SUB(CURDATE(), INTERVAL 29 DAY)GROUP BY register_date)
+		as user_count
+		ON 
+		register_left_count.date=user_count.register_date ORDER BY register_left_count.date asc
+    </select>
+    
+    <!-- 查询今日注册量 -->
+    <select id="queryTodayUserCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(id)
+        from zn_user
+        where flag = 1
+        <if test="type != null and type == 2">
+        	and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+        </if>
+        <if test="type != null and type == 3">
+        	and DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(now(), '%Y-%m')
+        </if>
+    </select>
+    
+    <!-- 查询工人工头总数 -->
+    <select id="queryUserByRole" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        select count(id) from zn_user where role = #{role}
+        and real_name is not null
+        and phone is not null
+        and age is not null
+        and sex is not null
+    </select>
+    
+    <!-- 查询用户信息 -->
+    <select id="queryCircleUser" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select id,real_name,age,sex,user_portrait,create_time,update_time,flag,last_time,current_date_time,birth_date,staff_num
+        from zn_user
+        where id = #{userId}
+    </select>
+    
+    <!-- 通过手机号查询转账用户信息 -->
+    <select id="queryUserByPhone" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select * from zn_user where phone = #{phone} and flag = 1
+    </select>
+
+	<!-- 查询用户信息 -->
+    <select id="queryUserDetail" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select u.*
+        from zn_user u
+        where u.id = #{userId} and flag = 1
+    </select>
+    <select id="queryCutUserDetail" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+        select u.*
+        from zn_user u
+        where u.id = #{userId} and flag = 1
+    </select>
+    <select id="queryCutUserDetailByPhone" resultMap="BaseResultMap2" parameterType="java.lang.String" >
+        select u.*
+        from zn_user u
+        where u.phone = #{phone} and flag = 1
+    </select>
+    
+	<!-- 查询报名工人信息 -->
+    <select id="queryEnlistUserList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select DISTINCT u.*
+        from zn_recruit_record zn 
+        inner join zn_user u on u.id = zn.user_id 
+		inner JOIN zn_recruit rt on rt.user_id = #{userId}
+        where zn.recruit_id = #{recruitId} and zn.flag = 1 and u.flag = 1 and rt.flag = 1
+        <if test="status != null and status == 1">
+	        and (zn.enlist_status = 1 or zn.enlist_status = 2) and (zn.worker_status = 0 or zn.worker_status = 1)
+        </if>
+        <if test="status != null and status == 2 ">
+	        and zn.foreman_status = 2 and zn.worker_status = 2
+        </if>
+        <if test="status != null and status == 3">
+	        and (zn.foreman_status = 3 or zn.balance_status = 1) and zn.worker_status = 3
+        </if>
+        <if test="status != null and status == 4">
+        	and (zn.worker_status = 4 or zn.enlist_status = 3)
+        </if>
+        order by create_time
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    
+    <insert id="insertUserCategory" parameterType="java.util.Map" >
+        insert into zn_user_category(user_id,category_id,create_time,update_time) values(#{userId},#{categoryId},#{createTime},#{updateTime})
+    </insert>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.User" >
+        insert into zn_user (id, user_name, real_name, 
+            age, phone, sex, 
+            user_portrait, role, openId, 
+            wx_name, unionid,remainder_money, standing, 
+            registered_province, registered_city, registered_area, 
+            registered_address, work_province, work_city, 
+            work_area, work_address, 
+            person_desc, last_ip, current_ip, 
+            last_time, current_date_time, register_channel, 
+            login_status, create_time, update_time, 
+            flag, birth_date, validate_message ,contract_type,app_user_token,current_device,last_device,staff_num
+            )
+        values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+            #{age,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+            #{userPortrait,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, #{openid,jdbcType=VARCHAR}, 
+            #{wxName,jdbcType=VARCHAR},#{unionid,jdbcType=VARCHAR}, #{remainderMoney,jdbcType=DECIMAL}, #{standing,jdbcType=VARCHAR}, 
+            #{registeredProvince,jdbcType=VARCHAR}, #{registeredCity,jdbcType=VARCHAR}, #{registeredArea,jdbcType=VARCHAR}, 
+            #{registeredAddress,jdbcType=VARCHAR}, #{workProvince,jdbcType=VARCHAR}, #{workCity,jdbcType=VARCHAR}, 
+            #{workArea,jdbcType=VARCHAR}, #{workAddress,jdbcType=VARCHAR}, 
+            #{personDesc,jdbcType=VARCHAR}, #{lastIp,jdbcType=VARCHAR}, #{currentIp,jdbcType=VARCHAR}, 
+            #{lastTime,jdbcType=TIMESTAMP}, #{currentDateTime,jdbcType=TIMESTAMP}, #{registerChannel,jdbcType=INTEGER}, 
+            #{loginStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER}, #{birthDate,jdbcType=TIMESTAMP}, #{validateMessage,jdbcType=VARCHAR},
+            #{contractType,jdbcType=INTEGER},#{appUserToken,jdbcType=VARCHAR},#{currentDevice,jdbcType=VARCHAR},#{lastDevice,jdbcType=VARCHAR} ,#{staffNum,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.User"  useGeneratedKeys="true" keyProperty="id">
+        insert into zn_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userName != null" >
+                user_name,
+            </if>
+            <if test="realName != null" >
+                real_name,
+            </if>
+            <if test="age != null" >
+                age,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="sex != null" >
+                sex,
+            </if>
+            <if test="userPortrait != null" >
+                user_portrait,
+            </if>
+            <if test="role != null" >
+                role,
+            </if>
+            <if test="openid != null" >
+                openId,
+            </if>
+            <if test="wxName != null" >
+                wx_name,
+            </if>
+            <if test="unionid != null" >
+                unionid,
+            </if>
+            <if test="remainderMoney != null" >
+                remainder_money,
+            </if>
+            <if test="standing != null" >
+                standing,
+            </if>
+            <if test="registeredProvince != null" >
+                registered_province,
+            </if>
+            <if test="registeredCity != null" >
+                registered_city,
+            </if>
+            <if test="registeredArea != null" >
+                registered_area,
+            </if>
+            <if test="registeredAddress != null" >
+                registered_address,
+            </if>
+            <if test="workProvince != null" >
+                work_province,
+            </if>
+            <if test="workCity != null" >
+                work_city,
+            </if>
+            <if test="workArea != null" >
+                work_area,
+            </if>
+            <if test="workAddress != null" >
+                work_address,
+            </if>
+            <if test="personDesc != null" >
+                person_desc,
+            </if>
+            <if test="lastIp != null" >
+                last_ip,
+            </if>
+            <if test="currentIp != null" >
+                current_ip,
+            </if>
+            <if test="lastTime != null" >
+                last_time,
+            </if>
+            <if test="currentDateTime != null" >
+                current_date_time,
+            </if>
+            <if test="registerChannel != null" >
+                register_channel,
+            </if>
+            <if test="loginStatus != null" >
+                login_status,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="birthDate != null" >
+                birth_date,
+            </if>
+            <if test="validateMessage != null" >
+                validate_message,
+            </if>
+            <if test="contractType != null" >
+                contract_type,
+            </if>
+            <if test="appUserToken != null" >
+                app_user_token,
+            </if>
+            <if test="currentDevice != null" >
+                current_device,
+            </if>
+            <if test="lastDevice != null" >
+                last_device,
+            </if>
+             <if test="staffNum != null" >
+                staff_num,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null" >
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                #{age,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null" >
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="userPortrait != null" >
+                #{userPortrait,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null" >
+                #{role,jdbcType=INTEGER},
+            </if>
+            <if test="openid != null" >
+                #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="wxName != null" >
+                #{wxName,jdbcType=VARCHAR},
+            </if>
+            <if test="unionid != null" >
+                #{unionid,jdbcType=VARCHAR},
+            </if>
+            <if test="remainderMoney != null" >
+                #{remainderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="standing != null" >
+                #{standing,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredProvince != null" >
+                #{registeredProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredCity != null" >
+                #{registeredCity,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredArea != null" >
+                #{registeredArea,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredAddress != null" >
+                #{registeredAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="workProvince != null" >
+                #{workProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="workCity != null" >
+                #{workCity,jdbcType=VARCHAR},
+            </if>
+            <if test="workArea != null" >
+                #{workArea,jdbcType=VARCHAR},
+            </if>
+            <if test="workAddress != null" >
+                #{workAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="personDesc != null" >
+                #{personDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="lastIp != null" >
+                #{lastIp,jdbcType=VARCHAR},
+            </if>
+            <if test="currentIp != null" >
+                #{currentIp,jdbcType=VARCHAR},
+            </if>
+            <if test="lastTime != null" >
+                #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="currentDateTime != null" >
+                #{currentDateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="registerChannel != null" >
+                #{registerChannel,jdbcType=INTEGER},
+            </if>
+            <if test="loginStatus != null" >
+                #{loginStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="birthDate != null" >
+                #{birthDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateMessage != null" >
+                #{validateMessage,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null" >
+                #{contractType,jdbcType=INTEGER},
+            </if>
+             <if test="appUserToken != null" >
+                #{appUserToken,jdbcType=VARCHAR},
+            </if>
+             <if test="currentDevice != null" >
+                #{currentDevice,jdbcType=VARCHAR},
+            </if>
+             <if test="lastDevice != null" >
+                #{lastDevice,jdbcType=VARCHAR},
+            </if>
+            <if test="staffNum != null" >
+                 #{staffNum,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+      <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.User" >
+        update zn_user
+        <set >
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null" >
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null" >
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="userPortrait != null" >
+                user_portrait = #{userPortrait,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null" >
+                role = #{role,jdbcType=INTEGER},
+            </if>
+            <if test="openid != null" >
+                openId = #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="wxName != null" >
+                wx_name = #{wxName,jdbcType=VARCHAR},
+            </if>
+            <if test="unionid != null" >
+                unionid = #{unionid,jdbcType=VARCHAR},
+            </if>
+            <if test="remainderMoney != null" >
+                remainder_money = #{remainderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="standing != null" >
+                standing = #{standing,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredProvince != null" >
+                registered_province = #{registeredProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredCity != null" >
+                registered_city = #{registeredCity,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredArea != null" >
+                registered_area = #{registeredArea,jdbcType=VARCHAR},
+            </if>
+            <if test="registeredAddress != null" >
+                registered_address = #{registeredAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="workProvince != null" >
+                work_province = #{workProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="workCity != null" >
+                work_city = #{workCity,jdbcType=VARCHAR},
+            </if>
+            <if test="workArea != null" >
+                work_area = #{workArea,jdbcType=VARCHAR},
+            </if>
+            <if test="workAddress != null" >
+                work_address = #{workAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="personDesc != null" >
+                person_desc = #{personDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="lastIp != null" >
+                last_ip = #{lastIp,jdbcType=VARCHAR},
+            </if>
+            <if test="currentIp != null" >
+                current_ip = #{currentIp,jdbcType=VARCHAR},
+            </if>
+            <if test="lastTime != null" >
+                last_time = #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="currentDateTime != null" >
+                current_date_time = #{currentDateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="registerChannel != null" >
+                register_channel = #{registerChannel,jdbcType=INTEGER},
+            </if>
+            <if test="loginStatus != null" >
+                login_status = #{loginStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="birthDate != null" >
+                birth_date = #{birthDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="validateMessage != null" >
+                validate_message = #{validateMessage,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null" >
+                contract_type = #{contractType,jdbcType=INTEGER},
+            </if>
+            <if test="appUserToken != null" >
+               app_user_token =  #{appUserToken,jdbcType=VARCHAR},
+            </if>
+            <if test="currentDevice != null" >
+               current_device =  #{currentDevice,jdbcType=VARCHAR},
+            </if>
+             <if test="lastDevice != null" >
+               last_device =  #{lastDevice,jdbcType=VARCHAR},
+            </if>
+            <if test="staffNum != null" >
+               staff_num =  #{staffNum,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.User" >
+        update zn_user
+        set user_name = #{userName,jdbcType=VARCHAR},
+            real_name = #{realName,jdbcType=VARCHAR},
+            age = #{age,jdbcType=INTEGER},
+            phone = #{phone,jdbcType=VARCHAR},
+            sex = #{sex,jdbcType=VARCHAR},
+            user_portrait = #{userPortrait,jdbcType=VARCHAR},
+            role = #{role,jdbcType=INTEGER},
+            openId = #{openid,jdbcType=VARCHAR},
+            wx_name = #{wxName,jdbcType=VARCHAR},
+            unionid = #{unionid,jdbcType=VARCHAR},
+            remainder_money = #{remainderMoney,jdbcType=DECIMAL},
+            standing = #{standing,jdbcType=VARCHAR},
+            registered_province = #{registeredProvince,jdbcType=VARCHAR},
+            registered_city = #{registeredCity,jdbcType=VARCHAR},
+            registered_area = #{registeredArea,jdbcType=VARCHAR},
+            registered_address = #{registeredAddress,jdbcType=VARCHAR},
+            work_province = #{workProvince,jdbcType=VARCHAR},
+            work_city = #{workCity,jdbcType=VARCHAR},
+            work_area = #{workArea,jdbcType=VARCHAR},
+            work_address = #{workAddress,jdbcType=VARCHAR},
+            person_desc = #{personDesc,jdbcType=VARCHAR},
+            last_ip = #{lastIp,jdbcType=VARCHAR},
+            current_ip = #{currentIp,jdbcType=VARCHAR},
+            last_time = #{lastTime,jdbcType=TIMESTAMP},
+            current_date_time = #{currentDateTime,jdbcType=TIMESTAMP},
+            register_channel = #{registerChannel,jdbcType=INTEGER},
+            login_status = #{loginStatus,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},
+            birth_date = #{birthDate,jdbcType=TIMESTAMP},
+            validate_message = #{validateMessage,jdbcType=VARCHAR},
+            contract_type = #{contractType,jdbcType=INTEGER},
+            app_user_token =  #{appUserToken,jdbcType=VARCHAR},
+            current_device =  #{currentDevice,jdbcType=VARCHAR},
+            last_device =  #{lastDevice,jdbcType=VARCHAR},
+            staff_num =  #{staffNum,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 通过手机号查询用户信息 -->
+    <select id="SelectUser" resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List" />
+    	 from zn_user where phone = #{phone} and flag = 1
+    </select>
+    
+    <!-- 根据手机号修改登录密码 -->
+    <update id="updateUserPasswordByPhone" parameterType="net.zn.ddxj.entity.UserPassword">
+    	UPDATE  zn_user_password  SET login_password=#{password} WHERE id=#{userId}
+    </update>
+     <!-- 多条件分页查询用户信息 -->
+	<select id="queryUserLists" resultMap="BaseResultMap" parameterType="java.util.Map">
+	 SELECT
+	   DISTINCT u.*
+	 FROM
+	   zn_user u
+	   INNER JOIN zn_user_category uc on u.id = uc.user_id
+	   INNER JOIN zn_category AS c ON uc.category_id = c.id 
+	   <if test="categoryId1 !=null and categoryId1 !=''">
+	     and uc.category_id in 
+	     (
+	       #{categoryId1}
+	       <if test="categoryId2 !=null and categoryId2 !=''">
+	       ,#{categoryId2}
+	       </if>
+	       <if test="categoryId3 !=null and categoryId3 !=''">
+	       ,#{categoryId3}
+	       </if>
+	     )				
+	   </if>		
+	 WHERE u.flag=1 and role = 1
+	 <if test="workerName !=null and workerName !=''">
+	  and (u.real_name LIKE CONCAT(CONCAT('%', #{workerName}), '%') or u.work_city  LIKE CONCAT(CONCAT('%', #{workerName}), '%')  or c.category_name  LIKE CONCAT(CONCAT('%', #{workerName}), '%') )
+	 </if>
+	 <if test="city !=null and city !=''">
+	   and u.work_city  LIKE CONCAT(CONCAT('%', #{city}), '%')
+	 </if>	
+	 <if test="jobStatus ==1">
+	     AND (select count(id) from zn_recruit_record rr where rr.user_id = u.id and  rr.worker_status = 2 and rr.enlist_status=2 ) &gt; 0
+	  </if> 
+	  <if test="jobStatus ==2">
+	    AND (select count(id) from zn_recruit_record rr where rr.user_id = u.id and  rr.worker_status = 2 and rr.enlist_status=2 ) &lt;= 0
+	  </if> 
+	  <if test="senioritySort != null and senioritySort != ''">
+	  <trim prefix="and (" suffix=")" suffixOverrides="or" >
+	  	  <if test="seniorityZeroToOne  != null and seniorityZeroToOne !='' and seniorityZeroToOne == '0-1'">
+		   (u.standing &lt; 1) or
+		  </if>
+  		  <if test="seniorityOneToThree  != null and seniorityOneToThree !='' and seniorityOneToThree == '1-3'">
+		   (u.standing BETWEEN 1 and 3) or
+		  </if>
+		  <if test="seniorityThreeToFive !=null and seniorityThreeToFive !='' and seniorityThreeToFive == '3-5'">
+		   (u.standing BETWEEN 3 and 5) or
+		  </if>
+		  <if test="seniorityFiveToTen !=null and seniorityFiveToTen !='' and seniorityFiveToTen == '5-10'">
+		    (u.standing BETWEEN 5 and 10) or
+		  </if>
+		  <if test="seniorityTenOver !=null and seniorityTenOver !='' and seniorityTenOver == '10'">
+		    (u.standing &gt;= 10) or
+		  </if>
+	  </trim>
+	  </if>
+	   <if test="ageSort != null and ageSort != ''">
+	   <trim prefix="and (" suffix=")" suffixOverrides="or" >
+		  <if test="ageEighteenToThirty !=null and ageEighteenToThirty !='' and ageEighteenToThirty == '18-30'">
+		      ( u.age BETWEEN 18 and 30 ) or
+		  </if>
+		  <if test="ageThirtyToForty !=null and ageThirtyToForty !='' and ageThirtyToForty == '30-40'">
+		      ( u.age BETWEEN 30 and 40) or
+		  </if>
+		  <if test="ageFortyToFifty !=null and ageFortyToFifty !='' and ageFortyToFifty == '40-50'">
+		      ( u.age BETWEEN 40 and 50) or
+		  </if>
+		  <if test="ageFiftyOver !=null and ageFiftyOver !='' and ageFiftyOver >'50'">
+		  	 ( u.age &gt;= 50  ) or
+		  </if>
+		 </trim>
+	  </if>
+	  GROUP BY u.phone
+	 <trim prefix="ORDER BY " suffix="" suffixOverrides="," >
+		 <if test="scoreSort !=null and scoreSort =='checked' ">
+		   IFNULL((select FORMAT(sum(uco1.level)/count(uco1.id),1) as score from zn_user_comment uco1 where uco1.to_user_id = u.id and uco1.flag = 1),5.0) DESC,
+		 </if>
+		 <if test="scoreSort == null or scoreSort == ''">
+		    (SELECT count(ra.id) FROM zn_real_auth ra where ra.real_status= 3 and ra.user_id = u.id and ra.flag = 1) desc,u.create_time DESC,
+		 </if>
+	 </trim>
+	
+	</select>
+    <!-- 更新转账人金额 -->
+    <update id="updateFromUserMoney" parameterType="net.zn.ddxj.entity.User">
+    	UPDATE zn_user set remainder_money=#{remainderMoney} where id=#{fromUserId} 
+    </update>
+    <!-- 更新收款人金额 -->
+    <update id="updateToUserMoney" parameterType="net.zn.ddxj.entity.User">
+    	UPDATE zn_user set remainder_money=#{remainderMoney} where id=#{toUserId} 
+    </update>
+    <select id="queryMyFollowUserInfo" resultMap="BaseResultMap">
+    	SELECT
+			 u.id,
+			 u.user_portrait,
+			 user_name,
+			 u.real_name,
+			 u.age,
+			 u.phone,
+			 u.sex,
+			 u.role,
+			 u.standing,
+			 u.registered_province,
+			 u.registered_city,
+			 u.registered_area,
+			 u.registered_address,
+			 u.work_province,
+			 u.work_city,
+			 u.work_area,
+			 u.work_address,
+			 u.last_time,
+			 u.current_date_time,
+			 u.create_time,
+			 u.update_time,
+			 u.birth_date,
+			 u.validate_message,
+			 u.contract_type
+			FROM
+				zn_user u
+			LEFT JOIN zn_user_collection uc ON uc.to_user_id = u.id
+			WHERE
+				uc.from_user_id = #{userId}
+			AND uc.flag = 1 AND u.flag = 1
+			order BY uc.create_time DESC
+    </select>
+    <!-- 更新用户调用微信充值后的金额 -->
+     <update id="updateUserRemainderMoney" parameterType="net.zn.ddxj.entity.User">
+    	UPDATE zn_user set remainder_money=#{remainderMoney} where id=#{userId} 
+    </update>
+    <delete id="deleteUserCategory" parameterType="java.lang.Integer">
+    	delete from zn_user_category where user_id = #{userId}
+    </delete>
+    <select id="queryManagerUserList" resultMap="BaseResultMap1" parameterType="java.util.Map">
+    	select 
+        <include refid="Base_Column_List" />
+        from zn_user u where u.flag = 1
+        
+        <if test="realName != null and realName != ''">
+        	and  u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+        </if>
+        <if test="phone != null and phone != ''">
+        	and u.phone = #{phone}
+        </if>
+        <if test="staffNum != null and staffNum !='' and '无'.toString()!= staffNum" >
+           and  u.staff_num=#{staffNum}
+        </if>
+        <if test="'无'.toString() == staffNum" >
+           and  u.staff_num is null
+        </if>
+        <if test="role != null and role != ''">
+        	and u.role = #{role}
+        </if>
+        <if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(u.create_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 and DATE_FORMAT(u.create_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+        <if test="isAuth != null and isAuth != ''">
+	        <if test="isAuth == 1">
+	        	 and (SELECT count(ra.id) FROM zn_real_auth ra where ra.real_status= 3 and ra.user_id = u.id and ra.flag = 1) &lt;= 0
+	         </if>
+	        <if test="isAuth == 2">
+	        	 and (SELECT count(ra.id) FROM zn_real_auth ra where ra.real_status= 3 and ra.user_id = u.id and ra.flag = 1) &gt; 0
+	        </if>
+        </if>
+        order by u.create_time desc
+    </select>
+    <update id="forbiddenUser">
+    	update zn_user set login_status = #{type} where id = #{userId}
+    </update>
+    <update id="updateUserLastInfo">
+    	UPDATE zn_user
+		SET 
+		current_date_time = last_time,
+		last_time = NOW(),
+		current_ip = last_ip,
+		last_ip = #{lastIp,jdbcType=VARCHAR},
+		current_device =last_device,
+		last_device=#{loginChannel,jdbcType=VARCHAR}
+		 where phone = #{phone,jdbcType=VARCHAR}
+    </update>
+    <update id="updateUserInfoAsyncByUnionid">
+    	UPDATE zn_user
+		SET 
+		current_date_time = last_time,
+		last_time = NOW(),
+		current_ip = last_ip,
+		last_ip = #{lastIp,jdbcType=VARCHAR},
+		current_device =last_device,
+		last_device=#{loginChannel,jdbcType=VARCHAR}
+		 where unionid = #{unionid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateUserAppUserToken">
+    	update zn_user set app_user_token = #{appUserToken,jdbcType=VARCHAR} where phone = #{phone,jdbcType=VARCHAR}
+    </update>
+    <select id="userListByCategoryId" resultMap="BaseResultMap">
+    select 
+    	u.*
+     from zn_user u inner join zn_user_category uc ON u.id = uc.user_id where uc.category_id = #{categoryId} and u.flag = 1 and u.login_status = 1 and role = 1 and uc.flag = 1
+    </select>
+    <update id="updateOutLogin">
+    	update zn_user set last_device = null,app_user_token = null where id =#{userId}
+    </update>
+    <!-- 更新工头申请工头 -->
+    <update id="updateUserRole" parameterType="java.lang.Integer">
+    	UPDATE zn_user
+		SET role=2 , update_time = NOW() where id=#{userId}
+    </update>
+    <select id="queryUserByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List" />
+    	 from zn_user where openId = #{openId} and flag = 1 and login_status = 1
+    </select>
+    <select id="changeUserWechatInfo" parameterType="java.lang.Integer" >
+    	update zn_user set openId = NULL,wx_name = NULL,unionid=NULL where id = #{userId}
+    </select>
+    <!-- 删除用户信息 -->
+    <delete id="delUserInfo" parameterType="java.lang.Integer" >
+        delete from zn_user
+        where id = #{userId,jdbcType=INTEGER}
+    </delete>
+    
+    <select id="findByPhone" parameterType="java.lang.String" resultType="java.lang.Integer">
+    	select id from zn_user where phone = #{phone} 
+    </select>
+    
+    <update id="updateRemainderBnousMoney">
+    	UPDATE zn_user set remainder_money=remainder_money + #{bnous} where id=#{userId} 
+    </update>
+    
+    <select id="queryUserInfoByStaffNum" resultMap="BaseResultMap">
+    	select u.* 
+    	from zn_user u where u.staff_num !="" and u.flag = 1 and u.login_status = 1  
+    	<if test="realName!=null and realName!='' ">
+    		and u.real_name = #{realName}
+    	</if>
+    	<if test="phone!=null and phone!='' ">
+    		and u.phone = #{phone}
+    	</if>
+    	<if test="staffNum!=null and staffNum!='' ">
+    		and u.staff_num = #{staffNum}
+    	</if>
+    	<if test="startTime!=null and startTime!='' and endTime!=null and endTime!='' ">
+    		and u.create_time &gt; #{startTime} and u.create_time &lt; #{endTime}
+    	</if>
+    	order by u.create_time desc
+    </select>
+    	<!-- 查询用户信息 -->
+    <select id="getUserByOpenid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+         <include refid="Base_Column_List" />
+        from zn_user 
+        where openId = #{openid} and flag = 1
+    </select>
+    
+    <select id="queryExtendUserInfo" resultMap="BaseResultMap">
+    	select u.* 
+    	from zn_user u where u.staff_num !="" and u.staff_num is not null and u.flag = 1 and u.login_status = 1  
+    	<if test="extendCode!=null and extendCode!=''">
+    		and u.staff_num = #{extendCode}
+    	</if>
+    	<if test="currentTime!=null and currentTime!='' ">
+    		and DATE_FORMAT(u.create_time, '%Y-%m-%d') &gt;=  str_to_date(#{currentTime},'%Y-%m-%d')  
+    	</if>
+    	<if test="endTime != null and endTime != ''">
+    	 	and DATE_FORMAT(u.create_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+    	order by u.create_time desc
+    </select>
+    <select id="queryUserByunionid" parameterType="java.lang.String" resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List" />
+    	 from zn_user where unionid = #{unionid} and flag = 1 and login_status = 1
+    </select>
+    
+    <!-- 通过工种查询工人信息 -->
+    <select id="selectUserByCategoryName"  parameterType="java.lang.String" resultMap="BaseResultMap">
+    	SELECT
+		u.real_name,
+		u.phone,
+		uc.category_id,
+		c.category_name,
+		u.role
+		FROM
+		zn_user AS u
+		INNER JOIN zn_user_category AS uc ON u.id = uc.user_id
+		INNER JOIN zn_category AS c ON uc.category_id = c.id
+		WHERE
+		u.role = 1 AND
+		c.category_name = #{categoryName}
+    </select>
+     <update id="updateUserAppUserTokenByUnionid">
+    	update zn_user set app_user_token = #{appUserToken,jdbcType=VARCHAR} where unionid = #{unionid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateUservalidateMessage" parameterType="java.lang.Integer">
+    	update zn_user set validate_message = null , update_time = NOW()  where id =#{userId} 
+    </update>
+    <!-- 多条件分页查询用户信息 -->
+	<select id="queryExprotUserList" resultMap="BaseResultMap1" parameterType="net.zn.ddxj.vo.ExprotVo">
+	 SELECT
+	   DISTINCT u.*
+	 FROM
+	   zn_user u
+	   INNER JOIN zn_user_category uc on u.id = uc.user_id
+	   INNER JOIN zn_category AS c ON uc.category_id = c.id 
+	   <if test="categoryId !=null and categoryId !=''">
+	     and uc.category_id = #{categoryId}
+	   </if>		
+	 WHERE u.flag=1
+	  <if test="role !=null and role !=''">
+	   	and u.role = #{role}
+	  </if>
+	 <if test="realName !=null and realName !=''">
+	  and (u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%'))
+	 </if>
+	 <if test="registeredProvince !=null and registeredProvince !=''">
+	   and u.registered_province  LIKE CONCAT(CONCAT('%', #{registeredProvince}), '%')
+	 </if>	
+	 <if test="registeredCity !=null and registeredCity !=''">
+	   and u.registered_city  LIKE CONCAT(CONCAT('%', #{registeredCity}), '%')
+	 </if>	
+	 <if test="registeredArea !=null and registeredArea !=''">
+	   and u.registered_area  LIKE CONCAT(CONCAT('%', #{registeredArea}), '%')
+	 </if>	
+	 <if test="workProvince !=null and workProvince !=''">
+	   and u.work_province  LIKE CONCAT(CONCAT('%', #{workProvince}), '%')
+	 </if>	
+	 <if test="workCity !=null and workCity !=''">
+	   and u.work_city  LIKE CONCAT(CONCAT('%', #{workCity}), '%')
+	 </if>	
+	 <if test="workArea !=null and workArea !=''">
+	   and u.work_area  LIKE CONCAT(CONCAT('%', #{workArea}), '%')
+	 </if>	
+	 <if test="sex !=null and sex !=''">
+	   and u.sex = #{sex}
+	 </if>	
+	 <if test="phone !=null and phone !=''">
+	   and u.phone LIKE CONCAT(CONCAT('%', #{phone}), '%')
+	 </if>	
+	 <if test="registerChannel !=null and registerChannel !=''">
+	   and u.register_channel = #{registerChannel}
+	 </if>	
+	  <if test="staffNum != null and staffNum !=''" >
+         and  u.staff_num=#{staffNum}
+      </if>
+      <if test="startTime!=null and startTime!='' ">
+   		and DATE_FORMAT(u.create_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+   	  </if>
+   	  <if test="endTime != null and endTime != ''">
+   	 	and DATE_FORMAT(u.create_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+      </if>
+	 <if test="jobStatus ==1">
+	     AND (select count(id) from zn_recruit_record rr where rr.user_id = u.id and  rr.worker_status = 2 and rr.enlist_status=2 ) &gt; 0
+	  </if> 
+	  <if test="jobStatus ==2">
+	    AND (select count(id) from zn_recruit_record rr where rr.user_id = u.id and  rr.worker_status = 2 and rr.enlist_status=2 ) &lt;= 0
+	  </if> 
+	  <if test="senioritySort != null and senioritySort != ''">
+	  	  <if test="senioritySort == '1'.toString()">
+		   and (u.standing &lt; 1)
+		  </if>
+  		  <if test="senioritySort == '1-3'.toString()">
+		   and (u.standing BETWEEN 1 and 3)
+		  </if>
+		  <if test="senioritySort == '3-5'.toString()">
+		   and (u.standing BETWEEN 3 and 5)
+		  </if>
+		  <if test="senioritySort == '5-10'.toString()">
+		    and (u.standing BETWEEN 5 and 10)
+		  </if>
+		  <if test="senioritySort == '10'.toString()">
+		    and (u.standing &gt;= 10)
+		  </if>
+	  </if>
+   		<if test="ageSort != null and ageSort != ''">
+		  <if test="ageSort == '18-30'.toString()">
+		      and( u.age BETWEEN 18 and 30 )
+		  </if>
+		  <if test="ageSort == '30-40'.toString()">
+		      and ( u.age BETWEEN 30 and 40)
+		  </if>
+		  <if test="ageSort == '40-50'.toString()">
+		      and ( u.age BETWEEN 40 and 50)
+		  </if>
+		  <if test="ageSort == '50'.toString()">
+		  	 and ( u.age &gt;= 50  )
+		  </if>
+  	  </if>
+		  order by u.create_time DESC
+	</select>
+   	 <select id="findUserCount" resultType="java.util.HashMap">
+   	 select work_province as name,count(id) as value from zn_user where work_province is not Null and work_province != '' and flag = 1 GROUP BY work_province 
+   	 </select>
+</mapper>

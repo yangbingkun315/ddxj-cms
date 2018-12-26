@@ -1,0 +1,130 @@
+[#assign title="点点小匠-公告列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=noticeList>
+	<div class="alert alert-warning" >注：最新轮播公告列表 </div>
+	<form method="post" id="notice_record_form" action="${base}/recruit/notice/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <span class="search_title">公告类型：</span>
+			  <select class="form-control" id="noticeType" name="noticeType" >
+				<option  value="">全部</option>
+				<option value="1">工人端</option>
+				<option value="2">工头端</option>
+				<option value="3">推广</option>
+				<option value="4">其他</option>
+			</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">上架时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryNoticeList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:notice:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateNotice()">添加公告</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/recruit/recruit_notice_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+//js
+function frontOneHour (fmt) {
+   var currentTime = new Date(new Date().getTime() + 1 * 60 * 60 * 24 * 1000);
+   var o = {
+     'M+': currentTime.getMonth() + 1, // 月份
+     'd+': currentTime.getDate(), // 日
+     'h+': currentTime.getHours(), // 小时
+     'm+': currentTime.getMinutes(), // 分
+     's+': currentTime.getSeconds(), // 秒
+     'q+': Math.floor((currentTime.getMonth() + 3) / 3), // 季度
+     'S': currentTime.getMilliseconds() // 毫秒
+   }
+   if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (currentTime.getFullYear() + '').substr(4 - RegExp.$1.length))
+   for (var k in o) {
+     if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+   }
+   return fmt
+ }
+function frontHour (fmt) {
+	   var currentTime = new Date(new Date().getTime());
+	   var o = {
+	     'M+': currentTime.getMonth() + 1, // 月份
+	     'd+': currentTime.getDate(), // 日
+	     'h+': currentTime.getHours(), // 小时
+	     'm+': currentTime.getMinutes(), // 分
+	     's+': currentTime.getSeconds(), // 秒
+	     'q+': Math.floor((currentTime.getMonth() + 3) / 3), // 季度
+	     'S': currentTime.getMilliseconds() // 毫秒
+	   }
+	   if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (currentTime.getFullYear() + '').substr(4 - RegExp.$1.length))
+	   for (var k in o) {
+	     if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+	   }
+	   return fmt
+	 }
+$('#notice_record_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryNoticeList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#notice_record_form').submit();
+}
+
+queryNoticeList(1);
+function updateNotice(id)
+{
+	var url = "${base}/recruit/notice/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改公告" : "新增公告","width":450,"height":400});
+}
+
+function confirmDeleteNotice(id)
+{
+	showConfirmDialog({message : "确认要删除该条公告吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/recruit/notice/delete.htm",{noticeId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryNoticeList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

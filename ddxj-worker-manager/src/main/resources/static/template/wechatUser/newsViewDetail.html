@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="never">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>素材文章列表</title>
+</head>
+<style>
+#content_detail img
+{
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
+<body ng-app="news" ng-controller="newsView">
+<div class="margin Competence_style" id="page_style">
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>图文消息的标题</th>
+						<th>图文消息的封面图片素材id</th>
+						<th>是否显示封面</th>
+						<th>作者</th>
+						<th>摘要</th>
+						<th>具体内容</th>
+						<th>图文页URL</th>
+						<th>图文消息的原文地址</th>
+						<th>是否同步</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="newsDetailList.length > 0 " ng-repeat="new in newsDetailList track by $index">
+						<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td ng-bind="new.title"></td>
+						<td ng-bind="new.thumb_media_id"></td>
+						<td>
+							<span ng-if="new.show_cover_pic == 0">不显示</span>
+							<span ng-if="new.show_cover_pic == 1">显示</span>
+						</td>
+						<td ng-bind="new.author ? new.author : '未知'"></td>
+						<td style="max-width:250px;" ng-bind="new.digest ? new.digest : '暂无'"></td>
+						<td><a href="javascript:" ng-click="queryMassageDetails('具体内容',new.content)">查看具体内容</a></td>
+						<td><a target="_Blank" ng-href="{{new.url}}">点击跳转</a></td>
+						<td><a href="javascript:" ng-click="queryMassageDetails('原文地址',new.content_source_url)">查看原文地址</a></td>
+						<td ng-bind="new.is_sync == 1 ? '已同步' : '未同步'"></td>
+						<td class="td-manage"> 
+							<a title="同步" ng-click="submitInformation(new.thumb_media_id)" href="javascript:;" class="btn button_btn bg-deep-blue">同步</a>
+						</td>
+					</tr>
+					<tr ng-if="newsDetailList == null || newsDetailList.length <= 0 ">
+						<td class="center" colspan="20">暂无数据</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+
+<div class="userinfo_style" id="content_detail" style="display: none">
+	<div class="member_show" >
+		<div class="member_content">
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script>
+
+function imageDataUrl()
+{
+	$("img").each(function(){
+		var dataSrc = $(this).attr("data-src")
+		if(isNotNull(dataSrc))
+		{
+			$(this).attr("src",dataSrc);
+		}
+	});
+}
+
+var media_id = urlParam("media_id");
+var news = angular.module('news',[]);
+news.controller('newsView',function($scope,$timeout)
+{
+	$scope.queryNewsViewDetailList = function()//查询列表
+	{
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot + '/query/news/view/details/list.ddxj',
+				data: {media_id : media_id},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.newsDetailList = data.data.newsDetailList;
+						$scope.$apply();
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.queryNewsViewDetailList();
+	
+	$scope.queryMassageDetails = function(title,content)
+	{
+		layer.open({
+			type: 1,
+			title: title,
+			maxmin: true, 
+			shadeClose:false, //点击遮罩关闭层
+			area : ['400px' , '600px'],
+			content:$('#content_detail'),
+		})
+		
+		$(".member_content").html(content);
+		imageDataUrl();
+	}
+	
+	$scope.submitInformation = function(id)
+	{
+		$scope.submitData = {};
+		
+		var newsDetailList = $scope.newsDetailList;
+		
+		var newsClass = {};
+		
+		for(var i = 0;i < newsDetailList.length; i++)
+		{
+			if(newsDetailList[i].thumb_media_id == id)
+			{
+				newsClass = newsDetailList[i];
+			}
+		}
+		$scope.submitData.mediaId = id;
+		$scope.submitData.infoTitle =  newsClass.title;
+		if(newsClass.author != null)
+		{
+			$scope.submitData.author = newsClass.author;
+		}
+		$scope.submitData.infoSummary = newsClass.digest;
+		$scope.submitData.infoContent = newsClass.content;
+		
+		Ajax.post({
+			url: getRoot+'/add/wechat/sync/information.ddxj',
+			data: $scope.submitData,
+			async: true,
+			success: function(data) 
+			{
+				if(data.response)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					
+					setTimeout(function(){
+						$scope.queryNewsViewDetailList();
+					},1000);
+				}
+			}
+		})
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function()
+{
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+						
+});
+</script>

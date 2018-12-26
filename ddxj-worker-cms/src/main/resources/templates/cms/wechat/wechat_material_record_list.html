@@ -1,0 +1,79 @@
+[#assign title="点点小匠-图文素材列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<style>
+#replyText
+{
+	width:250px;
+	height:100px!important;
+}
+.textinput-main
+{
+	width:250px!important;
+}
+</style>
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >注：微信公众号平台所有的图文素材，可以将这些图文素材同步到资讯列表中。 </div>
+	<form method="post" id="wechat_material_record_form" action="${base}/query/news/view/details/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<input id="mediaId" type="hidden" name="mediaId" value="${mediaId}"/>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_material_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#wechat_material_record_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+queryWechatMaterialRecordList(1)
+function queryWechatMaterialRecordList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#wechat_material_record_form').submit();
+}
+
+function submitInformation(mediaId,title,author,digest,content)
+{
+	var submitData = {};
+	submitData.mediaId = mediaId;
+	submitData.infoTitle =  title;
+	if(author != null)
+	{
+		submitData.author = author;
+	}
+	submitData.infoSummary = digest;
+	submitData.infoContent = content;
+	console.log(submitData);
+	var message="确定要同步素材到资讯码？"
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/add/wechat/sync/information.htm",submitData,function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryWechatMaterialRecordList();
+			}
+		});
+	}); 
+}
+
+</script>
+[#include "/common/cms_footer.html"]

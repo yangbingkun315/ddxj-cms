@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/chosen.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script type="text/javascript" src="../../js/Validform/Validform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/city_data.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<title>申请成为工头</title>
+</head>
+<body ng-app="foreman" ng-controller="applyForemanManager">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+		<div class="order-search-item">
+		  <span class="search_title">申请姓名：</span>
+		  <input type="text" name="realName" id="realName" ng-model="realName"   class="input textinput-main width160" placeholder="请输入申请姓名"> 
+	  	</div>
+	  	<div class="order-search-item">
+		  <span class="search_title">申请电话：</span>
+		  <input type="text" name="phone" id="phone" ng-model="phone"   class="input textinput-main width160" placeholder="请输入申请电话"> 
+	  	</div>
+	  	<div class="order-search-item">
+	  	    <span class="search_title">审核状态：</span>
+	        <select name="validateStatus" ng-model="validateStatus" class="width160">
+		        <option value="">请选择审核状态</option>
+				<option value="1">审核中</option>
+	          	<option value="2">审核成功</option>
+	          	<option value="2">审核失败</option>
+	       </select>
+   	 	</div>
+   	 	<div class="order-search-item " >
+	  		<button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryapplyForemanList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+  		</div>
+	</div>
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+					<th width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+					<th>真实姓名</th>
+					<th>手机号码</th>
+					<th style="width:200px">申请理由</th>
+					<th>申请时间</th>
+					<th style="width:200px">申请失败原因</th>
+					<th>审核状态</th>
+					<th>创建时间</th>
+					<th>更新时间</th>
+					<th>操作</th>
+				    </tr>
+				</thead>
+			<tbody>
+				<tr ng-if="foremanUserList.length > 0 " ng-repeat="foreman in foremanUserList track by $index">
+					<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+					<td ng-bind="foreman.user.realName"></td>
+					<td ng-bind="foreman.user.phone"></td>
+					<td ng-bind="foreman.reason"></td>
+					<td ng-bind="foreman.validateTime.time | date:'yyyy-MM-dd HH:mm'"></td>
+					<td ng-bind="foreman.validateCause"></td>
+					<td class="td-status">
+							<span class="label label-success radius" ng-if="foreman.validateStatus == 1">审核中</span>
+							<span class="label label-success radius" ng-if="foreman.validateStatus == 2">审核失败</span>
+							<span class="label label-success radius" ng-if="foreman.validateStatus == 3">审核成功</span>
+					</td>
+					<td ng-bind="foreman.createTime.time| date:'yyyy-MM-dd HH:mm'"></td>
+					<td ng-bind="foreman.updateTime.time | date:'yyyy-MM-dd HH:mm'"></td>
+					<td class="td-manage">
+						<div class="btn_group">
+						<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+						<ul class="btn_group_item none">
+						<li><a title="审核通过" ng-click="updateStatusTrue(foreman.id);" ng-if="foreman.validateStatus == 1">审核通过</a></li> 
+						<li><a title="拒绝通过" ng-click="updateStatusFalse(foreman.id);" ng-if="foreman.validateStatus == 1" >拒绝通过</a></li>
+						<li><a title="删除" ng-click="deleteRecord(foreman.id)" href="javascript:;" >删除</a></li>
+						</ul>
+						</div>
+						<!-- <span ng-if="foreman.validateStatus == 1">
+							<a title="审核通过" ng-click="updateStatusTrue(foreman.id);" class="btn button_btn btn-status " >审核通过</a> 
+				        	<a title="拒绝通过" ng-click="updateStatusFalse(foreman.id);" class="btn button_btn btn-status " >拒绝通过</a>
+				        </span>
+				        <a title="删除" ng-click="deleteRecord(foreman.id)" href="javascript:;" class="btn button_btn btn-danger">删除</a>	 -->			        
+					</td>
+			    </tr>
+			    <tr ng-if="foremanUserList == null || foremanUserList.length <= 0 ">
+			   		<td class="center" colspan="10">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+	
+</div>
+<!-- 申请工头 -->
+<div id="update_foreman" class="update_foreman" style="display:none">
+	<form ng-submit="" >
+		<div class="add_style add_administrator_style">
+			<ul>
+				<li class="clearfix">
+					<label class="label_name col-xs-2 col-lg-2"><i>*</i>失败原因：</label>
+					<div class="formControls col-xs-6">
+					<input type="text" class="input-text col-xs-12" value="" placeholder="请输入审核失败原因" ng-model="validateCause" ></div>
+				</li>
+		        <li class="clearfix col-xs-12 col-lg-12 align">
+					<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="确定" ng-click="submitForemanFalse();">
+				</li>
+		    </ul>
+		</div>
+	</form>
+</div>
+</body>
+</html>
+<script>
+var applyForemanManager = angular.module('foreman', []);
+applyForemanManager.controller('applyForemanManager', function($scope,$timeout) {
+	$scope.realName="";
+	$scope.phone="";
+	$scope.validateStatus="";
+	$scope.validateCause="";
+	$scope.pageNum=1;
+	$scope.pageSize=20;	
+	$scope.queryapplyForemanList = function(type)
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/manager/query/foreman/list.ddxj',
+				data: {realName:$scope.realName,phone:$scope.phone,validateStatus:$scope.validateStatus,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						//console.log(data.data.foremanUserList);
+						$scope.total = data.data.foremanUserList.total;
+						$scope.foremanUserList = data.data.foremanUserList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.queryapplyForemanList();
+                    }
+	      	    }
+			});
+		});
+	}
+	
+	$scope.queryapplyForemanList();
+	//审核失败
+	$scope.updateStatusFalse=function(id)
+	{
+		$scope.foremanId = id;
+		layer.open({
+			type: 1,
+			title:'审核失败',
+			area: ['600px',''],
+			shadeClose: false,
+			content: $('#update_foreman'),
+		});
+	}
+	
+	$scope.submitForemanFalse=function(){
+		if(!isNotNull($scope.validateCause))
+		{
+			layer.msg("请输入审核失败原因");
+			return false;
+		}
+		layer.confirm("确定要审核失败吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/update/foreman/info.ddxj',
+				data: {foremanId:$scope.foremanId,validateStatus:2,validateCause : $scope.validateCause},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.closeAll();
+						layer.msg("处理成功");
+						$scope.queryapplyForemanList();
+					}
+				}
+			}); 
+		});
+	}
+	//审核成功
+	var flag = true;
+	$scope.updateStatusTrue = function(id)
+	{
+		$scope.foremanId = id;
+		layer.confirm("确定要审核成功吗？",function(index){
+			if(!flag)
+			{
+				return ;
+			}
+			flag = false;
+			Ajax.post({
+				url: getRoot+'/manager/update/foreman/info.ddxj',
+				data: {foremanId:$scope.foremanId,validateStatus:3},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						flag = true;
+						$scope.queryapplyForemanList();
+					}
+				}
+			}); 
+		});
+	}
+	//删除
+	 $scope.deleteRecord = function (id)
+	 {
+		 layer.confirm("确定要删除吗？",function(index){
+			 Ajax.post({
+		         url: getRoot+'/manager/delete/foreman/info.ddxj',
+		         data: {applyId:id},
+		         async: true,
+		         success: function(data) {
+		             if(data.response == true)
+		             {
+						 layer.msg('已删除!',{icon: 6,time:1000});
+		            	 $scope.queryapplyForemanList();
+		             }
+		         }
+		     }); 
+		});
+	 }
+	
+	
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>

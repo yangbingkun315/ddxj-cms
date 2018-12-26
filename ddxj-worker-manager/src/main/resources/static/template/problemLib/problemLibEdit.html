@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link href="../../js/lay/css/layui.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/city_data.js" type="text/javascript"></script>
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/hsCheckData.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<script src="../../js/common/initUtils.js" type="text/javascript"></script>
+<title>管理问题</title>
+<style>
+	#LAY_layedit_1 img
+	{
+		width:200px; 
+	}
+</style>
+</head>
+<body>
+<div class="margin inside_pages clearfix" ng-app="problemLib" ng-controller="problemLibManager">
+	<div class="add_style clearfix relative">
+		<ul>
+			<li class="clearfix">
+				<label class="label_name col-xs-1"><i>*</i>问题标题：&nbsp;&nbsp;</label>
+				<div class="Add_content col-xs-11">
+					<input type="text" placeholder="请输入问题标题" ng-model="problemLib.problemTitle" class="col-xs-6"/>
+				</div>
+			</li>
+     		<li class="clearfix">
+				<div class="col-xs-4">
+					<label class="label_name col-xs-3"><i>*</i>问题难度等级	：&nbsp;&nbsp;</label>
+					<div class="Add_content col-xs-9">
+						<input type="text" placeholder="请输入问题难度（1-5）" ng-model="problemLib.problemDifficulty" class="col-xs-8"/>
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<label class="label_name col-xs-3"><i>*</i>作者：&nbsp;&nbsp;</label>
+					<div class="Add_content col-xs-9">
+						<input type="text" placeholder="请输入作者" ng-model="problemLib.author" class="col-xs-8"/>
+					</div>
+				</div>
+			</li>
+			<li class="clearfix">
+				<label class="label_name col-xs-1"><i>*</i>问题内容：&nbsp;&nbsp;</label>
+				<div class="Add_content col-xs-9">
+					<textarea class="layui-textarea" id="LAY_demo1" ng-model="problemLib.infoContent" style="display: none"></textarea>
+				</div>
+			</li>
+		</ul>
+		<div class="Button_operation btn_width">
+			<button class="btn button_btn bg-deep-blue" type="button" ng-click="submitProblemLib()">保存并提交</button>
+			<button class="btn button_btn bg-gray" type="button" onclick="window.location.href='problemLibList.html'">取消添加</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script>
+
+var libId = urlParam("libId");
+var problemLib = angular.module('problemLib', []);
+problemLib.controller('problemLibManager', function($scope,$timeout,$sce)
+{
+	layui.use(['layer'], function(){}); 
+	
+	$scope.problemLib = {};
+	
+	$scope.problemLibDetail = function()
+	{
+		if(isNotNull(libId))
+		{
+			Ajax.post({
+				url: getRoot+'/problem/lib/detail.ddxj', 
+				data: {libId:libId},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.problemLib = data.data.problemLib;
+	               		$scope.initRichText();
+		    			$scope.$apply();
+	         		}
+         		}
+			}); 
+		}
+	}
+	$scope.$watch('$viewContentLoaded', function() {  
+		$scope.problemLibDetail();
+		if(!isNotNull(libId))
+		{
+			$scope.initRichText();
+		}
+	}); 
+	$scope.initRichText = function()
+	{
+		layui.use('layedit', function(){
+			layedit = layui.layedit,$ = layui.jquery;
+			layedit.set({
+				uploadImage: {
+					url: getRoot+'/upload/qiniu/image.ddxj' //接口url
+					,type: 'post' //默认post
+				},height: 400 
+			});
+			//构建一个默认的编辑器
+			textAreaIndex = layedit.build('LAY_demo1');
+		});
+	}
+	$scope.submitProblemLib = function()
+	{
+		$scope.submitData = {};
+		var problemLib = $scope.problemLib;
+		if(isNotNull(problemLib.id))
+		{
+			$scope.submitData.libId = problemLib.id;
+		}
+		$scope.submitData.problemTitle =  problemLib.problemTitle;
+		$scope.submitData.problemDifficulty = problemLib.problemDifficulty;
+		$scope.submitData.author = problemLib.author;
+		$scope.submitData.problemContent = layedit.getContent(textAreaIndex);
+		if(!isNotNull(problemLib.problemTitle))
+		{
+			layer.msg("请输入问题标题！");
+			return false;
+		}
+		
+		if(!isNotNull(problemLib.problemDifficulty))
+		{
+			layer.msg("请输入问题等级！");
+			return false;
+		}
+		
+		if(!isNotNull(problemLib.author))
+		{
+			layer.msg("请输入作者！");
+			return false;
+		}
+		
+		if(!isNotNull($scope.submitData.problemContent))
+		{
+			layer.msg("请输入问题内容！");
+			return false;
+		}
+		
+		Ajax.post({
+			url: getRoot+'/problem/lib/edit.ddxj',
+			data: $scope.submitData,
+			async: true,
+			success: function(data) 
+			{
+				if(data.response)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					
+					setTimeout(function(){
+						window.location.href = "problemLibList.html";
+					},1500);
+				}
+			}
+		})
+	}
+});
+</script>

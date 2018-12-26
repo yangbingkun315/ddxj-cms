@@ -1,0 +1,168 @@
+#springboot_config
+server: 
+  port: 8986
+  context-path: /worker-cms
+context: 
+  listener: 
+  classes: net.zn.ddxj.config.listener.ApplicationEventListener
+   #激活哪一个环境的配置文件
+spring:
+  jmx: 
+    enabled: false
+  profiles:
+    active: test
+  mvc: 
+    static-path-pattern: /**
+    resources: 
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+  http: 
+    multipart: 
+      maxFileSize: 100Mb
+      maxRequestSize: 1000Mb
+---
+###测试配置文件###
+spring:
+  profiles: test
+  # Redis配置
+  redis:
+   host: 47.100.39.92
+   port: 6379
+   password: yang0315
+   timeout: 10000
+   pool:
+    max-idle: 20
+    min-idle: 5
+    max-active: 20
+    max-wait: 2
+  application:
+    name: worker-app
+  #数据库连接信息
+  datasource:
+        name: test
+        url: jdbc:mysql://47.100.39.92:3306/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true
+        username: kun-prd
+        password: yang0315
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+xxl: 
+  job: 
+    admin: 
+      addresses: http://47.100.39.92:8081/xxl-job-admin
+    executor: 
+      appname: ddxj-manager-job-executor
+      ip: 
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1
+    accessToken: 
+---
+###生产配置文件###
+spring:
+  profiles: prd
+  # Redis配置
+  redis:
+   host: 47.100.39.92
+   port: 6379
+   password: yang0315
+   timeout: 10000
+   pool:
+    max-idle: 20
+    min-idle: 5
+    max-active: 20
+    max-wait: 2
+  application:
+    name: worker-manager
+  #数据库连接信息
+  datasource:
+        name: test
+        url: jdbc:mysql://47.100.39.92:3306/ddxj?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useSSL=false
+        username: kun-prd
+        password: yang0315
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+xxl: 
+  job: 
+    admin: 
+      addresses: http://47.100.39.92:8081/xxl-job-admin
+    executor: 
+      appname: ddxj-manager-job-executor
+      ip: 
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1
+    accessToken: 
+---
+
+# freemarker config
+###########################################################
+spring: 
+  freemarker: 
+    ##指定HttpServletRequest的属性是否可以覆盖controller的model的同名项
+    allow-request-override: false
+    ##指定HttpSession的属性是否可以覆盖controller的model的同名项
+    allow-session-override: false
+    ##是否开启template caching.
+    cache: true 
+    ##设定Template的编码.
+    charset: UTF-8
+    ##是否检查templates路径是否存在.
+    check-template-location: true
+    ##设定Content-Type.
+    content-type: text/html
+    ##是否允许mvc使用freemarker.
+    enabled: true
+    ##设定所有request的属性在merge到模板的时候，是否要都添加到model中.
+    expose-request-attributes: false
+    ##设定所有HttpSession的属性在merge到模板的时候，是否要都添加到model中.
+    expose-session-attributes: false
+    ##设定是否以springMacroRequestContext的形式暴露RequestContext给Spring’s macro library使用
+    expose-spring-macro-helpers: true
+    ##是否优先从文件系统加载template，以支持热加载，默认为true
+    prefer-file-system-access: true
+    ##设定模板的后缀.
+    suffix: 
+    ##设定模板的加载路径，多个以逗号分隔，默认: ["classpath:/templates/"]
+    template-loader-path: classpath:/templates/cms
+    ###################################################
+      ##此处配置模版里标签的显示方式为<>或[] ,注意模版内标签显示方式不可混用。此处设置为自动匹配
+    settings: 
+      tag_syntax: auto_detect
+      template_update_delay: 0
+      default_encoding: UTF-8
+      classic_compatible: true
+      date_format: yyyy-MM-dd
+      time_format: HH:mm:ss
+      datetime_format: yyyy-MM-dd HH:mm:ss
+      whitespace_stripping: true
+    order: 1
+    ####################################################
+
+  

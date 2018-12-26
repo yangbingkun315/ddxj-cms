@@ -1,0 +1,36 @@
+.pagination  a {
+text-decoration: none;
+    border: 1px solid #bbbbbb;
+    color: #606163;
+}
+.page-class
+{
+	width:100%;
+    margin:0;
+    height: 40px;
+}
+.pagination
+{
+	      margin: 0;
+    float: right;
+    font-weight: bold;
+}
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.pagination .current {
+background: #757575;
+    color: #fff;
+    border: 1px solid #6d6d6d;
+}
+
+.pagination .current.prev, .pagination .current.next{
+	color:#6d6d6d;
+    border: 1px solid #6d6d6d;
+	background:#fff;
+}
+

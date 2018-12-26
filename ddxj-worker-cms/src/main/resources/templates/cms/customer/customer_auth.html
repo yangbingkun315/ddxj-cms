@@ -1,0 +1,102 @@
+[#assign title="点点小匠-实名认证列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=realNameList>
+	<div class="alert alert-warning" >注：用户实名认证审核，以下信息均为真实，请仔细核对身份证信息 </div>
+	<form method="post" id="user_auth_form" action="${base}/customer/user/real/auth/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label class="search-title">用户姓名：</label>
+			  <input type="text" name="realName" id="realName" placeholder="姓名关键字"  class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label class="search-title">身份证号码：</label>
+			  <input type="text" name="idCardNumber" id="idCardNumber" placeholder="请输入身份证"  class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		    <div class="search-item">
+			  	<label class="search-title">审核状态：</label>
+			    <select class="form-control" id="realStatus" name="realStatus" >
+					<option  value="">请选择类型</option>
+					<option value="1">审核中</option>
+					<option value="3">审核成功</option>
+					<option value="2">审核失败</option>
+				</select>
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryUserAuthList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/customer/customer_auth_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#user_auth_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserAuthList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#user_auth_form').submit();
+}
+
+queryUserAuthList(1);
+
+function updateRealAuthTrue(id,type)
+{
+	var message = "";
+	if(type == 3)
+	{
+		message = "确定要通过此人的实名认证吗？";
+	}
+	else
+	{
+		message = "确定要拒绝此人的实名认证吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/customer/user/real/auth/update.htm",{id:id,status:type},function(data){
+			if(data.response)
+			{
+				queryUserAuthList();
+			}
+		});
+	});
+	
+	
+}
+function confirmDeleteUser(id)
+{
+	showConfirmDialog({message : "确认要删除此用户实名认证吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/customer/user/real/auth/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryUserAuthList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

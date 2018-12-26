@@ -1,0 +1,23 @@
+<ul class="nav nav-tabs">
+	[@shiro.hasPermission name="system:wechat:passive:follow"]
+		<li [#if wechatTabActive == 1]class="active"[/#if]><a href="${base}/wechat/menu/setting.htm">被关注回复</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:follower:manager"]
+		<li [#if wechatTabActive == 2]class="active"[/#if]><a href="${base}/query/wechatUser/list.htm">粉丝管理</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:view:source"]
+		<li [#if wechatTabActive == 3]class="active"[/#if]><a href="${base}/query/wechatMaterial/list.htm">图文素材</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:custom:menu"]
+		<li [#if wechatTabActive == 4]class="active"[/#if]><a href="${base}/query/wechatMenu/list.htm">自定义菜单</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:keywords"]
+		<li [#if wechatTabActive == 5]class="active"[/#if]><a href="${base}/wechat/keywords/list.htm">关键字回复</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:invalid:keywords"]
+		<li [#if wechatTabActive == 6]class="active"[/#if]><a href="${base}/wechat/menu/noKeywords.htm">无效关键字回复</a></li>
+	[/@shiro.hasPermission]
+	[@shiro.hasPermission name="system:wechat:image:reply"]
+		<li [#if wechatTabActive == 7]class="active"[/#if]><a href="${base}/wechat/menu/picture/setting.htm">接收图片时回复</a></li>
+	[/@shiro.hasPermission]
+</ul>

@@ -1,0 +1,249 @@
+<div class="cms-edit">
+	<form action="${base}/cms/resource/edit.htm" method="post" id="resource_edit">
+		<input type="hidden" name="id" value="${(resource.id)!""}">
+		<div class="cms-table-making">
+				<div class="cell">
+					<div  class="item clear visible" >
+						<div class="title">
+							 <i class="question iconfont" data-toggle="tooltip" data-placement="right" title="根据不同的层级选择类型">&#xe61f;</i> 菜单类型：
+						</div>
+						<div class="content">
+							<select class="select-init" id="resourceTypeEdit" name="resourceType"  onchange="changeResourceType(this)" required>
+								<option  value="">请选择类型</option>
+								<option value="0" [#if (resource.resourceType)?? & resource.resourceType == 0]selected="selected"[/#if]>目录</option>
+								<option value="1" [#if (resource.resourceType)?? & resource.resourceType == 1]selected="selected"[/#if]>菜单</option>
+								<option value="2" [#if (resource.resourceType)?? & resource.resourceType == 2]selected="selected"[/#if]>按钮</option>
+								<option value="3" [#if (resource.resourceType)?? & resource.resourceType == 3]selected="selected"[/#if]>按钮组</option>
+								<option value="4" [#if (resource.resourceType)?? & resource.resourceType == 4]selected="selected"[/#if]>tab</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear [#if (resource.resourceType)?? & resource.resourceType == 1] cms-show[#else]cms-hide[/#if] visible" id="resourceContents">
+						<div class="title">
+							目录：
+						</div>
+						<div class="content">
+							<select class="select-init" id="parentContentsId" name="parentContentsId" >
+								<option  value="">请选择类型</option>
+								[#if parentResourceList?? && parentResourceList?size > 0]
+									[#list parentResourceList as resourceList]
+										<option value="${resourceList.id}"  [#if (resource.parentId)?? && resource.parentId == resourceList.id]selected="selected"[/#if]>${resourceList.resourceName}</option>
+									[/#list]
+								[/#if]
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear [#if (resource.resourceType)?? & (resource.resourceType == 2 || resource.resourceType == 3)] cms-show[#else]cms-hide[/#if] visible" id="resourceMenu">
+						<div class="title">
+							菜单：
+						</div>
+						<div class="content">
+							<select  id="parentMenuId" class="select-init" name="parentMenuId" onchange="changeBtnGroup()" >
+								<option  value="">请选择类型</option>
+								[#if menuResourceList?? && menuResourceList?size > 0]
+									[#list menuResourceList as menuList]
+										<option value="${menuList.id}" [#if (resource.parentId)?? && resource.parentId == menuList.id]selected="selected"[/#if]>${menuList.resourceName}</option>
+									[/#list]
+								[/#if]
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear [#if (resource.resourceType)?? & resource.resourceType == 2] cms-show[#else]cms-hide[/#if] " id="groupBtn">
+						<div class="title">
+							按钮组：
+						</div>
+						<div class="content">
+							<select class="form-control" id="groupBtnId" name="groupBtnId">
+								<option  value="">无按钮组</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+						资源名称：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入资源名称" name="resourceName" required autocomplete="off" value="${(resource.resourceName)!""}" maxLength="6" minLength="2">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+						<i class="question iconfont" data-toggle="tooltip" data-placement="right" title="Key必须和html中标签的name相同">&#xe61f;</i>  资源Key：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入资源Key" name="resourceKey" required autocomplete="off" value="${(resource.resourceKey)!""}" maxLength="36">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+							<i class="question iconfont" data-toggle="tooltip" data-placement="right" title="url必须和接口Url一致">&#xe61f;</i> 资源Url：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入资源Url" name="resourceUrl" required autocomplete="off" value="${(resource.resourceUrl)!""}" >
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+						<i class="question iconfont" data-toggle="tooltip" data-placement="right" title="根据左侧菜单判断层级">&#xe61f;</i> 层级：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入层级"  name="resourceLevel" required autocomplete="off" value="${(resource.resourceLevel)!""}" maxLength="2">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+							排序：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" 
+									placeholder="整数，必填"  name="resourceSort" required autocomplete="off" value="${(resource.resourceSort)!""}" maxLength="2">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+							资源图标：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入icon图标" name="icon" autocomplete="off" value="${(resource.icon)!""}" >
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear">
+						<div class="title">
+							描述：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+								placeholder="请输入描述" name="resourceDescription"  autocomplete="off" value="${(resource.resourceDescription)!""}" maxLength="32">
+						</div>
+					</div>
+				</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+$('#resource_edit').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+ 			 $('#cms_resource_form').submit();
+		 }
+	}
+});
+function changeResourceType(obj)
+{
+	var resourceType = $(obj).val();
+	if(resourceType == '1')	
+	{
+		$("#resourceContents").show();
+		$("#groupBtn").hide();
+		$("#resourceMenu").hide();
+	}
+	else if(resourceType == '2')	
+	{
+		$("#resourceContents").hide();
+		$("#groupBtn").show();
+		$("#resourceMenu").show();
+	}
+	else if(resourceType == '3')
+	{
+		$("#resourceContents").hide();
+		$("#resourceMenu").show();
+		$("#groupBtn").hide();
+				
+	}
+	else if(resourceType == '4')
+	{
+		$("#resourceContents").hide();
+		$("#resourceMenu").show();
+		$("#groupBtn").hide();
+				
+	}
+	else
+	{
+		$("#resourceContents").hide();
+		$("#resourceMenu").hide();
+		$("#groupBtn").hide();
+	}
+}
+function changeBtnGroup(parentId)
+{
+	if($("#resourceTypeEdit").val() != 2)
+	{
+		return false;
+	}
+	var parentMenuId = $("#parentMenuId").val();
+	if(!isNotNull(parentMenuId))
+	{
+		parentMenuId = "${resource.resourceParent.resourceParent.id}";
+		$("#parentMenuId").val(parentMenuId);
+	}
+	doPost("${base}/cms/resource/group.htm",{menuId:parentMenuId},function(data){
+		if(data.response)
+		{
+			var groupList = JSON.parse(data.data).groupList;
+			var html = '<option  value="">无按钮组</option>';
+			for(var c = 0;c<groupList.length;c++)
+			{
+				if(isNotNull(parentId) && parentId == groupList[c].id)
+				{
+					html += '<option  value="'+groupList[c].id+'" selected="selected">'+groupList[c].resourceName+'</option>';
+				}
+				else
+				{
+					html += '<option  value="'+groupList[c].id+'">'+groupList[c].resourceName+'</option>';
+				}
+			}
+			$("#groupBtnId").html(html);
+		}
+	})
+}
+[#if resource.id??]
+	changeBtnGroup(${resource.parentId});
+[/#if]
+ $("#parentMenuId,#resourceTypeEdit,#parentContentsId").chosen({allow_single_deselect:true,disable_search:false});
+</script>

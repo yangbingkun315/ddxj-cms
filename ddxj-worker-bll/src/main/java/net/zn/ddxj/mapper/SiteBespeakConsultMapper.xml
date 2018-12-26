@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.SiteBespeakConsultMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.SiteBespeakConsult" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, company_name, province, city, area, name, phone, create_time, update_time, flag, 
+        status, ip
+    </sql>
+
+	<!-- 多条件查询官网首页幻灯片列表 -->
+    <select id="siteBespeakConsultList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_site_bespeak_consult
+        where flag = 1
+        <if test="companyName != null and companyName != ''">
+        	and company_name like concat(concat('%', #{companyName}),'%')
+        </if>
+        <if test="phone != null and phone !=''" >
+             and  phone like concat(concat('%', #{phone}),'%')
+        </if>
+        <if test="status != null and status !=''" >
+             and  status =#{status}
+        </if>
+        <if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(create_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 and DATE_FORMAT(create_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+    </select>
+    
+    <!-- 删除预约资讯  -->
+    <update id="updateSiteBespeakConsult" parameterType="java.lang.Integer" >
+        update zn_site_bespeak_consult
+        <set >
+             flag = 2
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_site_bespeak_consult
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_site_bespeak_consult
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.SiteBespeakConsult" >
+        insert into zn_site_bespeak_consult (id, company_name, province, 
+            city, area, name, 
+            phone, create_time, update_time, 
+            flag, status, ip)
+        values (#{id,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+            #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+            #{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.SiteBespeakConsult" >
+        insert into zn_site_bespeak_consult
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="companyName != null" >
+                company_name,
+            </if>
+            <if test="province != null" >
+                province,
+            </if>
+            <if test="city != null" >
+                city,
+            </if>
+            <if test="area != null" >
+                area,
+            </if>
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="ip != null" >
+                ip,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="companyName != null" >
+                #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null" >
+                #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="ip != null" >
+                #{ip,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.SiteBespeakConsult" >
+        update zn_site_bespeak_consult
+        <set >
+            <if test="companyName != null" >
+                company_name = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null" >
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="ip != null" >
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.SiteBespeakConsult" >
+        update zn_site_bespeak_consult
+        set company_name = #{companyName,jdbcType=VARCHAR},
+            province = #{province,jdbcType=VARCHAR},
+            city = #{city,jdbcType=VARCHAR},
+            area = #{area,jdbcType=VARCHAR},
+            name = #{name,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},
+            status = #{status,jdbcType=INTEGER},
+            ip = #{ip,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

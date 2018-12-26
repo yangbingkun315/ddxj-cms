@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/common/common.js" type="text/javascript" />
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>招聘列表</title>
+</head>
+<body ng-app="recruit" ng-controller="userRecruit">
+<style>
+	.add_menber li .label_name, .member_content li .label_name{width:100px;}
+</style>
+<div class="margin Competence_style" id="page_style">
+	<div class="bkg_List clearfix datatable_height confirm">
+		<table class="table  table_list table_striped table-bordered">
+			<thead>
+				<tr>
+				<th  width="40"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+				<th>真实姓名</th>
+				<th>性别</th>
+				<th>年龄</th>
+				<th>联系电话</th>
+				<th>用户角色</th>
+				<th>工龄</th>
+				<th>是否认证</th>
+				<th>报名状态</th>
+				<th>结算状态</th>
+				<th>拒绝原因</th>
+				<th>申请时间</th>
+				<th>操作</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr ng-if="recruitRecordList.length > 0 " ng-repeat="recruit in recruitRecordList track by $index">
+					<td><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+					<td ng-bind="recruit.user.realName"></td>
+					<td ng-bind="recruit.user.sex == 'M' ? '男':'女'"></td>
+					<td ng-bind="recruit.user.age"></td>
+					<td ng-bind="recruit.user.phone"></td>
+					<td ng-bind="recruit.user.role == 1 ? '工人':'工头'"></td>
+					<td ng-bind="recruit.user.standing"></td>
+					<td ng-bind="recruit.user.isAttestation == 1 ? '已认证':'未认证'"></td>
+					<td ng-if="recruit.enlistStatus == 1">
+						已报名
+					</td>
+					<td ng-if="recruit.enlistStatus == 2">
+						报名通过
+					</td>
+					<td ng-if="recruit.enlistStatus == 3">
+						报名未通过
+					</td>
+					<td ng-bind="recruit.balanceStatus == 0 ? '未结算':'已结算'"></td>
+					<td ng-bind="recruit.refuseCause"></td>
+					<td ng-bind="recruit.createTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+					<td class="td-manage">
+						<div class="btn_group">
+						<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+						<ul class="btn_group_item none">
+						<li> <a title="审核通过" ng-click="updateRecruitTrue(recruit.id);"   ng-if="recruit.enlistStatus == 1">审核通过</a> </li> 
+						<li><a title="拒绝通过" ng-click="updateRecruitFalse(recruit.id);"   ng-if="recruit.enlistStatus == 1">拒绝通过</a></li>
+						<li><a title="删除" ng-click="deleteRecruitUser(recruit.id)" >删除</a></li>
+						</ul>
+						</div>
+					</td>
+			    </tr>
+			    <tr ng-if="recruitRecordList == null || recruitRecordList.length <= 0 ">
+			   		<td class="center" colspan="14">暂无数据  <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+<!-- 拒绝通过 -->
+<div id="update_recruit" class="update_recruit" style="display:none">
+	<form ng-submit="" >
+		<div class="add_style add_administrator_style">
+			<ul>
+				<li class="clearfix">
+					<label class="label_name col-xs-2 col-lg-2"><i>*</i>失败原因：</label>
+					<div class="formControls col-xs-6">
+					<input type="text" class="input-text col-xs-12" value="" placeholder="请输入拒绝通过原因" ng-model="refuseCause" ></div>
+				</li>
+		        <li class="clearfix col-xs-12 col-lg-12 align">
+					<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="确定" ng-click="submitRecruitFalse();">
+				</li>
+		    </ul>
+		</div>
+	</form>
+</div>
+</body>
+</html>
+<script>
+
+var menuManager = angular.module('recruit', []);
+menuManager.controller('userRecruit', function($scope,$timeout) {
+	$scope.recruitId = urlParam("recruitId");
+	$scope.userId = urlParam("userId");
+	$scope.pageNum=1;
+	$scope.pageSize=20;
+	$scope.queryRecruitRecordList = function()//查询招聘列表
+	{
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			});
+			if(!isNotNull($scope.recruitId) || !isNotNull($scope.userId))
+			{
+				layer.msg("参数错误");
+				return false;
+			}
+			Ajax.post({
+				url: getRoot+'/manager/recruit/user/list.ddxj',
+				data: {userId:$scope.userId,recruitId:$scope.recruitId,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.recruitRecordList.total;
+						$scope.recruitRecordList = data.data.recruitRecordList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function()
+		{
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+	      				$scope.queryRecruitRecordList();
+                    }
+	      	    }
+			});
+		});
+	}
+	$scope.queryRecruitRecordList();
+	
+	$scope.deleteRecruitUser = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/recruit/record/delete.ddxj',
+				data: {recordId:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryRecruitRecordList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRecruitTrue = function(id)
+	{
+		layer.confirm("确定要审核通过吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/record/update/status.ddxj',
+				data: {recordId:id,enlistStatus:2},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.queryRecruitRecordList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.updateRecruitFalse=function(id)
+	{
+		$scope.recordId = id;
+		layer.open({
+			type: 1,
+			title:'拒绝通过',
+			area: ['600px',''],
+			shadeClose: false,
+			content: $('#update_recruit'),
+		});
+	}
+	
+	$scope.submitRecruitFalse=function()
+	{
+		if(!isNotNull($scope.refuseCause))
+		{
+			layer.msg("请输入拒绝通过原因");
+			return false;
+		}
+		layer.confirm("确定要拒绝通过吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/manager/record/update/status.ddxj',
+				data: {recordId:$scope.recordId,enlistStatus:3,refuseCause : $scope.refuseCause},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.closeAll();
+						layer.msg("处理成功");
+						$scope.queryRecruitRecordList();
+					}
+				}
+			}); 
+		});
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>
+

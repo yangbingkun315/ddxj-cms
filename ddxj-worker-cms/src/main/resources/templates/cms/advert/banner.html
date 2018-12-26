@@ -1,0 +1,86 @@
+[#assign title="点点小匠-轮播图列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="advertBannerList">
+	<div class="alert alert-warning" >注：首页轮播图，对用户宣布一些重要的活动，让用户及时参与活动。 </div>
+	<form method="post" id="cms_banner_form" action="${base}/advert/banner/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">上架时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryBannerList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:advert:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateBanner()">添加轮播图</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/advert/banner_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_banner_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryBannerList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_banner_form').submit();
+}
+
+queryBannerList(1);
+function updateBanner(id)
+{
+	var url = "${base}/advert/banner/edit.htm"
+	if(id)
+	{
+		url += "?advertBannerId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改轮播图" : "新增轮播图","width":450,"height":680});
+}
+function confirmSlideRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该条轮播图吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/advert/banner/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryBannerList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,137 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td>真实姓名</td>
+   		<td>性别</td>
+   		<td>年龄</td>
+   		<td>联系电话</td>
+   		<td>用户角色</td>
+   		<td>工龄</td>
+   		<td>是否认证</td>
+   		<td>报名状态</td>
+   		<td>结算状态</td>
+   		<td>拒绝原因</td>
+   		<td>申请时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if recruitApplyList?? && recruitApplyList?size > 0]
+	   	[#list recruitApplyList as recruitRecord]
+	   	<tr>
+	   		<td>${recruitRecord.user.realName!""}</td>
+	   		<td>
+	   			[#if recruitRecord.user.sex == 'M']
+	   				<button type="button" class="btn btn-success btn-xs">男</button>
+	   			[#elseif recruitRecord.user.sex == 'F']
+	   				<button type="button" class="btn btn-warning btn-xs">女</button>
+	   			[/#if]
+	   		</td>
+	   		<td>${recruitRecord.user.age!""}</td>
+	   		<td>${recruitRecord.user.phone!""}</td>
+	   		<td>
+	   			[#if recruitRecord.user.role??]
+	   				[#if recruitRecord.user.role == '1']
+	   					工人
+	   				[#elseif recruitRecord.user.role == '2']
+	   					工头
+	   				[/#if]
+	   			[#else]
+	   				未知
+	   			[/#if]
+	   		</td>
+	   		<td>${recruitRecord.user.standing!""}</td>
+	   		<td>
+	   			[#if recruitRecord.isAttestation == '1']
+	   				<button type="button" class="btn btn-success btn-xs">已认证</button>
+	   			[#else]
+	   				<button type="button" class="btn btn-warning btn-xs">未认证</button>
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			[#if recruitRecord.enlistStatus == 1]
+	   				<button type="button" class="btn btn-info btn-xs">已报名</button>
+	   			[#elseif recruitRecord.enlistStatus == 2]
+	   				<button type="button" class="btn btn-success btn-xs">报名通过</button>
+	   			[#elseif recruitRecord.enlistStatus == 3]
+	   				<button type="button" class="btn btn-warning btn-xs">报名未通过</button>
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			[#if recruitRecord.balanceStatus == '0']
+	   				<button type="button" class="btn btn-danger btn-xs">未结算</button>
+	   			[#elseif recruitRecord.balanceStatus == '1']
+	   				<button type="button" class="btn btn-success btn-xs">已结算</button>
+	   			[/#if]
+	   		</td>
+	   		<td>
+	   			[#if recruitRecord.validateCause??]
+	   				${recruitRecord.validateCause}
+	   			[#else]
+	   				无
+	   			[/#if]
+	   		</td>
+	   		<td>${recruitRecord.createTime?string("yyyy-MM-dd")}</td>
+	   		<td>
+	   		[@shiro.hasPermission name="system:recruit:manager:group"]
+		 		<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+		   				[#if recruitRecord.enlistStatus==1]
+				   			[@shiro.hasPermission name="system:recruit:audit"]
+					   			<li>
+					   				<a onclick="updateApplyStatus(${recruitRecord.id},1)">审核通过</a>
+					   			</li>
+					   			<li class="divider"></li>
+				   			[/@shiro.hasPermission]
+				   			[@shiro.hasPermission name="system:recruit:audit"]
+					   			<li>
+					   				<a data-toggle="modal" data-target="#myModal" onclick="addReviewFailureValue(${recruitRecord.id})">拒绝通过</a>
+					   				
+					   			</li>
+					   			<li class="divider"></li>
+					   		[/@shiro.hasPermission]
+				   		[/#if]
+			   			[@shiro.hasPermission name="system:recruit:delete"]
+				   			<li>
+				   				<a onclick="confirmDeleteUser(${recruit.id})">删除</a>
+				   			</li>
+				   		[/@shiro.hasPermission]
+			   		
+		   			</ul>
+		  		</div>
+		  	[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="12" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(page > 1)
+{
+	$("a[name='previewPage']").show();
+}
+else
+{
+	$("a[name='previewPage']").hide();
+}
+$("a[name='previewPage']").unbind("click").click(function(){
+	var prePage = page - 1;
+	prePage = prePage < 1 ? 1 : prePage;
+	queryUserApplyList(prePage);
+});
+$("a[name='nextPage']").unbind("click").click(function(){
+	queryUserApplyList(page + 1);
+});
+if($(".dropdown-menu li").length == 0)
+{
+	$(".btn-group").addClass("cms-hide");
+}
+$('.galpop-info').galpop();
+</script>

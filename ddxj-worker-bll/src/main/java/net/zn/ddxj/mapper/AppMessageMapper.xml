@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.AppMessageMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.AppMessage" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="message_type" property="messageType" jdbcType="INTEGER" />
+        <result column="message_category" property="messageCategory" jdbcType="INTEGER" />
+        <result column="message_title" property="messageTitle" jdbcType="VARCHAR" />
+        <result column="message_summary" property="messageSummary" jdbcType="VARCHAR" />
+        <result column="message_content" property="messageContent" jdbcType="VARCHAR" />
+        <result column="message_stick" property="messageStick" jdbcType="INTEGER" />
+        <result column="message_read" property="messageRead" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, message_type, message_category, message_title, message_summary, message_content, 
+        message_stick, message_read, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_app_message
+        where id = #{id,jdbcType=INTEGER} where flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_app_message
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.AppMessage" >
+        insert into zn_app_message (id, user_id, message_type, 
+            message_category, message_title, message_summary, 
+            message_content, message_stick, message_read, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{messageType,jdbcType=INTEGER}, 
+            #{messageCategory,jdbcType=INTEGER}, #{messageTitle,jdbcType=VARCHAR}, #{messageSummary,jdbcType=VARCHAR}, 
+            #{messageContent,jdbcType=VARCHAR}, #{messageStick,jdbcType=INTEGER}, #{messageRead,jdbcType=INTEGER}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.AppMessage" >
+        insert into zn_app_message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="messageType != null" >
+                message_type,
+            </if>
+            <if test="messageCategory != null" >
+                message_category,
+            </if>
+            <if test="messageTitle != null" >
+                message_title,
+            </if>
+            <if test="messageSummary != null" >
+                message_summary,
+            </if>
+            <if test="messageContent != null" >
+                message_content,
+            </if>
+            <if test="messageStick != null" >
+                message_stick,
+            </if>
+            <if test="messageRead != null" >
+                message_read,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="messageType != null" >
+                #{messageType,jdbcType=INTEGER},
+            </if>
+            <if test="messageCategory != null" >
+                #{messageCategory,jdbcType=INTEGER},
+            </if>
+            <if test="messageTitle != null" >
+                #{messageTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="messageSummary != null" >
+                #{messageSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="messageContent != null" >
+                #{messageContent,jdbcType=VARCHAR},
+            </if>
+            <if test="messageStick != null" >
+                #{messageStick,jdbcType=INTEGER},
+            </if>
+            <if test="messageRead != null" >
+                #{messageRead,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.AppMessage" >
+        update zn_app_message
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="messageType != null" >
+                message_type = #{messageType,jdbcType=INTEGER},
+            </if>
+            <if test="messageCategory != null" >
+                message_category = #{messageCategory,jdbcType=INTEGER},
+            </if>
+            <if test="messageTitle != null" >
+                message_title = #{messageTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="messageSummary != null" >
+                message_summary = #{messageSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="messageContent != null" >
+                message_content = #{messageContent,jdbcType=VARCHAR},
+            </if>
+            <if test="messageStick != null" >
+                message_stick = #{messageStick,jdbcType=INTEGER},
+            </if>
+            <if test="messageRead != null" >
+                message_read = #{messageRead,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.AppMessage" >
+        update zn_app_message
+        set user_id = #{userId,jdbcType=INTEGER},
+            message_type = #{messageType,jdbcType=INTEGER},
+            message_category = #{messageCategory,jdbcType=INTEGER},
+            message_title = #{messageTitle,jdbcType=VARCHAR},
+            message_summary = #{messageSummary,jdbcType=VARCHAR},
+            message_content = #{messageContent,jdbcType=VARCHAR},
+            message_stick = #{messageStick,jdbcType=INTEGER},
+            message_read = #{messageRead,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 删除appMessage -->
+    <delete id="delAppMessageRecord" parameterType="java.lang.Integer" >
+        delete from zn_app_message
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+</mapper>

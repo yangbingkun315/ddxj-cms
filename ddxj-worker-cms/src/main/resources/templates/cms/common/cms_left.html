@@ -1,0 +1,324 @@
+    <div class="nav-left nav-mini">
+	        <div class="nav-top">
+	            <div id="mini" style="border-bottom:1px solid rgba(255,255,255,.1)"><img src="[@resUrl /]/assets/cms/images/mini.png" ></div>
+	        </div>
+	        <div class="cms-logo cms-logo-mini a-fadeinL">
+				<img alt="" src="[@imgResUrl /]/assets/cms/images/login/login_logo.png" onclick="window.location.href='${base}/cms/index.htm'">
+			</div>
+	       <div class="menu-left-content">
+	       		 <ul>
+	            <li class="nav-item" id="cmsIndex">
+	                 <a href="${base}/cms/index.htm" ><i class="my-icon nav-icon iconfont">&#xe615;</i><span>首页</span></a>
+	            </li>
+                
+	            [@shiro.hasPermission name="system:manager"]
+	            <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe64c;</i><span>系统管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                	[@shiro.hasPermission name="system:user:list"]
+                        <li id="cmsUserList">
+							 <a href="${base}/cms/user/list.htm">
+								<i class="my-icon nav-icon iconfont">&#xe70c;</i>
+								<span>用户管理</span>
+							</a>
+						</li>
+                        [/@shiro.hasPermission]
+ 						[@shiro.hasPermission name="system:role:list"]
+                        <li id="cmsRoleList">
+                            <a href="${base}/cms/role/list.htm">
+                               	<i class="my-icon nav-icon iconfont">&#xe610;</i>
+								<span>角色管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+						[@shiro.hasPermission name="system:resource:list"]
+                        <li id="cmsResourceList">
+                            <a href="${base}/cms/resource/list.htm">
+                           	  	<i class="my-icon nav-icon iconfont">&#xe65d;</i>
+								<span>资源管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+						 [@shiro.hasPermission name="system:logs"]
+                         <li id="cmsLogs">
+                            <a href="${base}/cms/logs/list.htm">
+                             	 <i class="my-icon nav-icon iconfont">&#xe604;</i>
+								<span>日志记录</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:message"]
+                         <li id="messageList">
+                            <a href="${base}/cms/message/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe735;</i>
+								<span>消息记录</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                         [@shiro.hasPermission name="system:complain"]
+                         <li id="complainList">
+                            <a href="${base}/cms/complain/list.htm">
+                            	  <i class="my-icon nav-icon iconfont">&#xe661;</i>
+								<span>投诉建议</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:storage"]
+	                        <li id="cmsStorage">
+	                            <a href="${base}/cms/storage/list.htm">
+	                             	  <i class="my-icon nav-icon iconfont">&#xe638;</i>
+									<span>文件管理</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:excel"]
+	                        <li id="excelExprot">
+	                            <a href="${base}/excel/export.htm?act=customer">
+	                             	  <i class="my-icon nav-icon iconfont">&#xe728;</i>
+									<span>Excel导出</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:problemLib:list"]
+	                        <li id="problemLibList">
+	                            <a href="${base}/query/problemLib/list.htm">
+									<i class="my-icon nav-icon iconfont">&#xe689;</i>
+									<span>问题库</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+                [@shiro.hasPermission name="system:customer:manager:menu"]
+                 <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe619;</i><span>客户管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                	[@shiro.hasPermission name="system:customer:list"]
+                        <li id="customerUserList">
+                            <a href="${base}/customer/user/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe60f;</i>
+								<span>客户管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:auth:list"]
+                        <li id="realNameList">
+                            <a href="${base}/customer/user/real/auth/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe603;</i>
+								<span>实名认证</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:category:list"]
+	                        <li id="categoryList">
+	                            <a href="${base}/customer/user/category/list.htm">
+	                             	<i class="my-icon nav-icon iconfont">&#xe606;</i>
+									<span>工种管理</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:foreman:list"]
+	                        <li id="applyForemanList">
+	                            <a href="${base}/customer/user/foreman/list.htm">
+	                             	<i class="my-icon nav-icon iconfont">&#xe64f;</i>
+									<span>申请工头</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+                
+                 [@shiro.hasPermission name="system:recruit:manager:menu"]
+                  <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe647;</i><span>招聘管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                	[@shiro.hasPermission name="system:recruit:list"]
+                        <li id="recruitList">
+                            <a href="${base}/recruit/recruit/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe647;</i>
+								<span>招聘列表</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:organization:list"]
+                        <li id="creditInstList">
+                            <a href="${base}/recruit/credit/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe602;</i>
+								<span>授信机构</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                         [@shiro.hasPermission name="system:creditRecord:list"]
+                        <li id="creditRecordList">
+                            <a href="${base}/recruit/credit/record/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe61c;</i>
+								<span>授信记录</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:salary:manager"]
+                        <li id="salaryList">
+                            <a href="${base}/recruit/salary/manager/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe635;</i>
+								<span>授信发放</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:notice:list"]
+                        <li id="noticeList">
+                            <a href="${base}/recruit/notice/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe6c8;</i>
+								<span>公告管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+                [@shiro.hasPermission name="system:website"]
+                 <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe613;</i><span>官网管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                	[@shiro.hasPermission name="system:site:manager"]
+                        <li id="slideList">
+                            <a href="${base}/sites/slide/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe698;</i>
+								<span>幻灯片列表</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:bespeak:list"]
+                        <li id="bespeakList">
+                            <a href="${base}/sites/bespeak/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe697;</i>
+								<span>预约咨询</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                         [@shiro.hasPermission name="system:recruitment:list"]
+                        <li id="recruitmentList">
+                            <a href="${base}/sites/recruitment/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe647;</i>
+								<span>招贤纳士</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                         [@shiro.hasPermission name="system:project:list"]
+                        <li id="projectList">
+                            <a href="${base}/sites/project/list.htm">
+                               <i class="my-icon nav-icon iconfont">&#xe636;</i>
+								<span>工程需求</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:web:recruit:list"]
+                        <li id="webRecruitList">
+                            <a href="${base}/web/recruit/list.htm">
+                               <i class="my-icon nav-icon iconfont">&#xe67c;</i>
+								<span>官网招聘</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+                [@shiro.hasPermission name="system:marketing:manager"]
+                 <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe618;</i><span>营销管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                    [@shiro.hasPermission name="system:screen:list"]
+	                        <li id="screenList">
+	                            <a href="${base}/cms/screen/list.htm">
+	                             	  <i class="my-icon nav-icon iconfont">&#xe9ab;</i>
+									<span>闪屏设置</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+                          [@shiro.hasPermission name="system:information:list"]
+                        <li id="informationList">
+                            <a href="${base}/information/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe622;</i>
+								<span>资讯管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:invite:list"]
+                        <li id="inviteList">
+                            <a href="${base}/marketing/invite/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe7c5;</i>
+								<span>分销设置</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+	                	[@shiro.hasPermission name="system:circle:list"]
+                        <li id="circleList">
+                            <a href="${base}/circle/record/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe631;</i>
+								<span>圈子列表</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:advert:banner"]
+                        <li id="advertBannerList">
+                            <a href="${base}/advert/banner/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe698;</i>
+								<span>首页轮播图</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:app:menu:manager"]
+                        <li id="appMenuList">
+                            <a href="${base}/app/menu/list.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe696;</i>
+								<span>首页业务模块</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:wechat:manager"]
+                        <li id="wechatMenuList">
+                            <a href="${base}/wechat/menu/setting.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe745;</i>
+								<span>公众号管理</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:mass:message:app"]
+                        <li id="massMessageApp">
+                            <a href="${base}/app/mass/message/send.htm">
+                             	<i class="my-icon nav-icon iconfont">&#xe735;</i>
+								<span>群发消息</span>
+                            </a>
+                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+                [@shiro.hasPermission name="system:withdraw:manager:menu"]
+                 <li class="nav-item">
+	                <a href="javascript:;"><i class="my-icon nav-icon iconfont">&#xe635;</i><span>资金管理</span><i class="my-icon nav-more iconfont">&#xe605;</i></a>
+	                <ul>
+	                    [@shiro.hasPermission name="system:withdraw:list"]
+	                        <li id="userWithdrawList">
+	                            <a href="${base}/query/userWithdraw/list.htm">
+	                             	  <i class="my-icon nav-icon iconfont">&#xe68c;</i>
+									<span>提现列表</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+                        [@shiro.hasPermission name="system:transfer:list"]
+	                        <li id="transferList">
+	                            <a href="${base}/customer/transfer/list.htm">
+	                             	  <i class="my-icon nav-icon iconfont">&#xe63c;</i>
+									<span>转账列表</span>
+	                            </a>
+	                        </li>
+                        [/@shiro.hasPermission]
+               		</ul>
+	            </li>
+                [/@shiro.hasPermission]
+	        </ul>
+	       </div>
+	    </div>
+	<script type="text/javascript">$('.cms-loading-top').animate({'width':'55%'},200);</script>

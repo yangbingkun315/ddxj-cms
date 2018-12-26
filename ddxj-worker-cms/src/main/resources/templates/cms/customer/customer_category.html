@@ -1,0 +1,79 @@
+[#assign title="点点小匠-工种列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=categoryList>
+	<div class="alert alert-warning" >注：可以对平台的所有工种进行增删改查 </div>
+	<form method="post" id="cms_category_form" action="${base}/customer/user/category/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			<label class="search-title">工种：</label>
+		    	<input type="text" id="categoryName" name="categoryName" class="form-control search-input" placeholder="请输入工种类型">
+			</div>
+			<div class="search-button">
+				<button type="button" onclick="queryCategoryList(1)" class="btn btn-warning">查询</button>
+			</div>
+		</div>
+	</form>
+	[@shiro.hasPermission name="system:category:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateUserCategory()">添加工种</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/customer/customer_category_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_category_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryCategoryList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_category_form').submit();
+}
+
+queryCategoryList(1);
+
+function updateUserCategory(id)
+{
+	var url = "${base}/customer/user/category/edit.htm"
+	if(id)
+	{
+		url += "?categoryId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改工种" : "创建工种","width":400,"height":400});
+}
+
+function confirmDeleteCategory(id)
+{
+	showConfirmDialog({message : "确认要删除此工种吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/customer/user/category/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryCategoryList();
+			}
+		});
+	});
+}
+
+</script>
+[#include "/common/cms_footer.html"]

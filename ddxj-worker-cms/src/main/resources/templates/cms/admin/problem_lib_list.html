@@ -1,0 +1,103 @@
+[#assign title="点点小匠-问题库"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/star/star-rating.css?[@cmsVersion /]">
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/js/common/star/star-rating.min.js"></script>
+<style>
+.preview-content img
+{
+	max-width: 100%;
+}
+</style>
+<div class="cms-content" id="problemLibList">
+	<div class="alert alert-warning" >注：问题列表 </div>
+	<form method="post" id="problem_lib_form" action="${base}/query/problemLib/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">问题标题：</label>
+				<input type="text" name="problemTitle" id="problemTitle" class="form-control search-input" placeholder="问题标题" autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+				<label class="search-title">创建时间：</label>
+				<input type="text" name="startTime" id="startTime" class="form-control search-input" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+					placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+				<input type="text" name="endTime" id="endTime" class="form-control search-input" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+					placeholder="结束时间" autocomplete="off" >
+			</div>
+			<div class="search-button">
+				<button type="submit" class="btn btn-warning" onclick="queryProblemLibList(1);">查询</button>
+			</div>
+		</div>
+	</form>
+	[@shiro.hasPermission name="system:site:slide:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<a class="btn btn-warning" href="${base}/problem/lib/edit.htm">添加问题</a>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/admin/problem_lib_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<div class="userinfo_style" id="content_detail" style="display: none">
+	<div class="member_show" >
+		<div class="member_content"></div>
+	</div>
+</div>
+<script type="text/javascript">
+$('#problem_lib_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryProblemLibList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#problem_lib_form').submit();
+}
+
+queryProblemLibList(1);
+
+function queryDetails(id)
+{
+	var url = "${base}/query/problemLib/detail.htm?id=" + id;
+	TB_show({"url":url,"title":"问题详情","width":400,"height":800});
+}
+
+function confirmSlideRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该条记录吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		$.post("${base}/problem/lib/delete.htm?id=" + id,function(data){
+			if(data.responseCode == 1036)
+			{
+				 linkLogin();
+			}
+			else
+			{
+				minAlert("删除成功！",1);
+				queryProblemLibList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

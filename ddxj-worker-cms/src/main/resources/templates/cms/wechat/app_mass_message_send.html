@@ -1,0 +1,209 @@
+[#assign title="点点小匠-APP群发"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link href="${base!}/assets/cms/css/user/skin.css?[@cmsVersion /]" rel="stylesheet">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/city_data.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<style>
+.width8{width:80%;}
+.width5{width:55%;}
+.order-search-item {
+	width:100%;
+}
+.chosen-container {
+	width: 250px !important;
+}
+.clearfix {
+	width:40%;
+}
+</style>
+<div class="cms-content" id="massMessageApp">
+	<div class="alert alert-warning" >注：此群发为APP群发，推送至手机端 </div>
+	[#assign appTabActive = 1]
+	[#include "/wechat/app_tab.html"]
+	<form method="post" id="app_mass_message_form" action="${base}/app/mass/message/send.htm">
+		<div class="bootstrap-widget-content">
+			<div class="order-search-item">
+				<label>群发标题</label>
+				<div class="input-field clearfix">
+					<input type="text" id="massTitle" name="massTitle" class="input textinput-main width8" maxlength="255" isRequired="true" placeholder="群发标题，必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>群发内容</label>
+				<div class="input-field clearfix">
+					<textarea class="form-control" maxLength="255" id="massContent" name="massContent" isRequired="true" placeholder="群发内容，必填"></textarea>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>跳转链接</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="链接前缀为“http://”或“https://”">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="massLink" name="massLink" class="input textinput-main width8" maxlength="128" placeholder="跳转链接，非必填">
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>推送平台</label>
+				<div class="input-field clearfix">
+					<div class="cms-checkbox">
+						<label class="el-radio">
+							<span class="margin-l">全部</span>
+							<input type="radio" name="massPlatform" value="3" checked>
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+						<label class="el-radio">
+							<span class="margin-l">IOS</span>
+							<input type="radio" name="massPlatform" value="1">
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+						<label class="el-radio">
+							<span class="margin-l">安卓</span>
+							<input type="radio" name="massPlatform" value="2">
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+					</div>
+				</div>
+			</div> 
+			<div class="order-search-item">
+				<label>推送对象</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="默认此项推送内容将推送给所有用户">&#xe61f;</i>
+				<div class="input-field clearfix" style="cursor: pointer;">
+					<div class="advertise-type box-making width5">
+						<div class="making-item type-item on" data-id="1">广播</div>
+						<div class="making-item type-item" data-id="2">工头端</div>
+						<div class="making-item type-item" data-id="3">工人端</div>
+						<input type="hidden" id="massObject" name="massObject" value="1" />
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item none" id="category_id">
+				<label>工种</label>
+				<div class="input-field clearfix" style="min-height:40px;">
+					<select class="form-control textinput-main" id="categoryId" data-placeholder="请选择工种" multiple="multiple">
+						[#if categoryList?? && categoryList?size > 0]
+							[#list categoryList as category]
+								<option value="${category.id}">${category.categoryName}</option>
+							[/#list]
+						[/#if]
+					</select>
+					<div id="categoryIdList_ctx"></div>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>地区</label>
+				<div class="input-field clearfix">
+					 <select class="form-control textinput-main" id="province" name="province" onchange="changeCityText(this)" style="width:30%;display:inline-block;" >
+						<option value="">请选择省</option>
+					 </select>
+					 <select class="form-control textinput-main" id="city" name="city" style="width:30%;display:inline-block;">
+						<option value="">请选择市</option>
+					 </select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>性别</label>
+				<div class="input-field clearfix">
+					<div class="cms-checkbox">
+						<label class="el-radio">
+							<span class="margin-l">全部</span>
+							<input type="radio" name="msgSex" value="0" checked>
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+						<label class="el-radio">
+							<span class="margin-l">男</span>
+							<input type="radio" name="msgSex" value="1">
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+						<label class="el-radio">
+							<span class="margin-l">女</span>
+							<input type="radio" name="msgSex" value="2">
+							<span class="el-radio-style  pull-left"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>年龄段</label>
+				<i class="question iconfont" data-toggle="tooltip" data-placement="top" title="此日期为出生日期时间段">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" name="startAge" id="startAge" class="input textinput-main" style="width:150px" placeholder="开始时间" autocomplete="off" 
+						onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,maxDate:'%y-%M-%d %H:%i:%S'})">&nbsp;至&nbsp;
+					<input type="text" name="endAge" id="endAge" class="input textinput-main" style="width:150px" placeholder="结束时间" autocomplete="off" 
+						onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:document.getElementById('startAge').value,maxDate:'%y-%M-%d %H:%i:%S'})"> 
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;">
+				<button class="btn btn-warning" id="yw9" type="submit" name="yt0">确定群发</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#app_mass_message_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#app_mass_message_form').validate())
+		{
+			removeAllRightMessage();
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在群发,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else if(data.response)
+		{
+			TINY.box.show("群发成功！",0,0,0,0,2);
+			TB_remove();
+		}
+		else
+		{
+			alertTip(data.responseMsg,3);
+		}
+	}
+});
+
+changeProvinceText("#province","null","null","null");
+
+$("#categoryId").chosen({allow_single_deselect:true,max_selected_options:3,disable_search:true}).change(function(){
+	$("#categoryIdList_ctx").html("");
+	var selectedValue = $("#categoryId").val();
+	if(selectedValue)
+	{
+		for(var i = 0;i < selectedValue.length;i++)
+		{
+			$("#categoryIdList_ctx").append('<input name="categoryIdList" type="hidden" value="' + selectedValue[i] + '"/>');
+		}
+	}
+});
+
+setTimeout(function(){
+	$('#app_mass_message_form').configValidate();
+	$("#categoryId").trigger("chosen:updated");
+},100);
+
+$(".advertise-type .type-item").click(function(){
+	$(".advertise-type div").removeClass("on");
+	$(this).addClass("on");
+	var data = $(this).attr("data-id");
+	if(data == "3")
+	{
+		$("#category_id").show();
+	}
+	else
+	{
+		$("#category_id").hide();
+	}
+	$("#massObject").val(data);
+});
+</script>
+[#include "/common/cms_footer.html"]

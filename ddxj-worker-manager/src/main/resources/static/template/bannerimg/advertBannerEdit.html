@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link href="../../js/lay/css/layui.css" type="text/css"  rel="stylesheet" />
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/city_data.js" type="text/javascript"></script>
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/hsCheckData.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>管理资讯</title>
+</head>
+<body>
+<div class="margin inside_pages clearfix" ng-app="bannerEdit" ng-controller="bannerManager">
+	<div class="add_style clearfix relative">
+		<ul>
+			<li class="clearfix">
+				<label class="label_name col-xs-1"><i>*</i>跳转链接：&nbsp;&nbsp;</label>
+				<div class="Add_content col-xs-11">
+					<input type="text" placeholder="请输入跳转链接" ng-model="advertBanner.bannerLink" class="col-xs-6"/>
+				</div>
+			</li>
+			<li class="clearfix">
+				<div class="col-xs-4">
+					<label class="label_name col-xs-3"><i>*</i>上架时间：&nbsp;&nbsp;</label> 
+					<div class="Add_content col-xs-9">
+						<input class="laydate-icon col-xs-4 col-lg-3" id="start" ng-model="advertBanner.startTime" style="min-width: 170px;margin-right:10px; height:28px; line-height:28px; float:left">
+					</div>   
+				</div>
+				<div class="col-xs-4">
+					<label class="label_name col-xs-3"><i>*</i>下架时间：&nbsp;&nbsp;</label> 
+					<div class="Add_content col-xs-9">
+						<input class="laydate-icon col-xs-4 col-lg-3" id="end" ng-model="advertBanner.endTime" style="min-width: 170px;height:28px; line-height:28px; float:left">
+					</div>   
+				</div>
+			</li>
+			<li class="clearfix"><label class="label_name col-xs-1"><i>*</i>类型：&nbsp;&nbsp;</label>
+   				<div class="Add_content col-xs-11">
+   					<span class="add_name">
+		     			<select id="bannerType_id" ng-model="advertBanner.bannerType" ng-init="advertBanner.bannerType=bannerTypeList[0].value" ng-options="role.value as role.name for role in bannerTypeList">
+		               		<option value="">请选择图影类型</option>
+		       			</select>
+					</span>
+   				</div>
+     		</li>
+			<li class="clearfix" ng-if="advertBanner.bannerType == null || advertBanner.bannerType == 1">
+				<label class="label_name col-xs-1"><i>*</i>上传图片：&nbsp;&nbsp;</label>
+				<div class="Add_content col-xs-11">
+					<div id="preview" class="preview_img">
+						<img ng-src="{{advertBanner.bannerUrl}}" ng-model="advertBanner.bannerUrl" id="imageFile" border="0" src="../../images/image.png" />
+					</div>
+					<div class="fileInput ">
+						<input type="file" onchange="uploadImg(this)" name="upfile" id="upfile" class="upFileBtn"/>
+			        </div>
+				</div>
+			</li>
+			<li class="clearfix" ng-if="advertBanner.bannerType != null && advertBanner.bannerType == 2">
+				<label class="label_name col-xs-1"><i>*</i>上传视频：&nbsp;&nbsp;</label>
+				<div class="Add_content col-xs-11">
+					<div id="preview" class="preview_img">
+						<!-- <embed id="uplVideo" ng-src="{{advertBanner.bannerUrl}}" allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed> -->
+						<!-- <video ng-src="{{advertBanner.bannerUrl}}" width="320" height="240" controls="controls"></video> -->
+						<iframe ng-src="{{advertBanner.bannerUrl}}" id="uplVideo"></iframe>
+					</div>
+					<div class="fileInput ">
+						<input type="file" onchange="uploadVideo(this)" id="upfileVideo" class="upFileBtn"/>
+			        </div>
+				</div>
+			</li>
+		</ul>
+		<div class="Button_operation btn_width">
+			<button class="btn button_btn bg-deep-blue" type="button" ng-click="submitBanner()">保存并提交</button>
+			<button class="btn button_btn bg-gray" type="button" onclick="window.location.href='advertBannerList.html'">取消添加</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script>
+	
+/******时间设置*******/
+var start = 
+{
+	elem: '#start',
+	format: 'YYYY-MM-DD hh:mm:ss',
+	min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16 23:59:59', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas)
+	{
+		end.min = datas; //开始日选好后，重置结束日的最小日期
+		end.start = datas //将结束日的初始值设定为开始日
+	}
+};
+var end = 
+{
+	elem: '#end',
+	format: 'YYYY-MM-DD hh:mm:ss',
+    min: laydate.now(),
+    max: '2099-06-16 23:59:59',
+    istime: true,
+    istoday: false,
+    choose: function(datas)
+    {
+		start.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+};
+laydate(start);
+laydate(end);
+
+var bannerId = urlParam("bannerId");
+var bannerEdit = angular.module('bannerEdit', []);
+bannerEdit.controller('bannerManager', function($scope,$timeout,$sce) 
+{
+	layui.use(['layer'], function(){}); 
+	$scope.bannerTypeList = [{
+		name:'图片',
+		value:1
+	},{
+		name:'视频',
+		value:2
+	}]
+	$scope.advertBanner = "";
+	
+	//获取token
+	$scope.uploadToken = function() 
+	{
+		var image;
+	    Ajax.post({
+			url: getRoot+'/member/query/qiniu/token.ddxj',
+			data: {},
+			async: false,
+			success: function(data) {
+				if(data.response == true)
+				{
+		        	$scope.token = data.data.token;
+				}
+			}
+		}); 
+	}
+	
+	$scope.advertBannerDetail = function()//查询招聘详情
+	{
+		//$scope.queryCategoryParent();
+		if(isNotNull(bannerId))
+		{
+			Ajax.post({
+				url: getRoot+'/advert/banner/detail.ddxj', 
+				data: {bannerId:bannerId},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.advertBanner = data.data.advertBanner;
+						$scope.advertBanner.bannerUrl = $sce.trustAsResourceUrl(data.data.advertBanner.bannerUrl);
+						$scope.advertBanner.startTime = timeInMillisToformat(data.data.advertBanner.startTime.time);
+	               		$scope.advertBanner.endTime = timeInMillisToformat(data.data.advertBanner.endTime.time);
+						$scope.$apply();
+	         		}
+         		}
+			}); 
+		}
+	}
+	$scope.advertBannerDetail();
+	
+	$scope.submitBanner = function()
+	{
+		$scope.submitData = {};
+		var banner = $scope.advertBanner;
+		if(isNotNull(banner.id))
+		{
+			$scope.submitData.id = banner.id;
+		}
+		$scope.submitData.bannerUrl =  banner.bannerUrl;
+		$scope.submitData.bannerLink = banner.bannerLink;
+		$scope.submitData.startTime = banner.startTime;
+		$scope.submitData.endTime = banner.endTime;
+		$scope.submitData.bannerType = banner.bannerType;
+		
+		if(!isNotNull(banner.bannerLink))
+		{
+			layer.msg("请输入跳转链接！");
+			return false;
+		}
+		
+		if(!isNotNull($("#start").val()))
+		{
+			layer.msg("请选择上架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.submitData.startTime = $("#start").val();
+		}
+		
+		if(!isNotNull($("#end").val()))
+		{
+			layer.msg("请选择下架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.submitData.endTime = $("#end").val();
+		}
+		
+		var bannerType = $("#bannerType_id").val();
+		if(bannerType.length <= 0)
+		{
+			layer.msg("请选择图影类型");
+			return false;
+		}
+		else
+		{
+			$scope.submitData.bannerType = banner.bannerType;
+		}
+		
+		if(banner.bannerType == 1)
+		{
+			$scope.submitData.bannerUrl = $("#imageFile").attr("src");
+		}
+		else if(banner.bannerType == 2)
+		{
+			if(!isNotNull($("#uplVideo").attr("ng-src")))
+			{
+				$scope.submitData.bannerUrl = $("#uplVideo").attr("src");
+			}
+			else
+			{
+				$scope.submitData.bannerUrl = $("#uplVideo").attr("ng-src");
+			}
+		}
+		
+		
+		Ajax.post({
+			url: getRoot+'/advert/banner/edit.ddxj',
+			data: $scope.submitData,
+			async: true,
+			success: function(data) 
+			{
+				if(data.response)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					
+					setTimeout(function(){
+						window.location.href = "advertBannerList.html";
+					},1500);
+				}
+			}
+		})
+	}
+});
+
+/*********滚动事件*********/
+$("body").niceScroll({  
+	cursorcolor:"#888888",
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"
+});
+
+function uploadImg(event)
+{
+	layui.use(['layer'], function(){
+		var img = uploadImageTOQN(event);
+		$("#imageFile").attr("src",img);
+	})
+}
+
+function uploadVideo(event)
+{
+	layui.use(['layer'], function(){
+		var src = uploadVideoTOQN(event);
+		$("#preview").html("<iframe src='" + src +"' id='uplVideo'></iframe>");
+	})
+}
+
+
+</script>

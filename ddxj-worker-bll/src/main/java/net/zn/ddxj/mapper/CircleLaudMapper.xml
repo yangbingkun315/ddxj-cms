@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CircleLaudMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CircleLaud" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="circle_id" property="circleId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, circle_id, user_id, create_time, update_time, flag
+    </sql>
+
+	<!-- 根据圈子Id查询点赞记录 -->
+    <select id="queryCircleLaudById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select *
+        from zn_circle_laud
+        where circle_id = #{circleId} and user_id = #{userId} and flag = 1
+    </select>
+    
+    <!-- 更新用户点赞状态  -->
+    <update id="updateCircleLaudById" parameterType="java.lang.Integer">
+    	UPDATE zn_circle_laud SET flag = #{flag} WHERE id = #{laudId} and user_id = #{userId}
+    </update>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_circle_laud
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_circle_laud
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CircleLaud" >
+        insert into zn_circle_laud (id, circle_id, user_id, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{circleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CircleLaud" >
+        insert into zn_circle_laud
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="circleId != null" >
+                circle_id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="circleId != null" >
+                #{circleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CircleLaud" >
+        update zn_circle_laud
+        <set >
+            <if test="circleId != null" >
+                circle_id = #{circleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CircleLaud" >
+        update zn_circle_laud
+        set circle_id = #{circleId,jdbcType=INTEGER},
+            user_id = #{userId,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+     <delete id="deleteCricleLaud" parameterType="java.lang.Integer" >
+        delete from zn_circle_laud
+        where user_id = #{userId}
+    </delete>
+    <!-- 删除圈子点赞 -->
+    <delete id="delUserCircleLaud" parameterType="java.lang.Integer" >
+        delete from zn_circle_laud
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+    <!-- 根据圈子ID删除圈子点赞 -->
+    <delete id="deleteCricleLaudById" parameterType="java.lang.Integer" >
+        DELETE from zn_circle_laud  where circle_id = #{circleId}
+    </delete>
+</mapper>

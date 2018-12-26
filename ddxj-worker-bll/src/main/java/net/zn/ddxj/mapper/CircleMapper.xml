@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CircleMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Circle" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="circle_number" property="circleNumber" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="lng" property="lng" jdbcType="VARCHAR" />
+        <result column="lat" property="lat" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="give_count" property="giveCount" jdbcType="INTEGER" />
+        <result column="is_give" property="isGive" jdbcType="INTEGER" />
+        <result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+        <!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail" ></association>
+        <!-- 一对多关系 -->
+        <collection property="circleImageList"  column="id" select="net.zn.ddxj.mapper.CircleImageMapper.getCircleImage"></collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, circle_number, user_id, content, address,city, lng, lat, ip, model, create_time, update_time, 
+        flag
+    </sql>
+    
+    <sql id="findCountAndIsGive" >
+        ,(select count(cl.id) FROM zn_circle_laud cl where cl.circle_id = ce.id and cl.flag = 1) as give_count
+        ,(select count(lc.id) FROM zn_circle_laud lc where lc.circle_id = ce.id and lc.user_id = #{userId} and lc.flag = 1) as is_give
+    </sql>
+
+	<!-- 查询圈子动态详情 -->
+    <select id="findCircleByNumber" resultType="java.lang.Integer">
+        select id from zn_circle where user_id = #{userId} and circle_number = #{number} and flag = 1
+    </select>
+    
+	<!-- 查询圈子动态-->
+    <select id="queryMyCircleRecord" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select ce.*,(select count(cc.id) from zn_circle_comment cc where cc.circle_id = ce.id  and cc.flag = 1) as comment_count
+        <include refid="findCountAndIsGive" />
+        from zn_circle ce where ce.user_id = #{userId} and ce.flag = 1 
+        order by ce.create_time desc
+    </select>
+    
+	<!-- 查询圈子动态详情 -->
+    <select id="findCircleDetail" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select ce.*,(select count(cc.id) from zn_circle_comment cc where cc.circle_id = ce.id  and cc.flag = 1) as comment_count
+        <include refid="findCountAndIsGive" />
+        from zn_circle ce where ce.id = #{circleId} and ce.flag = 1
+    </select>
+    
+	<!-- 多条件查询圈子列表 -->
+    <select id="queryCircleList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+        select ce.*,(select count(cc.id) from zn_circle_comment cc where cc.circle_id = ce.id  and cc.flag = 1) as comment_count
+        ,(select count(cl.id) FROM zn_circle_laud cl where cl.circle_id = ce.id and cl.flag = 1) as give_count
+        from zn_circle ce where ce.flag = 1
+        <if test="circleNumber != null and circleNumber != ''">
+			and ce.circle_number like concat(concat('%', #{circleNumber}), '%')
+		</if>
+        <if test="city != null and city != ''">
+			and ce.city like concat(concat('%', #{city}), '%')
+		</if>
+		<if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(ce.create_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 and DATE_FORMAT(ce.create_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+		order by ce.create_time desc
+    </select>
+    
+	<!-- 查询所有圈子动态 -->
+    <select id="queryCircleAllRecord" resultMap="BaseResultMap">
+        select ce.*,(select count(cc.id) from zn_circle_comment cc where cc.circle_id = ce.id  and cc.flag = 1) as comment_count
+        <include refid="findCountAndIsGive" />
+        from zn_circle ce where ce.flag = 1
+        <if test="city !=null and city !=''">
+			and ce.city like concat(concat('%', #{city}), '%')
+		</if>
+		order by ce.create_time desc
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_circle
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    
+    <!-- 根据ID删除圈子动态 -->
+    <update id="deleteMyCircleRecord" parameterType="java.lang.Integer" >
+        update zn_circle set flag = 2  where id = #{circleId} and user_id = #{userId} 
+    </update>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_circle
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Circle" >
+        insert into zn_circle (id, circle_number, user_id, 
+            content, address,city, lng, 
+            lat, ip, model, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{circleNumber,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+            #{content,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{lng,jdbcType=VARCHAR}, 
+            #{lat,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Circle" >
+        insert into zn_circle
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="circleNumber != null" >
+                circle_number,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="address != null" >
+                address,
+            </if>
+            <if test="city != null" >
+                city,
+            </if>
+            <if test="lng != null" >
+                lng,
+            </if>
+            <if test="lat != null" >
+                lat,
+            </if>
+            <if test="ip != null" >
+                ip,
+            </if>
+            <if test="model != null" >
+                model,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="circleNumber != null" >
+                #{circleNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="lng != null" >
+                #{lng,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null" >
+                #{lat,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null" >
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null" >
+                #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Circle" >
+        update zn_circle
+        <set >
+            <if test="circleNumber != null" >
+                circle_number = #{circleNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="lng != null" >
+                lng = #{lng,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null" >
+                lat = #{lat,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null" >
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null" >
+                model = #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Circle" >
+        update zn_circle
+        set circle_number = #{circleNumber,jdbcType=VARCHAR},
+            user_id = #{userId,jdbcType=INTEGER},
+            content = #{content,jdbcType=VARCHAR},
+            address = #{address,jdbcType=VARCHAR},
+            city = #{city,jdbcType=VARCHAR},
+            lng = #{lng,jdbcType=VARCHAR},
+            lat = #{lat,jdbcType=VARCHAR},
+            ip = #{ip,jdbcType=VARCHAR},
+            model = #{model,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 申请工头删除圈子 -->
+    <delete id="deleteCricle" parameterType="java.lang.Integer">
+    	delete from zn_circle
+        where user_id = #{userId}
+    </delete>
+    <!-- 删除圈子 -->
+     <delete id="delUserCircle" parameterType="java.lang.Integer">
+    	delete from zn_circle
+        where user_id = #{userId}
+    </delete>
+    <select id="findCircleCount" resultType="java.lang.Integer">
+    	select count(id) from zn_circle where flag = 1
+    </select>
+</mapper>

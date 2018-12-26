@@ -1,0 +1,285 @@
+<div class="cms-edit">
+	<form action="${base}/recruit/credit/record/repayment.htm"  method="post" id="credit_repayment_form">
+		<input type="hidden" name="recruitCredit.id" value="${(recruitCredit.id)!""}" />
+		<input type="hidden" id= "recruitId" name="recruitId" value="${(recruitCredit.recruitId)!""}" />
+		
+		<div class="table-making">
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							机构名称：
+						</div>
+						<div class="content input-field clearfix">
+							<input type="text" value="${(recruitCredit.credit.creditName)!""}" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							授信额度：
+						</div>
+						<div class="content">
+							<input type="text" value="${(recruitCredit.totalMoney?string('currency'))!""}" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							可用额度：
+						</div>
+						<div class="content">
+							<input type="text" value="${(recruitCredit.usableMoney?string('currency'))!""}" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							贷款利率：
+						</div>
+						<div class="content">
+							<input type="text" value="${(recruitCredit.interestRate)!""}%" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							可用额度：
+						</div>
+						<div class="content">
+							<input type="text" value="${(recruitCredit.usableMoney?string('currency'))!""}" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							收入金额：
+						</div>
+						<div class="content">
+							<input type="number"  fieldType="number"   class="input textinput-main" id="sumMoney"    isRequired="true" name="sumMoney"   placeholder="请输入收入金额"  value="" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							<i class="question iconfont" data-toggle="tooltip" data-placement="right" title="还款金额=((授信额度*贷款利率)* 贷款天数  ) + 授信额度">&#xe61f;</i> 还款金额：
+						</div>
+						<div class="content">
+							<input type="text"  value="${(repaymentAmount)!""}" id="repaymentAmount" name="repaymentAmount" class="input textinput-main" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							偿还金额：
+						</div>
+						<div class="content">
+							<input type="text"  value="0.00"  id="payMentMoney" name="payMentMoney" class="input textinput-main" readonly="readonly">
+						</div>
+					</div> 
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							<i class="question iconfont" data-toggle="tooltip" data-placement="right" title="以天为单位">&#xe61f;</i> 贷款天数：
+						</div>
+						<div class="content">
+							<!-- <div class="content-text">${(loanDay)!""}&nbsp天</div> -->
+							<input type="number"  class="input textinput-main" id="loanDay"     name="loanDay"  readonly="readonly" value="${(loanDay)!""}" >
+						</div>
+					</div>
+				</div>
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							管理员手机：
+						</div>
+						<div class="content">
+							<input type="text" value="${user.telphone?substring(0,3)}****${user.telphone?substring(7,11)}" class="input textinput-main" disabled="disabled">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="cell">
+					<div  class="item clear" >
+						<div class="title">
+							安全验证码：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" id="idCode" isRequired="true" name="idCode" maxLength="6" minLength="6"   placeholder="6位数" style="width:100px;" value="${(code)!""}"" >
+						</div>
+						<div class="tip"><button type="button" class="btn btn-success" onclick="queryIdCode(${user.telphone},10,this)" style="height:45px">获取验证码</button></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<button type="button" class="btn btn-danger" onclick="custom_close()" >取消</button>
+				<input type="submit" class="btn btn-warning" value="确认还款"/>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+
+
+$('#credit_repayment_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#credit_repayment_form').validate())
+		{
+			var sumMoney=parseInt($("#sumMoney").val() * 1); 
+			var repaymentAmount=parseInt($('#repaymentAmount').val() * 1);
+			if(!isNotNull(sumMoney))
+			{
+				minAlert("收入金额不能为空",2);
+				return false;
+			}
+			if(sumMoney < repaymentAmount)
+			{
+				minAlert("输入金额不能小于扣款金额",2);
+				$("#payMentMoney").val("0.00");
+				return false;
+			}
+			
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.response)
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryCreditRecordList(1);
+		 }
+<<<<<<< .working
+		 else
+		 {
+			minAlert(data.responseMsg,3);
+		 }
+=======
+		 else
+		 {
+			alertTip(data.responseMsg,3);
+		 }
+>>>>>>> .merge-right.r3687
+	}
+});
+
+$(function(){
+	
+	$('#credit_repayment_form').configValidate();
+});
+$('#sumMoney').blur(function(){
+	//debugger;
+	var sumMoney=parseInt($("#sumMoney").val() * 1); 
+	var repaymentAmount=parseInt($('#repaymentAmount').val() * 1);
+	var loanDay=parseInt($('#loanDay').val());
+	if(sumMoney < repaymentAmount)
+	{
+		alertTip("输入金额不能小于扣款金额",2);
+		$("#payMentMoney").val("0.00");
+	}
+	else if(sumMoney >= repaymentAmount)
+	{
+		if(loanDay!=0)
+		{
+			if(sumMoney < repaymentAmount)
+			{
+				alertTip("输入金额不能小于扣款金额",2);
+				$("#repaymentAmount").val("");
+			}
+			else if(sumMoney >= repaymentAmount)
+			{
+				var payMentMoney=sumMoney-repaymentAmount;
+				$('#payMentMoney').val(payMentMoney);
+			}
+			
+		}
+		else if(loanDay==0)
+		{
+			var payMentMoney=sumMoney-repaymentAmount;
+			$('#payMentMoney').val(payMentMoney);
+		}
+		
+	}
+	else if(sumMoney == repaymentAmount)
+	{
+		if(loanDay==0)
+		{
+			$('#payMentMoney').val(sumMoney);
+		}
+	}
+});
+
+function custom_close(){
+	 TINY.box.show("还款已取消！",0,0,0,0,2);
+	 TB_remove();
+}
+//倒计时
+var countdown=60;
+
+function queryIdCode(phone,type,val)
+{
+	//debugger;
+	var sumMoney=parseInt($("#sumMoney").val() * 1); 
+	var repaymentAmount=parseInt($('#repaymentAmount').val() * 1);
+	if(sumMoney < repaymentAmount)
+	{
+		alertTip("收入金额不能小于还款金额",2);
+		$("#payMentMoney").val("0.00");
+		return;
+	}
+	else if(sumMoney >= repaymentAmount)
+	{
+		function setTime(val)
+		{
+			//debugger;
+			if (countdown == 0) {
+		        val.removeAttribute("disabled");
+		        val.innerText="获取验证码";
+		        countdown = 60;
+		        return false;
+		    } else {
+		        val.setAttribute("disabled", true);
+		        val.innerText="重新发送" + countdown + "秒";
+		        countdown--;
+		    }
+		    setTimeout(function() {
+		    	setTime(val);
+		    },1000);
+			
+		}
+		doPost("${base}/get/verification/code.htm",{phone:phone,type:type},function(data){
+			/* var v = JSON.parse(data.data); 
+			$("#idCode").val(v.code); */
+		});
+		
+		setTime(val);
+	}
+	
+}
+</script>

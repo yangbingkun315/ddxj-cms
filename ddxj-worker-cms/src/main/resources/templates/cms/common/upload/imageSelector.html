@@ -1,0 +1,94 @@
+<style>
+#tipDiv{z-index:1002;}
+</style>
+ <link href="[@resUrl /]/assets/cms/css/common/upload.css?v=[@cmsVersion /]" rel="stylesheet">
+<script src="[@resUrl /]/assets/cms/js/common/template.min.js?v=[@cmsVersion /]" type="text/javascript"></script>
+ <div class="img-manage">
+	<div class="img-selector-title">
+		选择图片
+	</div>
+	<div class="images-left" style="float:right;">
+		<div class="images-info" id="selector_query_data">
+			[#include "/common/upload/imageSelectorTpl.html"/]
+		</div>
+		<ul class="pager" style="margin:10px;margin-bottom:5px;float:right;margin-right:10px;" id="imageSelectorPager">
+		  <li><a href="javascript:;" name="previewSelectorPage">上一页</a></li>
+		  <li><a href="javascript:;" name="nextSelectorPage">下一页</a></li>
+		</ul>
+		<input id="selectedImage" type="hidden" value=""/>
+	</div>
+	<div class="images-right" style="float:left;max-height:450px;overflow: auto;">
+		<div class="search">
+				<form action="${base}/images/selector/index.htm" method="post" id="selector_query_form">
+					<input id="selector_currentPage" type="hidden" name="currentPage"/>
+					<input id="pageSize" value="200" type="hidden" name="pageSize"/>
+				</form>
+			</div>
+		<ul class="mt8">
+			<li><a ><i class="fa fa-th-list"></i> 所有图片</a></li>
+		</ul>
+	</div>
+</div>
+<div class="selector-btn-container">
+	<span class="selector-btn confirm">确认</span>
+	<span class="selector-btn cancel">取消</span>
+</div>
+<div id="colseImageSelector">×</div>
+<script type="text/javascript">
+$('#selector_query_form').ajaxForm({
+	beforeSubmit:function(){
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		$("#selector_query_data").html(data);
+	}
+});
+function queryUploadImageList(pageNo)
+{
+	$("#selectedImage").val("");
+	
+	$("#selector_currentPage").val(pageNo);
+	$('#selector_query_form').submit();
+}
+
+$("#selector_upload_btn").change(function(){
+	$('#selectorUploadForm').submit();
+});
+
+// 为非IE绑定事件
+try
+{
+	var browser = $.browser.msie;
+	if(typeof browser == 'undefined' || !browser)
+	{
+		$("#selector_upload_btn").css("top","100px");
+		
+		$(".prompt-message .upload .txt").click(function(event){
+			$("#selector_upload_btn").trigger(event);
+		});
+	}
+}
+catch(e){}
+// 点击事件
+$("#image_selector").find(".cancel,#colseImageSelector").click(function(){
+	$("#image_selector,#image_selector_overlay").hide();
+});
+
+$("#image_selector").find(".confirm").click(function(){
+	
+	var img = $("#selectedImage").val();
+	
+	if(img == "")
+	{
+		alertTip("请先选择图片",2);
+		return ;
+	}
+	
+	$("#image_selector,#image_selector_overlay").hide();
+	showImageSelectorCallback(img);
+});
+</script>

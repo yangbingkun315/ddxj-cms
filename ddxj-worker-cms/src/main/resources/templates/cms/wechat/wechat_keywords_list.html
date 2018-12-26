@@ -1,0 +1,81 @@
+[#assign title="点点小匠关键字回复"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/niceEdit/nicEdit.js?v=[@cmsVersion /]" type="text/javascript"></script>
+
+<div class="cms-content" id="wechatMenuList">
+	<div class="alert alert-warning" >
+	1、关键字回复主要用户在于用户（粉丝）和公众号进行聊天，当用户发送的文字与设置匹配，则回复设置的内容。<br />
+	2、回复的内容可以为图片、文本、图文素材。<br />
+	 </div>
+	[#assign wechatTabActive = 5]
+	[#include "/wechat/wechat_tab.html"]
+	<form method="post" id="cms_wechat_keywords_form" action="${base}/wechat/keywords/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+	</form>
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="wechatKeywordsEdit()">添加关键字</button>
+		</div>
+	</div>
+	<div class="cms-table-tpl">
+		[#include "/wechat/wechat_keywords_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_wechat_keywords_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryKeywordsList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_wechat_keywords_form').submit();
+}
+
+queryKeywordsList(1);
+
+function wechatKeywordsEdit(id)
+{
+	var url = "${base}/wechat/keywords/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改关键字" : "新增关键字","width":500,"height":400});
+}
+function confirmWechatMenu(id)
+{
+	showConfirmDialog({message : "确认要删除该关键字吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/delete/keywords.htm",{keywordsId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryKeywordsList();
+			}
+			else
+			{
+				alertTip(data.responseMsg,3);
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

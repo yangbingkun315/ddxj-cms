@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.InviteSettingMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.InviteSetting" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="img" property="img" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,type, title, link_url, content, img, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_invite_setting
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        update zn_invite_setting set flag = 2
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.InviteSetting" >
+        insert into zn_invite_setting (id,type, title, link_url, 
+            content, img, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},#{title,jdbcType=VARCHAR}, #{linkUrl,jdbcType=VARCHAR}, 
+            #{content,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.InviteSetting" >
+        insert into zn_invite_setting
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="title != null" >
+                title,
+            </if>
+            <if test="linkUrl != null" >
+                link_url,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="img != null" >
+                img,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null" >
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="img != null" >
+                #{img,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.InviteSetting" >
+        update zn_invite_setting
+        <set >
+        	<if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null" >
+                link_url = #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="img != null" >
+                img = #{img,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.InviteSetting" >
+        update zn_invite_setting
+        set type = #{type,jdbcType=INTEGER},
+        	title = #{title,jdbcType=VARCHAR},
+            link_url = #{linkUrl,jdbcType=VARCHAR},
+            content = #{content,jdbcType=VARCHAR},
+            img = #{img,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="queryByFlag" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+         from zn_invite_setting
+        where type = #{type,jdbcType=INTEGER} and flag = #{flag,jdbcType=INTEGER}
+    </select>
+    
+    <select id="queryInviteSetting" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+         from zn_invite_setting where 1=1 
+         <if test="title != null and title!='' " >
+                and title = #{title,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type!='' " >
+                and type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="startTime!=null and startTime!='' and endTime!=null and endTime!='' ">
+    		 and create_time &gt; #{startTime} and create_time &lt; #{endTime}
+    	</if>
+    </select>
+    
+    <select id="queryInviteSettingList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+		select
+		<include refid="Base_Column_List" />
+		from zn_invite_setting
+		where flag = 1
+		<if test="title != null and title != ''">
+			and title like CONCAT(CONCAT('%',#{title}),'%') 
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type,jdbcType=INTEGER}
+		</if>
+		<if test="createTime != null and createTime != ''">
+			and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{createTime},'%Y-%m-%d')
+		</if>
+	</select>
+</mapper>

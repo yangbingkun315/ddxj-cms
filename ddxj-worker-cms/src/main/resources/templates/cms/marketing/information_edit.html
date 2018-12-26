@@ -1,0 +1,321 @@
+[#assign title="点点小匠-资讯编辑"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/ueditor/ueditor.all.js"></script>
+<div class="cms-content" id=informationList>
+<div class="alert alert-warning" >注：资讯是用户因为及时地获得它并利用它而能够在相对短的时间内给自己带来价值的信息，资讯有时效性和地域性，它必须被消费者利用。并且“提供－使用（阅读或利用）－反馈”之间能够形成一个长期稳定的CS链，具有这些特点才可以称之为资讯。 </div>
+	<form method="post" id="cms_information_edit_form" action="${base}/information/edit.htm">
+		<input id="informationId" type="hidden" name="inforId" value="${information.id}"/>
+		<div class="bootstrap-widget-content">
+			<div class="order-search-item">
+				<label>资讯标题</label>
+				<div class="input-field clearfix">
+					<input type="text" id="infoTitle" name="infoTitle" value="${(information.infoTitle)!''}" isRequired="true" maxLength="50" minLength="6" class="input textinput-main" showrightmsg="false" placeholder="标题必填，20个字以内" >
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>资讯概述</label>
+				<div class="input-field clearfix">
+					<input type="text" id="infoSummary" name="infoSummary" value="${(information.infoSummary)!''}" isRequired="true" maxLength="200" minLength="6" class="input textinput-main" showrightmsg="false" placeholder="简介必填，50字以内" >
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>资讯分类&nbsp;&nbsp;若没有分类 <a href="${base}/information/type/list.htm" target="_blank">新建分类</a></label>
+				<div class="input-field clearfix">
+					<select class="form-control textinput-main" style="height: 40px"  id="categoryId" data-placeholder="请选择资讯分类" multiple="multiple">
+						[#if categoryList?? && categoryList?size > 0]
+							[#list categoryList as category]
+								<option value="${category.id}">${category.name}</option>
+							[/#list]
+						[/#if]
+					</select>
+					<div id="categoryIdList_ctx">
+						[#if information.categoryList?? && information.categoryList?size > 0]
+							[#list information.categoryList as category]
+								<input name="categoryIdList" type="hidden" value="${category.id}"/>
+							[/#list]
+						[/#if]
+					</div>
+					
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>资讯类型</label>
+				<i class="question iconfont" data-toggle="popover" data-content="类型在修改时不能修改，保持资讯唯一性">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<select class="form-control" id="infoType" name="infoType" style="width: 250px;height: 40px;"  onchange="changeInfoType(this)" [#if information??]disabled="disabled"[/#if]>
+						<option value="1" [#if information?? && information.infoType == '1']selected="selected"[/#if]>纯文字</option>
+						<option value="2" [#if information?? && information.infoType == '2']selected="selected"[/#if]>多图</option>
+						<option value="3" [#if information?? && information.infoType == '3']selected="selected"[/#if]>视频</option>
+						<option value="4" [#if information?? && information.infoType == '4']selected="selected"[/#if]>单图</option>
+					</select>
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>上架时间</label>
+				<div class="input-field clearfix">
+		 		 <input type="text" name="startTime" id="startTime"   class="input textinput-main"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" 
+							placeholder="上架时间" autocomplete="off" value="${(information.startTime?string("yyyy-MM-dd HH:mm:ss"))!''}" isRequired="true" > 
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>下架时间</label>
+				<div class="input-field clearfix">
+		 		 <input type="text" name="endTime" id="endTime"   class="input textinput-main"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1})" 
+							placeholder="下架时间" autocomplete="off" value="${(information.endTime?string("yyyy-MM-dd HH:mm:ss"))!''}" isRequired="true"> 
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>作者</label>
+				<i class="question iconfont" data-toggle="popover" data-content="默认为“点点小匠”">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="author" name="author" value="${(information.author)!''}"   class="input textinput-main" showrightmsg="false" placeholder="作者非必填，5字以内" >
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>是否置顶</label>
+				<i class="question iconfont" data-toggle="popover" data-content="如果为“是”，资讯则排名在最顶部”">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<div class="cms-checkbox">
+						<label class="el-radio">
+							<input type="radio" name="stick" id="sexRadios1" value="1" [#if information?? && information.stick == '2'][#else]checked[/#if] />
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">是</span>
+							
+						</label>
+						<label class="el-radio">
+							<input type="radio" name="stick" id="sexRadios2" value="2" [#if information?? && information.stick == '1'][#else]checked[/#if] />
+							<span class="el-radio-style  pull-left"></span>
+							<span class="margin-l">否</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item [#if information?? && (information.infoType == '2' || information.infoType == '4')][#else]none[/#if] coverUpload" style="width:100%">
+				<label>封面图片上传</label>
+				<div class="input-field clearfix">
+					<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=informationCoverImageUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+					<a class="multi-upload-image">
+						[#if information?? && information.infoType == '2']
+							<div class='banner-content'>
+								<img class='galpop-info' src="${information.imageOne}" href="${information.imageOne}" width='100%' height='100%'/>
+								<i class="iconfont" onclick="removeBanner(this);">&#xe614;</i>
+								<input type="hidden" id="bannerImageList" name="bannerImageList" value="${information.imageOne}"/>
+							</div>
+							<div class='banner-content'>
+								<img class='galpop-info' src="${information.imageTwo}" href="${information.imageTwo}" width='100%' height='100%'/>
+								<i class="iconfont" onclick="removeBanner(this);">&#xe614;</i>
+								<input type="hidden" id="bannerImageList" name="bannerImageList" value="${information.imageTwo}"/>
+							</div>
+							<div class='banner-content'>
+								<img class='galpop-info' src="${information.imageThree}" href="${information.imageThree}" width='100%' height='100%'/>
+								<i class="iconfont" onclick="removeBanner(this);">&#xe614;</i>
+								<input type="hidden" id="bannerImageList" name="bannerImageList" value="${information.imageThree}"/>
+							</div>
+						[#elseif information?? && information.infoType == '4']
+							<div class='banner-content'>
+								<img class='galpop-info' src="${information.imageOne}" href="${information.imageOne}" width='100%' height='100%'/>
+								<i class="iconfont" onclick="removeBanner(this);">&#xe614;</i>
+								<input type="hidden" id="bannerImageList" name="bannerImageList" value="${information.imageOne}"/>
+							</div>
+						[/#if]
+					</a>
+				</div>
+			</div>
+			<div class="order-search-item clearfix [#if information?? && information.infoType == '3' ][#else]none[/#if] videoUpload" style="width: 40%" >
+				<label>视频上传</label>
+				<div class="input-field clearfix">
+					<div style="width:70%;">
+						<input type="hidden" id="videoUrl" name="videoUrl"/>
+						<iframe id="uploadVideoFrame" class="fl" src="${base}/video/upload.htm?callback=videoUpload_click" width="100" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+						[#include "/common/upload/video.html"]
+					</div>
+				</div>
+			</div>
+			<div class="order-search-item" style="width: 100%">
+				<label>资讯内容</label>
+				<div class="input-field clearfix">
+				<input name="infoContent" id="infoContent" type="hidden"/>
+		 		 <script id="editor" type="text/plain" style="width:100%;"></script>
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="button" onclick="submitInformartion()"  name="yt0">保存信息</button> </div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+//实例化编辑器
+//建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+// 自定义的编辑器配置项,此处定义的配置项将覆盖editor_config.js中的同名配置
+var editorOption = {
+    //focus时自动清空初始化时的内容
+    autoClearinitialContent: true,
+     //关闭elementPath
+     elementPathEnabled: true,
+     initialFrameHeight:500,//设置编辑器高度
+     scaleEnabled:true//设置不自动调整高度
+};
+var editor_a = new baidu.editor.ui.Editor(editorOption);
+editor_a.render('editor');
+editor_a.ready(function() {
+[#if information??]
+    editor_a.setContent('${information.infoContent}');
+[/#if]
+});
+function submitInformartion()//提交form表单
+{
+	$("#infoContent").val(UE.getEditor('editor').getContent());
+	$("#cms_information_edit_form").submit();
+}
+$('#cms_information_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#cms_information_edit_form').validate())
+		{
+			if(!UE.getEditor('editor').hasContents())
+			{
+				alertTip("请输入资讯内容",2);
+				return false;
+			}
+			if($("input[name=categoryIdList]").length <= 0)
+			{
+				alertTip("请输入资讯分类",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			setTimeout(function(){
+				window.location.href="${base}/information/list.htm"
+			},1000)
+		}
+	}
+});
+ $("#categoryId").chosen({allow_single_deselect:true,disable_search:true}).change(function(){
+	$("#categoryIdList_ctx").html("");
+		var selectedValue = $("#categoryId").val();
+		if(selectedValue)
+		{
+			for(var i = 0;i < selectedValue.length;i++)
+			{
+				$("#categoryIdList_ctx").append('<input name="categoryIdList" type="hidden" value="' + selectedValue[i] + '"/>');
+			}
+		}
+});
+ 
+setTimeout(function(){
+	$('#cms_information_edit_form').configValidate();
+	$("#categoryIdList_ctx").find("input[name='categoryIdList']").each(function(){
+		$("#categoryId option[value='" + $(this).val() + "']").attr("selected",true);
+	});
+	$("#categoryId").trigger("chosen:updated");
+	$('.galpop-info').galpop(); 
+},100);
+ function informationCoverImageUpload_click(data)
+ {
+	 var length = $(".banner-content").length;
+	 	
+	 	var infoType = $("#infoType").val();
+	 	if(infoType == '2')
+	 	{
+	 		if(length >= 3)
+	 	 	{
+	 	 		alertTip("多图模式只能上传3张封面",2);
+	 	 		return false;
+	 	 	}
+	 	}
+	 	else if(infoType == '4')
+	 	{
+	 		if(length >= 1)
+	 	 	{
+	 	 		alertTip("单图模式只能上传1张封面",2);
+	 	 		return false;
+	 	 	}
+	 	}
+ 	
+ 	if(data == "start")
+ 	{
+ 		alyCms.base.showLoading("正在上传，请稍后。。。");
+ 	}
+ 	else if(data == "end")
+ 	{
+ 		alyCms.base.removeLoading();
+ 	}
+ 	else if(data == "99")
+ 	{
+ 		alertTip("上传的文件不能大于500KB！",2);
+ 	}
+ 	else if(data == "98")
+ 	{
+ 		alertTip("文件格式错误！",2);
+ 	}
+ 	else
+ 	{
+ 		alyCms.base.removeLoading();
+ 		var bannerLength = $(".banner-content").length;
+ 		var html ="<div class='banner-content'><img class='galpop-info' src='${storageUrl}" + data + "' href='${storageUrl}" + data + "' width='100%' height='100%'/><i class='iconfont' onclick='removeBanner(this);'>&#xe614;</i><input type='hidden' id='bannerImage' name='bannerImageList' value='${storageUrl}" + data + "'/></div>";
+ 		$(".multi-upload-image").append(html).show();
+ 		removeErrorMessage("uploadFileFrame");
+ 		$('img.galpop-info').galpop();
+ 	}
+ }
+ function videoUpload_click(data)
+ {
+ 	if(data == "start")
+ 	{
+ 		alyCms.base.showLoading("正在上传，请稍后。。。");
+ 	}
+ 	else if(data == "end")
+ 	{
+ 		alyCms.base.removeLoading();
+ 	}
+ 	 else if(data == "99")
+ 	{
+ 		alertTip("上传的文件不能大于100MB！",2);
+ 	}
+ 	else if(data == "98")
+ 	{
+ 		alertTip("文件格式错误！",2);
+ 	} 
+ 	else
+ 	{
+ 		alyCms.base.removeLoading();
+ 		$("#videoUrl").val(data);
+ 		$(".upload-video .js-video .js-media").html(' <source src="'+data+'" />');
+ 		removeErrorMessage("uploadVideoFrame");
+ 	}
+ }
+ function changeInfoType(obj)
+ {
+	 $(".coverUpload,.videoUpload").hide();
+	 var infoType = $(obj).val();
+	 if(infoType == '2' || infoType == '4')
+	 {
+		 $(".coverUpload").show();
+	 }
+	 else if(infoType == '3')
+	 {
+		 $(".videoUpload").show();
+	 }
+	 console.log($(obj).val());
+ }
+</script>
+[#include "/common/cms_footer.html"]

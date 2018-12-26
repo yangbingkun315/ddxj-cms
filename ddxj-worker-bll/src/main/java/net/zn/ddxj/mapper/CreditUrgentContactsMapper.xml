@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CreditUrgentContactsMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CreditUrgentContacts" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_credit_id" property="recruitCreditId" jdbcType="INTEGER" />
+        <result column="contacts_name" property="contactsName" jdbcType="VARCHAR" />
+        <result column="contacts_phone" property="contactsPhone" jdbcType="VARCHAR" />
+        <result column="contacts_relation" property="contactsRelation" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_credit_id, contacts_name, contacts_phone, contacts_relation, create_time, 
+        update_time, flag
+    </sql>
+	
+	<!-- 根据授信ID查询 -->
+    <select id="getCreditUrgentContactsById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit_urgent_contacts
+        where recruit_credit_id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit_urgent_contacts
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_credit_urgent_contacts
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CreditUrgentContacts" >
+        insert into zn_credit_urgent_contacts (id, recruit_credit_id, contacts_name, 
+            contacts_phone, contacts_relation, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{recruitCreditId,jdbcType=INTEGER}, #{contactsName,jdbcType=VARCHAR}, 
+            #{contactsPhone,jdbcType=VARCHAR}, #{contactsRelation,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CreditUrgentContacts" >
+        insert into zn_credit_urgent_contacts
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitCreditId != null" >
+                recruit_credit_id,
+            </if>
+            <if test="contactsName != null" >
+                contacts_name,
+            </if>
+            <if test="contactsPhone != null" >
+                contacts_phone,
+            </if>
+            <if test="contactsRelation != null" >
+                contacts_relation,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitCreditId != null" >
+                #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="contactsName != null" >
+                #{contactsName,jdbcType=VARCHAR},
+            </if>
+            <if test="contactsPhone != null" >
+                #{contactsPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactsRelation != null" >
+                #{contactsRelation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CreditUrgentContacts" >
+        update zn_credit_urgent_contacts
+        <set >
+            <if test="recruitCreditId != null" >
+                recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="contactsName != null" >
+                contacts_name = #{contactsName,jdbcType=VARCHAR},
+            </if>
+            <if test="contactsPhone != null" >
+                contacts_phone = #{contactsPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactsRelation != null" >
+                contacts_relation = #{contactsRelation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CreditUrgentContacts" >
+        update zn_credit_urgent_contacts
+        set recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            contacts_name = #{contactsName,jdbcType=VARCHAR},
+            contacts_phone = #{contactsPhone,jdbcType=VARCHAR},
+            contacts_relation = #{contactsRelation,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 删除授信联系人 -->
+    <delete id="delCreditUrgentContactRecord" parameterType="java.lang.Integer" >
+        delete from zn_credit_urgent_contacts
+        WHERE recruit_credit_id in(SELECT id FROM zn_recruit_credit WHERE user_id=#{userId})
+    </delete>
+    
+    <!-- 删除授信联系人 -->
+    <delete id="deleteUrgent" parameterType="java.lang.Integer" >
+        delete from zn_credit_urgent_contacts
+        WHERE recruit_credit_id =#{id}
+    </delete>
+</mapper>

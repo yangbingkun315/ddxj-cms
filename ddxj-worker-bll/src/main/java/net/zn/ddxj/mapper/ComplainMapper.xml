@@ -1,0 +1,190 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.ComplainMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.Complain" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="complain_content" property="complainContent" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <!--一对一关系 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryUserDetail" ></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, complain_content, status, type, img_url, create_time, update_time, flag
+    </sql>
+
+	<!-- 多条件查询投诉与建议 -->
+    <select id="queryComplainList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo" >
+        SELECT
+		c.*,
+		u.real_name,
+		u.phone
+		FROM
+		zn_complain AS c
+		INNER JOIN zn_user AS u ON c.user_id = u.id
+		WHERE
+		c.flag = 1 
+		<if test="status != null and status != '' and status > 0">
+        	and c.status = #{status}
+        </if>
+        <if test="type != null and type != '' and type > 0">
+        	and c.type = #{type}
+        </if>
+        <if test="phone != null and phone != '' ">
+        	and u.phone like concat(concat('%', #{phone}), '%')
+        </if>
+        <if test="createTime != null and createTime != ''">
+			and DATE_FORMAT(c.create_time, '%Y-%m-%d') = DATE_FORMAT(#{createTime} , '%Y-%m-%d')
+		</if>
+		order by c.create_time desc 
+    </select>
+    
+    <!-- 删除投诉与建议 -->
+    <update id="deleteComPlain" parameterType="java.lang.Integer" >
+        update zn_complain
+        <set >
+			flag = 2
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_complain
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_complain
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.Complain" >
+        insert into zn_complain (id, user_id, complain_content, 
+            status, type, img_url, 
+            create_time, update_time, flag
+            )
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{complainContent,jdbcType=VARCHAR}, 
+            #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{imgUrl,jdbcType=VARCHAR}, 
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.Complain" >
+        insert into zn_complain
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="complainContent != null" >
+                complain_content,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="imgUrl != null" >
+                img_url,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="complainContent != null" >
+                #{complainContent,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="imgUrl != null" >
+                #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.Complain" >
+        update zn_complain
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="complainContent != null" >
+                complain_content = #{complainContent,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="imgUrl != null" >
+                img_url = #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.Complain" >
+        update zn_complain
+        set user_id = #{userId,jdbcType=INTEGER},
+            complain_content = #{complainContent,jdbcType=VARCHAR},
+            status = #{status,jdbcType=INTEGER},
+            type = #{type,jdbcType=INTEGER},
+            img_url = #{imgUrl,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 删除投诉与建议 -->
+    <delete id="delComplainRecord" parameterType="java.lang.Integer" >
+        delete from zn_complain
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CmsStorageMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CmsStorage" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="storage_user_id" property="storageUserId" jdbcType="INTEGER" />
+        <result column="storage_key" property="storageKey" jdbcType="VARCHAR" />
+        <result column="storage_hash" property="storageHash" jdbcType="VARCHAR" />
+        <result column="storage_size" property="storageSize" jdbcType="VARCHAR" />
+        <result column="storage_type" property="storageType" jdbcType="VARCHAR" />
+        <result column="storage_time" property="storageTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, storage_user_id, storage_key, storage_hash, storage_size, storage_type, storage_time, 
+        create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_cms_storage
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_cms_storage
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CmsStorage" >
+        insert into zn_cms_storage (id, storage_user_id, storage_key, 
+            storage_hash, storage_size, storage_type, 
+            storage_time, create_time)
+        values (#{id,jdbcType=INTEGER}, #{storageUserId,jdbcType=INTEGER}, #{storageKey,jdbcType=VARCHAR}, 
+            #{storageHash,jdbcType=VARCHAR}, #{storageSize,jdbcType=VARCHAR}, #{storageType,jdbcType=VARCHAR}, 
+            #{storageTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CmsStorage" >
+        insert into zn_cms_storage
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="storageUserId != null" >
+                storage_user_id,
+            </if>
+            <if test="storageKey != null" >
+                storage_key,
+            </if>
+            <if test="storageHash != null" >
+                storage_hash,
+            </if>
+            <if test="storageSize != null" >
+                storage_size,
+            </if>
+            <if test="storageType != null" >
+                storage_type,
+            </if>
+            <if test="storageTime != null" >
+                storage_time,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="storageUserId != null" >
+                #{storageUserId,jdbcType=INTEGER},
+            </if>
+            <if test="storageKey != null" >
+                #{storageKey,jdbcType=VARCHAR},
+            </if>
+            <if test="storageHash != null" >
+                #{storageHash,jdbcType=VARCHAR},
+            </if>
+            <if test="storageSize != null" >
+                #{storageSize,jdbcType=VARCHAR},
+            </if>
+            <if test="storageType != null" >
+                #{storageType,jdbcType=VARCHAR},
+            </if>
+            <if test="storageTime != null" >
+                #{storageTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CmsStorage" >
+        update zn_cms_storage
+        <set >
+            <if test="storageUserId != null" >
+                storage_user_id = #{storageUserId,jdbcType=INTEGER},
+            </if>
+            <if test="storageKey != null" >
+                storage_key = #{storageKey,jdbcType=VARCHAR},
+            </if>
+            <if test="storageHash != null" >
+                storage_hash = #{storageHash,jdbcType=VARCHAR},
+            </if>
+            <if test="storageSize != null" >
+                storage_size = #{storageSize,jdbcType=VARCHAR},
+            </if>
+            <if test="storageType != null" >
+                storage_type = #{storageType,jdbcType=VARCHAR},
+            </if>
+            <if test="storageTime != null" >
+                storage_time = #{storageTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CmsStorage" >
+        update zn_cms_storage
+        set storage_user_id = #{storageUserId,jdbcType=INTEGER},
+            storage_key = #{storageKey,jdbcType=VARCHAR},
+            storage_hash = #{storageHash,jdbcType=VARCHAR},
+            storage_size = #{storageSize,jdbcType=VARCHAR},
+            storage_type = #{storageType,jdbcType=VARCHAR},
+            storage_time = #{storageTime,jdbcType=TIMESTAMP},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="queryAllStorage" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.CmsRequestVo">
+    	 select 
+        <include refid="Base_Column_List" />
+        from zn_cms_storage where storage_user_id is null
+        <if test="storageType == null or storageType == ''" >
+	        and storage_type  LIKE CONCAT(CONCAT('%', 'image/'), '%') or 
+	        storage_type  LIKE CONCAT(CONCAT('%', 'video/%'), '%')
+         </if>
+         <if test="storageType != null and storageType != ''" >
+        	 and storage_type  LIKE CONCAT(CONCAT('%', #{storageType}), '%')
+         </if>
+         <if test="storageKey != null" >
+            and storage_key  LIKE CONCAT(CONCAT('%', #{storageKey}), '%')
+         </if>
+         <if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(storage_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 	and DATE_FORMAT(storage_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+         order by storage_time desc
+    </select>
+</mapper>

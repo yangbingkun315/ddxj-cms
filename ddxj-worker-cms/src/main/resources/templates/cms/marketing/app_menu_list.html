@@ -1,0 +1,93 @@
+[#assign title="点点小匠-首页业务模块列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=appMenuList>
+	<div class="alert alert-warning" >注：首页业务模块列表 </div>
+	<form method="post" id="app_menu_form" action="${base}/app/menu/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <span class="search_title">推送端口：</span>
+			  <select class="form-control" id="type" name="type" >
+				<option  value="">全部</option>
+				<option value="1">工人</option>
+				<option value="2">工头</option>
+			</select>
+		  	</div>
+			<div class="search-item" style="width: 430px">
+			  <label class="search-title">创建时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryAppMenuList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	[@shiro.hasPermission name="system:app:menu:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateAppMenu()">添加模块</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/marketing/app_menu_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#app_menu_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryAppMenuList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#app_menu_form').submit();
+}
+
+queryAppMenuList(1);
+function updateAppMenu(id)
+{
+	var url = "${base}/app/menu/edit.htm"
+	if(id)
+	{
+		url += "?id=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改模块" : "新增模块","width":450,"height":700});
+}
+
+function confirmDeleteAppMenu(id)
+{
+	showConfirmDialog({message : "确认要删除该个模块吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/app/menu/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryAppMenuList();
+			}
+		});
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,364 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="../../css/shop.css" type="text/css" rel="stylesheet" />
+<link href="../../css/Sellerber.css" type="text/css"  rel="stylesheet" />
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="../../js/proTree.js" ></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<title>幻灯片列表</title>
+</head>
+<!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <script src="js/css3-mediaqueries.js"  type="text/javascript"></script>
+  <![endif]-->
+<style>
+	.item
+	{
+		display: inline-block;
+		margin: 5px;
+	}
+</style>
+<body ng-app="slide" ng-controller="siteSlide">
+	<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+	    <div class="order-search-item">
+	    <span class="search_title">图片名称：</span>
+		  <input type="text" name="imgName" id="imgName" ng-model="imgName"   class="input textinput-main width160" placeholder="请输入图片名称关键字"> 
+	    </div>
+	   <div class="order-search-item clear" >
+	  	<button class="btn button_btn bg-deep-blue " style="float:left" onclick=""  type="button" ng-click="querySiteSlideList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+	  	<button ng-click="openSiteSlide()" id="administrator_add" type="button" class="btn button_btn bg-deep-blue "><i class="fa  fa-edit"></i>&nbsp;添加图片</button> 
+  	   </div>
+	</div>
+		<div class="compete_list" >
+			<table id="sample_table" class="table table_list table_striped table-bordered dataTable no-footer">
+				<thead>
+					<tr>
+						<th class="center"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></th>
+						<th>图片预览</th>
+						<th>图片名称</th>
+						<th>图片简介</th>
+						<th>上架时间</th>
+						<th>下架时间</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th class="hidden-480">操作</th>
+					</tr>
+				</thead>
+	            <tbody>
+					<tr ng-if="siteSlideList.length > 0 " ng-repeat="site in siteSlideList track by $index">
+						<td class="center"><label><input type="checkbox" class="ace"><span class="lbl"></span></label></td>
+						<td><img ng-src="{{site.imgUrl}}" width="100px;" height="100px;" ng-click="showBigImage(site.imgUrl)"/></td>
+						<td ng-bind="site.imgName ? site.imgName : '无'"></td>
+						<td ng-bind="site.imgDesc ? site.imgDesc : '无'"></td>
+						<td ng-bind="site.startTime.time | date:'yyyy年MM月dd日'"></td>
+						<td ng-bind="site.endTime.time | date:'yyyy年MM月dd日'"></td>
+						<td ng-bind="site.createTime.time | date:'yyyy年MM月dd日'"></td>
+						<td ng-bind="site.updateTime.time | date:'yyyy年MM月dd日'"></td>
+						<td class="td-manage">
+							<div class="btn_group">
+							<button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							<ul class="btn_group_item none">
+							<li><a title="编辑" ng-click="openSiteSlide(site.id)" href="javascript:;" >编辑</a> </li> 
+							<li><a title="删除" href="javascript:;" ng-click="deleteSiteSlide(site.id)" >删除</a></li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="siteSlideList.length == 0 ">
+						<td class="center" colspan="8">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	 	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+	</div>
+	<!--添加管理员-->
+	<div id="add_siteSlide" class="add_siteSlide" style="display:none">
+		<form ng-submit="updateSiteSlide()" >
+			<div class="add_style add_administrator_style">
+				<ul>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>图片名称：</label>
+						<div class="formControls col-xs-6">
+							<input type="text" class="input-text col-xs-12" value="" placeholder="请输入图片名称" ng-model="siteSlide.imgName" >
+						</div>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>图片简介：</label>
+						<div class="formControls col-xs-6">
+						<textarea name="" cols="" rows="" ng-model="siteSlide.imgDesc" class="textarea col-xs-12" style="width:240px;" placeholder="请输入图片简介" dragonfly="true"></textarea>
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>上架时间：&nbsp;&nbsp;</label> 
+						<div class="formControls col-xs-6">
+							<input class="laydate-icon col-xs-4 col-lg-3" id="start" ng-model="siteSlide.startTime" style="min-width: 170px;margin-right:10px; height:28px; line-height:28px; float:left">
+						</div>   
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>下架时间：&nbsp;&nbsp;</label> 
+						<div class="formControls col-xs-6">
+							<input class="laydate-icon col-xs-4 col-lg-3" id="end" ng-model="siteSlide.endTime" style="min-width: 170px;height:28px; line-height:28px; float:left">
+						</div>   
+					</li>
+					<li class="clearfix">
+						<label class="label_name col-xs-2 col-lg-2"><i>*</i>上传图片：</label>
+						<div class="formControls col-xs-6">
+							<div class="preview_img" style="max-width: 250px;">
+								<img style="max-width: 100%;max-height: 100%;" ng-src="{{siteSlide.imgUrl}}" id="slideImg" border="0" src="../../images/image.png" />
+							</div>
+							<div class="fileInput ">
+								<input type="file" onchange="imageChange(this,'slideImg')" class="upFileBtn" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" />
+					        </div>
+						</div>
+					</li>
+			        <li class="clearfix col-xs-12 col-lg-12 align">
+						<input class="btn button_btn bg-deep-blue btn_height" type="button"  value="保存" ng-click="updateSiteSlide()">
+					</li>
+			    </ul>
+			</div>
+		</form>
+	</div>
+	<div id="show_credit_image" class="addOrUpdate_credit layui-form-item" style="display:none">
+		<a class="close" ng-click="hideBigImage()"></a>
+		<div class="hide-layer" ng-click="hideBigImage()"></div>
+		<div class="add_style add_administrator_style">
+			<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+		</div>
+	</div>
+</body>
+</html>
+<script>
+/******时间设置*******/
+var start = 
+{
+	elem: '#start',
+	format: 'YYYY-MM-DD hh:mm:ss',
+	min: laydate.now(), //设定最小日期为当前日期
+	max: '2099-06-16 23:59:59', //最大日期
+	istime: true,
+	istoday: false,
+	choose: function(datas)
+	{
+		end.min = datas; //开始日选好后，重置结束日的最小日期
+		end.start = datas //将结束日的初始值设定为开始日
+	}
+};
+var end = 
+{
+	elem: '#end',
+	format: 'YYYY-MM-DD hh:mm:ss',
+    min: laydate.now(),
+    max: '2099-06-16 23:59:59',
+    istime: true,
+    istoday: false,
+    choose: function(datas)
+    {
+		start.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+};
+laydate(start);
+laydate(end);
+
+var slide = angular.module('slide', []);
+slide.controller('siteSlide', function($scope,$timeout) {
+	$scope.imgName = "";
+	$scope.pageNum = 1;
+	$scope.pageSize = 20;
+	
+	$scope.querySiteSlideList = function(type)//查询工种信息
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+			var index =  layui.layer.load(3, {
+				shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot+'/site/slide/list.ddxj',
+				data: {imgName:$scope.imgName,pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.siteSlideList.total;
+						$scope.siteSlideList = data.data.siteSlideList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+							$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+	      	    ,jump: function(obj,first){
+					$scope.pageNum = obj.curr;
+	      			$scope.pageSize = obj.limit;
+		      		if(!first)//一定要加此判断，否则初始时会无限刷新
+		      		{
+		      			$scope.querySiteSlideList();
+                    }
+	      	    }
+			});
+		});
+	}
+	$scope.querySiteSlideList();
+	$scope.deleteSiteSlide = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/site/slide/delete.ddxj',
+				data: {id:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.querySiteSlideList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.openSiteSlide = function(id)//打开添加窗口
+	{
+		$scope.siteSlide = [];
+		if(isNotNull(id))
+		{
+			Ajax.post({
+				url: getRoot+'/site/slide/detail.ddxj',
+				data: {id:id},
+		        async: true,
+		        success: function(data) {
+		    		if(data.response == true)
+	    			{
+						$scope.siteSlide = data.data.siteSlide;
+						$scope.siteSlide.startTime = timeInMillisToformat(data.data.siteSlide.startTime.time);
+	               		$scope.siteSlide.endTime = timeInMillisToformat(data.data.siteSlide.endTime.time);
+						$scope.$apply();
+	         		}
+         		}
+			}); 
+		}
+		layer.open({
+			type: 1,
+			title:id?'修改幻灯片':'添加幻灯片',
+			area: ['600px',''],
+			shadeClose: false,
+			content: $('#add_siteSlide'),
+		});
+	}
+	
+	$scope.updateSiteSlide = function()//更新菜单
+	{
+		$scope.siteSlide.imgUrl = $("#slideImg").attr("src");
+		if(!isNotNull($scope.siteSlide.imgName))
+		{
+			layer.msg("请输入图片名称!");
+			return false;
+		}
+		if(!isNotNull($scope.siteSlide.imgDesc))
+		{
+			layer.msg("请输入图片简介!");
+			return false;
+		}
+		if($scope.siteSlide.imgUrl == "../../images/image.png")
+		{
+			layer.msg("请上传图片!");
+			return false;
+		}
+		if(!isNotNull($("#start").val()))
+		{
+			layer.msg("请选择上架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.siteSlide.startTime = $("#start").val();
+		}
+		
+		if(!isNotNull($("#end").val()))
+		{
+			layer.msg("请选择下架时间！");
+			return false;
+		}
+		else
+		{
+			$scope.siteSlide.endTime = $("#end").val();
+		}
+		Ajax.post({
+			url: getRoot+'/update/site/slide.ddxj',
+			data: $scope.siteSlide,
+			async: true,
+			success: function(data) {
+				if(data.response == true)
+				{
+					layer.closeAll();
+					layer.msg(data.responseMsg);
+					$scope.querySiteSlideList();
+				}
+			}
+		}); 
+	}
+	
+	$scope.showBigImage = function(url){
+		$scope.image = url;
+		$("#show_credit_image").show();
+	}
+	
+	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	}
+});
+
+/*******滚动条*******/
+$("body").niceScroll({  
+	cursorcolor:"#888888",  
+	cursoropacitymax:1,  
+	touchbehavior:false,  
+	cursorwidth:"5px",  
+	cursorborder:"0",  
+	cursorborderradius:"5px"  
+});
+
+/****复选框选中******/
+$('table th input:checkbox').on('click' , function(){
+	var that = this;
+	$(this).closest('table').find('tr > td:first-child input:checkbox')
+	.each(function(){
+		this.checked = that.checked;
+		$(this).closest('tr').toggleClass('selected');
+	});
+});
+</script>

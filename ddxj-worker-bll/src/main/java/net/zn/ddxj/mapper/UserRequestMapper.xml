@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.UserRequestMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.UserRequest" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_id" property="recruitId" jdbcType="INTEGER" />
+        <result column="accept_user_id" property="acceptUserId" jdbcType="INTEGER" />
+        <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_id, accept_user_id, send_user_id, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user_request
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+    
+    <!-- 查询工人是否被邀请过 -->
+    <select id="queryUserRequestById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(ur.id)
+        from zn_user_request ur
+        where ur.accept_user_id = #{toUserId}
+        and ur.send_user_id = #{fromUserId}
+        and ur.recruit_id = #{recruitId}
+        and ur.flag = 1
+    </select>
+    
+    <select id="queryUserIsRequest" resultType="java.lang.Integer">
+        select count(ur.id)
+        from zn_user_request ur left JOIN zn_recruit r ON ur.recruit_id = r.id
+        where DATE_FORMAT(now(), '%Y-%m-%d') &gt;= DATE_FORMAT(r.end_time , '%Y-%m-%d') and ur.accept_user_id = #{toUserId} 
+        and ur.send_user_id = #{fromUserId} and ur.flag = 1 and r.flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_user_request
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.UserRequest" >
+        insert into zn_user_request (id, recruit_id, accept_user_id, 
+            send_user_id, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{recruitId,jdbcType=INTEGER}, #{acceptUserId,jdbcType=INTEGER}, 
+            #{sendUserId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.UserRequest" >
+        insert into zn_user_request
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitId != null" >
+                recruit_id,
+            </if>
+            <if test="acceptUserId != null" >
+                accept_user_id,
+            </if>
+            <if test="sendUserId != null" >
+                send_user_id,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitId != null" >
+                #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="acceptUserId != null" >
+                #{acceptUserId,jdbcType=INTEGER},
+            </if>
+            <if test="sendUserId != null" >
+                #{sendUserId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.UserRequest" >
+        update zn_user_request
+        <set >
+            <if test="recruitId != null" >
+                recruit_id = #{recruitId,jdbcType=INTEGER},
+            </if>
+            <if test="acceptUserId != null" >
+                accept_user_id = #{acceptUserId,jdbcType=INTEGER},
+            </if>
+            <if test="sendUserId != null" >
+                send_user_id = #{sendUserId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.UserRequest" >
+        update zn_user_request
+        set recruit_id = #{recruitId,jdbcType=INTEGER},
+            accept_user_id = #{acceptUserId,jdbcType=INTEGER},
+            send_user_id = #{sendUserId,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+     <delete id="deleteUserRequest" parameterType="java.lang.Integer" >
+        delete from zn_user_request
+        where accept_user_id = #{userId}
+    </delete>
+    <!-- 删除收到的邀请 -->
+    <delete id="delUserRequestRecord" parameterType="java.lang.Integer" >
+        delete from zn_user_request
+        where accept_user_id = #{userId} or send_user_id=#{userId}   
+    </delete>
+</mapper>

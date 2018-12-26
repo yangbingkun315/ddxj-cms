@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CmsLogsMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CmsLogs" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="log_content" property="logContent" jdbcType="VARCHAR" />
+        <result column="log_ip_address" property="logIpAddress" jdbcType="VARCHAR" />
+        <result column="log_time" property="logTime" jdbcType="TIMESTAMP" />
+         <association property="user" column="user_id" select="net.zn.ddxj.mapper.CmsUserMapper.selectByPrimaryKey"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, user_id, log_content, log_ip_address, log_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_cms_logs
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_cms_logs
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CmsLogs" >
+        insert into zn_cms_logs (id, user_id, log_content, 
+            log_ip_address, log_time)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{logContent,jdbcType=VARCHAR}, 
+            #{logIpAddress,jdbcType=VARCHAR}, #{logTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CmsLogs" >
+        insert into zn_cms_logs
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="logContent != null" >
+                log_content,
+            </if>
+            <if test="logIpAddress != null" >
+                log_ip_address,
+            </if>
+            <if test="logTime != null" >
+                log_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="logContent != null" >
+                #{logContent,jdbcType=VARCHAR},
+            </if>
+            <if test="logIpAddress != null" >
+                #{logIpAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="logTime != null" >
+                #{logTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CmsLogs" >
+        update zn_cms_logs
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="logContent != null" >
+                log_content = #{logContent,jdbcType=VARCHAR},
+            </if>
+            <if test="logIpAddress != null" >
+                log_ip_address = #{logIpAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="logTime != null" >
+                log_time = #{logTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CmsLogs" >
+        update zn_cms_logs
+        set user_id = #{userId,jdbcType=INTEGER},
+            log_content = #{logContent,jdbcType=VARCHAR},
+            log_ip_address = #{logIpAddress,jdbcType=VARCHAR},
+            log_time = #{logTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="findLogsByUserId" parameterType="net.zn.ddxj.vo.CmsRequestVo" resultMap="BaseResultMap">
+    	  select 
+        <include refid="Base_Column_List" />
+        from zn_cms_logs
+        where user_id = #{userId,jdbcType=INTEGER}
+        <if test="logContent != null" >
+             and log_content LIKE CONCAT(CONCAT('%', #{logContent}), '%')
+        </if>
+         <if test="startTime != null and startTime != ''">
+        	 and DATE_FORMAT(log_time, '%Y-%m-%d') &gt;=  str_to_date(#{startTime},'%Y-%m-%d')  
+        </if>
+        <if test="endTime != null and endTime != ''">
+    	 and DATE_FORMAT(log_time, '%Y-%m-%d') &lt;= str_to_date(#{endTime},'%Y-%m-%d') 
+        </if>
+        order by log_time desc
+    </select>
+</mapper>

@@ -1,0 +1,84 @@
+[#assign title="点点小匠-圈子列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id=circleList>
+	<div class="alert alert-warning" >注：用户圈子俗称朋友圈，让工人之间有相互的互动、分享自己美好的生活以及工作。 </div>
+	<form method="post" id="circle_record_form" action="${base}/circle/record/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label class="search-title">圈子编号：</label>
+			  <input type="text" name="circleNumber" id="circleNumber"  placeholder="请输入圈子编号" class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label class="search-title">发布城市：</label>
+			  <input type="text" name="city" id="city"  placeholder="请输入发布城市" class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item" style="width: 430px">
+			  <label class="search-title">创建时间：</label>
+			  <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >&nbsp;至&nbsp;
+			  <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" > 
+			
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryCircleList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/circle/circle_record_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#circle_record_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryCircleList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#circle_record_form').submit();
+}
+
+queryCircleList(1);
+
+function confirmDeleteCircle(id)
+{
+	showConfirmDialog({message : "确认要删除该圈子吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/circle/record/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryCircleList();
+			}
+		});
+	});
+}
+function queryUserDetails(id)
+{
+	 var url = "${base}/customer/user/detail.htm?userId="+id
+	TB_show({"url":url,"title": "用户详情","width":400,"height":800});
+} 
+
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,68 @@
+[#assign title="点点小匠-分销-分销详情"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="inviteList">
+	<div class="alert alert-warning" >注：分销活动的用户邀请详情</div>
+	<ul class="nav nav-tabs">
+			[@shiro.hasPermission name="system:invite:set"]
+			<li><a href="${base}/marketing/invite/list.htm">分销设置</a></li>
+			[/@shiro.hasPermission]
+			[@shiro.hasPermission name="system:invite:manager"]
+			<li><a href="${base}/marketing/invite/manager.htm">分销管理</a></li>
+			[/@shiro.hasPermission]
+			[@shiro.hasPermission name="system:invite:manager:list"]
+			<li class="active"><a>邀请列表</a></li>
+			[/@shiro.hasPermission]
+	</ul>
+	<form method="post" id="cms_invite_form" action="${base}/marketing/invite/detail.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<input type="hidden" name="userId" value="${userId}">
+			<div class="search-item">
+				<label class="search-title">受邀人姓名：</label>
+		    	<input type="text" id="realName" name="realName" class="form-control search-input" placeholder="用户名关键字" autocomplete="off" maxLength="5">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">受邀人电话：</label>
+			  	<input type="text" id="phone" name="phone" class="form-control search-input" placeholder="请输入手机号码" maxLength="11" autocomplete="off">	
+		  	</div>
+		  <div class="search-button">
+		     <button type="submit" class="btn btn-warning" onclick="queryUserList(1);">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/marketing/invite_detail_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_invite_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_invite_form').submit();
+}
+
+queryUserList(1);
+</script>
+[#include "/common/cms_footer.html"]

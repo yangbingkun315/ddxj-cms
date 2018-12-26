@@ -1,0 +1,107 @@
+[#assign title="点点小匠-角色列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/chosen.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/chosen.jquery.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="cmsResourceList">
+<div class="alert alert-warning" > 注：此列表中的资源必须对应页面所配置的资源 </div>
+<form method="post" id="cms_resource_form" action="${base}/cms/resource/list.htm">
+<input id="currentPage" type="hidden" name="currentPage"/>
+<div class="cms-search">
+ <div class="search-item">
+  	<label class="search-title">一级菜单：</label>
+    	<select class="form-control" id="parentId" name="parentId" >
+			<option value="">请选择菜单</option>
+			[#if parentResourceList?? && parentResourceList?size > 0]
+				[#list parentResourceList as resourceList]
+					<option value="${resourceList.id}">${resourceList.resourceName}</option>
+				[/#list]
+			[/#if]
+		</select>
+  </div>
+  <div class="search-item">
+  	<label class="search-title">资源名称：</label>
+    <input type="text" id="resourceName" name="resourceName" class="form-control search-input" placeholder="资源关键字" autoComplete="off">
+  </div>
+  <div class="search-item">
+  	<label class="search-title">资源Key：</label>
+    <input type="text" id="resourceKey" name="resourceKey" class="form-control search-input" placeholder="资源Key关键字" autoComplete="off">
+  </div>
+  <div class="search-item">
+  	<label class="search-title">资源类型：</label>
+    <select class="form-control" id="resourceType" name="resourceType" >
+		<option  value="">请选择类型</option>
+		<option value="0">目录</option>
+		<option value="1">菜单</option>
+		<option value="2">按钮</option>
+		<option value="3">按钮组</option>
+		<option value="4">tab</option>
+	</select>
+  </div>
+  <div class="search-button">
+     <button type="button" onclick="queryResourceList(1)" class="btn btn-warning">查询</button>
+  </div>
+</div>
+</form>
+[@shiro.hasPermission name="system:resource:add"]
+<div class="operate-btn">
+  <div class="operate-item">
+     <button type="button" class="btn btn-warning" onclick="updateCmsResource()">添加资源</button>
+  </div>
+</div>
+[/@shiro.hasPermission]
+<div class="table-responsive  cms-table">
+  [#include "/admin/cms_resource_tpl.html"]
+</div>
+ [#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_resource_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table").html(data)
+	}
+});
+function queryResourceList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_resource_form').submit();
+}
+queryResourceList(1);
+function updateCmsResource(id)
+{
+	var url = "${base}/cms/resource/edit.htm";
+	if(id)
+	{
+		url += "?resourceId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改资源" : "添加资源","width":650,"height":450});
+}
+function confirmDeleteResource(id)
+{
+	showConfirmDialog({message : "确认要删除此资源吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		$.post("${base}/cms/resource/delete.htm?id=" + id,function(data){
+			if(data.responseCode == 1036)
+			{
+				 linkLogin();
+			}
+			else
+			{
+				minAlert("删除成功！",1);
+				$('#cms_resource_form').submit();
+			}
+			
+		});
+	});
+}
+
+</script>
+[#include "/common/cms_footer.html"]

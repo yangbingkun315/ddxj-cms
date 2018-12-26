@@ -1,0 +1,213 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('informationIdList')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>资讯标题</td>
+   		<td>资讯类型</td>
+   		<td>资讯类别</td>
+   		<td>是否置顶</td>
+   		<td>作者</td>
+   		<td>上架时间</td>
+   		<td>下架时间</td>
+   		<td>创建时间</td>
+   		<td>阅读人数</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if informationList?? && informationList?size > 0]
+	   	[#list informationList as information]
+	   	<tr class="pointer">
+		   	<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="informationIdList" id="${information.id}" >
+					<label class="el-checkbox-style" for="${information.id}"></label>
+				</div>
+		   	</td>
+	   		<td style="width:30%" onclick="openCmsDetail('informtion_list_${information.id}');">${information.infoTitle!""}</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">
+	   			[#if information.infoType == 1]
+	   				纯文字
+	   			[#elseif information.infoType == 2]
+	   				多图模式
+	   			[#elseif information.infoType == 3]
+	   				视频模式
+	   			[#elseif information.infoType == 4]
+	   				单图
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">
+	   			[#if information.categoryList?? && information.categoryList?size > 0]
+		   			[#list information.categoryList as categorys]
+		   				<a class="label label-primary">${categorys.name!""}</a>
+		   			[/#list]
+		   		[#else]
+		   			暂无
+	   			[/#if]
+	   		</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">
+	   			[#if information.stick == 1]
+	   				<a  class="label label-danger">置顶</a>
+	   			[#elseif information.stick == 2]
+	   				不置顶
+	   			[/#if]
+   			</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">
+	   			${information.author!"暂无"}
+	   		</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">${information.startTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">${information.endTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">${information.createTime?string("yyyy-MM-dd")}</td>
+	   		<td onclick="openCmsDetail('informtion_list_${information.id}');">${information.readPeople!0}人</td>
+	   		<td>
+	   			<div class="btn-group"> 
+		   			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></button> 
+		   			<ul class="dropdown-menu" role="menu">
+		   				[@shiro.hasPermission name="system:information:type:add"]
+			   			<li>
+			   				<a href="${base}/information/edit.htm?id=${information.id}">修改</a>
+			   			</li>
+			   			[/@shiro.hasPermission]
+			   			[@shiro.hasPermission name="system:information:type:add"]
+			   			<li class="divider"></li>
+			   			<li>
+			   					[#if information.stick == 2]
+				   				<a onclick="confirmDisableInfo(${information.id},1)">置顶</a>
+				   				[#else]
+				   				<a onclick="confirmDisableInfo(${information.id},2)">取消置顶</a>
+				   				[/#if]
+			   			</li>
+			   			[/@shiro.hasPermission]
+			   			[@shiro.hasPermission name="system:information:type:delete"]
+			   			<li class="divider"></li>
+			   			<li>
+			   				<a onclick="deleteInfo(${information.id})">删除</a>
+			   			</li>
+			   			[/@shiro.hasPermission]
+		   			</ul>
+		  		</div>
+	   		</td>
+	   	</tr>
+	   		<tr id="informtion_list_${information.id}" class="cms_list_detail none" item="detail">
+	   		<td></td>
+			<td colspan="11" tdType="orderItemDetail">
+				<table class="table table-hover table-striped table-bordered draggable sortable order_item_detail">
+					<tbody>
+						<tr>
+							<td class="firstTd">资讯标题：</td>
+							<td>${information.infoTitle!""}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">资讯简介：</td>
+							<td>${information.infoSummary!""}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">资讯类型：</td>
+							<td>
+								[#if information.infoType == 1]
+					   				纯文字
+					   			[#elseif information.infoType == 2]
+					   				多图模式
+					   			[#elseif information.infoType == 3]
+					   				视频模式
+					   			[#elseif information.infoType == 4]
+					   				单图
+					   			[/#if]
+							</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">资讯类别：</td>
+							<td>
+								[#if information.categoryList?? && information.categoryList?size > 0]
+						   			[#list information.categoryList as categorys]
+						   				<a class="label label-primary">${categorys.name!""}</a>
+						   			[/#list]
+					   			[/#if]
+							</td>
+						</tr>
+						[#if information.infoType == 2 || information.infoType == 3 || information.infoType == 4]
+						<tr>
+					   		<td class="firstTd">资讯文件（图片、视频）：</td>
+							<td>
+								[#if information.infoType == 2]
+									[#if information.imageOne != '']
+							   			<a class="galpop-info label label-default"  data-galpop-group="information3_${information.id}"  href="${information.imageOne!''}">查看图片</a>
+							   		[/#if]
+							   		[#if information.imageTwo != '']
+							   		<a class="galpop-info hide"   data-galpop-group="information3_${information.id}" href="${information.imageTwo!''}"></a>
+							   		[/#if]
+							   		[#if information.imageThree != '']
+							   			<a class="galpop-info hide"  data-galpop-group="information3_${information.id}" href="${information.imageThree!''}"></a>
+							   		[/#if]
+							   	[#elseif information.infoType == 4]
+							   		<a class="galpop-info label label-default"  data-galpop-group="information4_${information.id}"  href="${information.imageOne!''}">查看图片</a>
+							   	[#elseif information.infoType == 3]
+							   		<a href="${information.imageOne!''}" class="label label-default" target="_bank">查看视频</a>
+								[/#if]
+							</td>
+						</tr>
+			   			[/#if]
+						<tr>
+					   		<td class="firstTd">是否置顶：</td>
+							<td>
+								[#if information.stick == 1]
+					   				置顶
+					   			[#elseif information.stick == 2]
+					   				不置顶
+					   			[/#if]
+							</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">作者：</td>
+							<td>${information.author!"暂无"}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">阅读人数：</td>
+							<td>${information.readPeople!0}人</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">上架时间：</td>
+							<td>${information.startTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">下架时间：</td>
+							<td>${information.endTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd">创建时间：</td>
+							<td>${information.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+						</tr>
+						<tr>
+					   		<td class="firstTd"> </td>
+							<td><button class="btn btn-warning" onclick="informationPrebiew(${information.id})">预览</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="12" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryInformationList(pagination.pageNumber);
+		}
+	});
+}
+$('.galpop-info').galpop({callback:imagePageCallback});
+</script>

@@ -1,0 +1,203 @@
+<div class="cms-edit">
+<div class="alert alert-warning" >注：针对不同操作系统的，上下架时间不能冲突 </div>
+	<form action="${base}/cms/screen/edit.htm"  method="post" id="screenAdvert_edit_form">
+		<input type="hidden" name="screenAdvert.id" value="${(screenAdvert.id)!""}" />
+		<div class="cms-table-making">
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  推送平台：
+						</div>
+						<div class="content">
+							<div class="cms-checkbox">
+								<label class="el-radio">
+									<input type="radio" name="screenAdvert.pushPlatform" id="pushPlatform3" value="1,2" [#if screenAdvert?? && screenAdvert.pushPlatform == '1,2']checked[/#if] [#if !screenAdvert??]checked[/#if]>
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">全部</span>
+								</label>
+								<label class="el-radio">
+									<input type="radio" name="screenAdvert.pushPlatform" id="pushPlatform1" value="1" [#if screenAdvert?? && screenAdvert.pushPlatform == '1']checked[/#if]>
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">IOS</span>
+								</label>
+								<label class="el-radio">
+									<input type="radio" name="screenAdvert.pushPlatform" id="pushPlatform2" value="2" [#if screenAdvert?? && screenAdvert.pushPlatform == '2']checked[/#if]>
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">Android</span>
+								</label>
+							</div>
+						</div>	
+					</div>
+			</div>
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  跳转链接：
+						</div>
+						<div class="content">
+							<input type="text"  class="input textinput-main" autofocus 
+            					placeholder="请输入跳转链接" id="screenAdvertBannerLink" name="screenAdvert.bannerLink" required autocomplete="off" value="${(screenAdvert.bannerLink)!''}" maxLength="36">
+						</div>	
+					</div>
+			</div>
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  上架时间：
+						</div>
+						<div class="content">
+							<input type="text"  id="startDate" name="startTime" value="${(screenAdvert.startTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:'%y-%M-%d %H:%i:%S',maxDate:document.getElementById('endDate').value})" autofocus placeholder="上架时间" autocomplete="off" required> 			
+						</div>	
+					</div>
+			</div>
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  下架时间：
+						</div>
+						<div class="content">
+							<input type="text" id="endDate" name="endTime" value="${(screenAdvert.endTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:document.getElementById('startDate').value})"  autofocus placeholder="下架时间" autocomplete="off" required>
+						</div> 	
+					</div>
+			</div>
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  闪屏设置：
+						</div>
+						<div class="content" >
+							<div class="cms-checkbox">
+								<label class="el-radio">
+									<input type="radio" name="screenAdvert.status" id="status1" value="2" [#if screenAdvert?? && screenAdvert.status == '2']checked[/#if] [#if !screenAdvert??]checked[/#if] onchange="changeOpenstate(this)">
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">关闭</span>
+									
+								</label>
+								<label class="el-radio">
+									<input type="radio" name="screenAdvert.status" id="status2" value="1" [#if screenAdvert?? && screenAdvert.status == '1']checked[/#if] onchange="changeOpenstate(this)" >
+									<span class="el-radio-style  pull-left"></span>
+									<span class="margin-l">开启</span>
+								</label>
+							</div>
+						</div>		
+					</div>
+			</div>
+			<div class="cell">
+				<div  class="item clear [#if (screenAdvert.status)?? & screenAdvert.status == 1] cms-show[#else]cms-hide[/#if] visible" id="screenAdvertTimer" >
+					<div class="title">
+						  闪屏时间：
+					</div>
+					<div class="content" >
+						<select class="form-control" id="screenAdvertTimer" name="screenAdvert.timer" >
+							<option  value="3" [#if screenAdvert?? && screenAdvert.timer == '3']selected="selected"[/#if]>3秒</option>
+							<option value="4" [#if screenAdvert?? && screenAdvert.timer == '4']selected="selected"[/#if]>4秒</option>
+							<option value="5" [#if screenAdvert?? && screenAdvert.timer == '5']selected="selected"[/#if]>5秒</option>
+						</select>
+					</div>		
+				</div>	
+			</div>
+			<div class="cell">
+				<div  class="item clear " >
+						<div class="title">
+							  闪屏图片：
+						</div>
+						<div class="content">
+							<input type="hidden" id="bannerUrl" name="screenAdvert.bannerUrl" value="${screenAdvert.bannerUrl!""}"/>
+							<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=screenImgUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+							<a class="galpop-single upload-image openImage" href="${screenAdvert.bannerUrl!""}">
+								<img  src="${screenAdvert.bannerUrl!""}" width="100%" id="screeniImg_preview" height="100%"  [#if !screenAdvert?? || !screenAdvert.bannerUrl] style="display:none;"[/#if]/>
+							</a>
+						</div>		
+					</div>
+			</div>
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+$('#screenAdvert_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#screenAdvert_edit_form').validate())
+		{
+			if(!isNotNull($("#bannerUrl").val()))
+			{
+				alertTip("请上传图片",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.response)
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryScreenList(1);
+		 }
+		 else
+		 {
+			alertTip(data.responseMsg,3);
+		 }
+	}
+});
+
+function changeOpenstate(obj)
+{
+	var type=$(obj).val();
+	console.log(type);
+	if(type == 1)	
+	{
+		 $("#screenAdvertTimer").show();
+	}
+	else if(type==2)
+	{
+		$("#screenAdvertTimer").hide();
+	}
+}
+
+
+function screenImgUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#bannerUrl").val("${storageUrl}" + data);
+		$("#screeniImg_preview").attr("src","${storageUrl}" + data).show();
+		$("#screeniImg_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#screenAdvert_edit_form').configValidate();
+});
+</script>

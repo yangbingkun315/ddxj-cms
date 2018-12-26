@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CreditRepaymentMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CreditRepayment" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="recruit_credit_id" property="recruitCreditId" jdbcType="INTEGER" />
+        <result column="business_money" property="businessMoney" jdbcType="DECIMAL" />
+        <result column="application" property="application" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="business_status" property="businessStatus" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="payee_name" property="payeeName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, recruit_credit_id, business_money, application, type, business_status, user_id,payee_name, 
+        create_time, update_time, flag
+    </sql>
+    
+    <!-- 查询授信发放记录 -->
+    <select id="queryCreditRepaymentRecord" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        SELECT
+		cr.*
+		FROM
+		zn_credit_repayment AS cr
+		INNER JOIN zn_recruit_credit AS rc ON cr.recruit_credit_id = rc.recruit_id
+		WHERE rc.recruit_id =#{recruitId} and cr.flag = 1 and rc.flag = 1 and cr.type=1
+    </select>
+	<!-- 查询授信还款记录 -->
+    <select id="queryRecruitRepmentRecord" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        SELECT
+		cr.*
+		FROM
+		zn_credit_repayment AS cr
+		WHERE cr.recruit_credit_id =#{recruitId} and cr.flag = 1 and cr.type=2
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_credit_repayment
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_credit_repayment
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CreditRepayment" >
+        insert into zn_credit_repayment (id, recruit_credit_id, business_money, user_id,
+            application, type, business_status, 
+            payee_name, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{recruitCreditId,jdbcType=INTEGER}, #{businessMoney,jdbcType=DECIMAL}, 
+            #{application,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{businessStatus,jdbcType=INTEGER},  #{userId,jdbcType=INTEGER},
+            #{payeeName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CreditRepayment" useGeneratedKeys="true" keyProperty="id" >
+        insert into zn_credit_repayment
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="recruitCreditId != null" >
+                recruit_credit_id,
+            </if>
+            <if test="businessMoney != null" >
+                business_money,
+            </if>
+            <if test="application != null" >
+                application,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="businessStatus != null" >
+                business_status,
+            </if>
+             <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="payeeName != null" >
+                payee_name,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="recruitCreditId != null" >
+                #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="businessMoney != null" >
+                #{businessMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="application != null" >
+                #{application,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="businessStatus != null" >
+                #{businessStatus,jdbcType=INTEGER},
+            </if>
+             <if test="userId != null" >
+                 #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="payeeName != null" >
+                #{payeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CreditRepayment" >
+        update zn_credit_repayment
+        <set >
+            <if test="recruitCreditId != null" >
+                recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            </if>
+            <if test="businessMoney != null" >
+                business_money = #{businessMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="application != null" >
+                application = #{application,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="businessStatus != null" >
+                business_status = #{businessStatus,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                 user_id=#{userId,jdbcType=INTEGER},
+            </if>
+            <if test="payeeName != null" >
+                payee_name = #{payeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CreditRepayment" >
+        update zn_credit_repayment
+        set recruit_credit_id = #{recruitCreditId,jdbcType=INTEGER},
+            business_money = #{businessMoney,jdbcType=DECIMAL},
+            application = #{application,jdbcType=VARCHAR},
+            type = #{type,jdbcType=INTEGER},
+            business_status = #{businessStatus,jdbcType=INTEGER},
+            user_id=#{userId,jdbcType=INTEGER},
+            payee_name = #{payeeName,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <update id="updateCreditRepaymentRecord" parameterType="java.lang.Integer">
+    	  update zn_credit_repayment set business_status = 2 where id = #{id}
+    </update>
+    <!-- 删除授信发放记录 -->
+    <delete id="delCreditRepayMentRecord" parameterType="java.lang.Integer" >
+        delete from zn_credit_repayment
+        where user_id = #{user_id,jdbcType=INTEGER}
+     </delete>
+</mapper>

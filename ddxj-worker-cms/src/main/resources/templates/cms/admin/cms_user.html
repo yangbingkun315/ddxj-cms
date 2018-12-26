@@ -1,0 +1,118 @@
+[#assign title="点点小匠-管理员列表"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="cmsUserList">
+	<div class="alert alert-warning" >注：此列表中的用户均可登录，可承担相应的角色 </div>
+	<form method="post" id="cms_user_form" action="${base}/cms/user/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+				<label class="search-title">用户名：</label>
+		    	<input type="text" id="userName" class="form-control search-input" name="userName" placeholder="请输入用户名">
+			</div>
+			<div class="search-item">
+			  	<label class="search-title">角色：</label>
+			    <select class="form-control" id="roleId" name="roleId" >
+					<option  value="">请选择角色</option>
+					[#if roleList?? && roleList?size > 0]
+					[#list roleList as role]
+						<option value="${role.id}" [#if roleId?? && roleId == role.id]selected="selected"[/#if]>${role.roleName}</option>
+					[/#list]
+					[/#if]
+				</select>
+		  	</div>
+			<div class="search-button">
+				<button type="button" onclick="queryUserList(1)" class="btn btn-warning">查询</button>
+			</div>
+		</div>
+	</form>
+	[@shiro.hasPermission name="system:user:add"]
+	<div class="operate-btn">
+		<div class="operate-item">
+			<button type="button" class="btn btn-warning" onclick="updateCmsUser()">添加管理员</button>
+		</div>
+	</div>
+	[/@shiro.hasPermission]
+	<div class="cms-table-tpl">
+		[#include "/admin/cms_user_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_user_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_user_form').submit();
+}
+
+queryUserList(1);
+
+function updateCmsUser(id)
+{
+	var url = "${base}/cms/user/edit.htm"
+	if(id)
+	{
+		url += "?userId=" + id;
+	}
+	TB_show({"url":url,"title": id ? "修改用户" : "创建用户","width":600,"height":500});
+}
+function changeUserPassword(id)
+{
+	var url = "${base}/cms/user/changepwd.htm?userId=" + id
+	TB_show({"url":url,"title": "修改用户密码" ,"width":300,"height":235});
+}
+
+function confirmDeleteUser(id)
+{
+	showConfirmDialog({message : "确认要删除此用户吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/cms/user/delete.htm",{id:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryUserList();
+			}
+		});
+	});
+}
+
+function confirmDisableUser(id,locked)
+{
+	var message = "";
+	if(locked == 1)
+	{
+		message = "确认要锁定此用户吗？";
+	}
+	else
+	{
+		message = "确认要解锁此用户吗？";
+	}
+	showConfirmDialog({message : message,height:100},function(){
+		alertTip("正在操作，请稍后...",4);
+		doPost("${base}/cms/user/disable.htm",{id:id,locked:locked},function(data){
+			if(data.response)
+			{
+				TINY.box.show("操作成功！",0,0,0,0,2);
+				queryUserList();
+			}
+		});
+	});
+}
+
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.CommentLabelMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.CommentLabel" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="work_type" property="workType" jdbcType="INTEGER" />
+        <result column="label" property="label" jdbcType="VARCHAR" />
+        <result column="checked" property="checked" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, work_type, label, checked, create_time, update_time, flag
+    </sql>
+    
+    <select id="getLabelListByUserId" resultMap="BaseResultMap"  parameterType="java.lang.Integer" >
+    	select cl.* from zn_user_comment co 
+    	inner join zn_user_comment_label ul 
+    	inner join zn_comment_label cl 
+    	ON 
+    	co.id = ul.comment_id and ul.label_id = cl.id where co.flag = 1 AND ul.flag = 1 AND cl.flag = 1 and ul.comment_id = #{id}
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_comment_label
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_comment_label
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.CommentLabel" >
+        insert into zn_comment_label (id, work_type, label, 
+            checked, create_time, update_time, 
+            flag)
+        values (#{id,jdbcType=INTEGER}, #{workType,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR}, 
+            #{checked,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.CommentLabel" >
+        insert into zn_comment_label
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="workType != null" >
+                work_type,
+            </if>
+            <if test="label != null" >
+                label,
+            </if>
+            <if test="checked != null" >
+                checked,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="workType != null" >
+                #{workType,jdbcType=INTEGER},
+            </if>
+            <if test="label != null" >
+                #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="checked != null" >
+                #{checked,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.CommentLabel" >
+        update zn_comment_label
+        <set >
+            <if test="workType != null" >
+                work_type = #{workType,jdbcType=INTEGER},
+            </if>
+            <if test="label != null" >
+                label = #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="checked != null" >
+                checked = #{checked,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.CommentLabel" >
+        update zn_comment_label
+        set work_type = #{workType,jdbcType=INTEGER},
+            label = #{label,jdbcType=VARCHAR},
+            checked = #{checked,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 根据职位类型查询评论标签 -->
+    <select id="queryCommentLabel" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    	select 
+        <include refid="Base_Column_List" />
+        from zn_comment_label
+        where work_type = #{workerType} and flag=1
+    </select>
+</mapper>

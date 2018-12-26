@@ -1,0 +1,98 @@
+[#assign title="点点小匠-授信发放列表"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/jquery.galpop.css?[@cmsVersion /]">
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<script src="[@resUrl /]/assets/cms/js/common/jquery.galpop.min.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="salaryList">
+	<div class="alert alert-warning" >注：授信工资发放列表 </div>
+	<form method="post" id="cms_salary_form" action="${base}/recruit/salary/manager/list.htm">
+		<input id="currentPage" type="hidden" name="currentPage"/>
+		<div class="cms-search">
+			<div class="search-item">
+			  <label  class="search-title">收款人姓名：</label >
+			  <input type="text" name="realName" id="realName" placeholder="请输入收款人姓名"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  <label  class="search-title">收款人电话：</label >
+			  <input type="text" name="phone" id="phone" placeholder="请输入收款人电话"   class="form-control search-input"  autocomplete="off"> 
+		  	</div>
+		  	<div class="search-item">
+			  	<label class="search-title">审核状态：</label>
+			    <select class="form-control" id="auditStatus" name="auditStatus" >
+					 <option value="">审核状态</option>
+					 <option value="1">审核中</option>
+					 <option value="2">审核成功</option>
+					 <option value="3">审核失败</option>
+				</select>
+		  	</div>
+			
+		  <div class="search-button">
+		     <button type="submit" onclick="queryUserList(1);" class="btn btn-warning">查询</button>
+		  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+		[#include "/recruit/recruit_salary_list_tpl.html"]
+	</div>
+	[#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_salary_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data)
+	}
+});
+
+function queryUserList(page)
+{
+	if(page == 1)
+	{
+		isInitPage = false;
+	}
+	$("#currentPage").val(page);
+	$('#cms_salary_form').submit();
+}
+
+queryUserList(1);
+function confirmSlideRecord(id)
+{
+	showConfirmDialog({message : "确认要删除该条发放记录吗？",height:100},function(){
+		alertTip("正在删除，请稍后...",4);
+		doPost("${base}/recruit/salary/manager/delete.htm",{salaryId:id},function(data){
+			if(data.response)
+			{
+				minAlert("删除成功！",1);
+				queryUserList();
+			}
+		});
+	});
+}
+
+function updateSalaryStatus(id,type)
+{
+	var auditStatus;
+	if(type == 1)//审核成功
+	{
+		auditStatus = 2;
+	}else
+	{
+		auditStatus = 3;
+	}
+	doPost("${base}/recruit/salary/manager/update.htm",{salaryId:id,auditStatus:auditStatus},function(data){
+		if(data.response)
+		{
+			minAlert("更新成功！",1);
+			queryUserList();
+		}
+	});
+}
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.KeyWordsMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.KeyWords" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="key_words" property="keyWords" jdbcType="VARCHAR" />
+        <result column="replay_words" property="replayWords" jdbcType="VARCHAR" />
+        <result column="is_match" property="isMatch" jdbcType="INTEGER" />
+        <result column="reply_type" property="replyType" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, key_words, replay_words, is_match, reply_type, create_time, update_time, flag
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_key_words
+        where id = #{id,jdbcType=INTEGER} and flag = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_key_words
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.KeyWords" >
+        insert into zn_key_words (id, key_words, replay_words, 
+            is_match, reply_type, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{keyWords,jdbcType=VARCHAR}, #{replayWords,jdbcType=VARCHAR}, 
+            #{isMatch,jdbcType=INTEGER}, #{replyType,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.KeyWords" >
+        insert into zn_key_words
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="keyWords != null" >
+                key_words,
+            </if>
+            <if test="replayWords != null" >
+                replay_words,
+            </if>
+            <if test="isMatch != null" >
+                is_match,
+            </if>
+            <if test="replyType != null" >
+                reply_type,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="keyWords != null" >
+                #{keyWords,jdbcType=VARCHAR},
+            </if>
+            <if test="replayWords != null" >
+                #{replayWords,jdbcType=VARCHAR},
+            </if>
+            <if test="isMatch != null" >
+                #{isMatch,jdbcType=INTEGER},
+            </if>
+            <if test="replyType != null" >
+                #{replyType,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.KeyWords" >
+        update zn_key_words
+        <set >
+            <if test="keyWords != null" >
+                key_words = #{keyWords,jdbcType=VARCHAR},
+            </if>
+            <if test="replayWords != null" >
+                replay_words = #{replayWords,jdbcType=VARCHAR},
+            </if>
+            <if test="isMatch != null" >
+                is_match = #{isMatch,jdbcType=INTEGER},
+            </if>
+            <if test="replyType != null" >
+                reply_type = #{replyType,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.KeyWords" >
+        update zn_key_words
+        set key_words = #{keyWords,jdbcType=VARCHAR},
+            replay_words = #{replayWords,jdbcType=VARCHAR},
+            is_match = #{isMatch,jdbcType=INTEGER},
+            reply_type = #{replyType,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="findKeyWordsList"  resultMap="BaseResultMap" >
+    	 select 
+        <include refid="Base_Column_List" />
+        from zn_key_words
+        where flag = 1
+    </select>
+    <update id="updateKeywordsFlagById" parameterType="java.lang.Integer" >
+    	update zn_key_words set flag = 2 where id = #{keywordsId}
+    </update>
+    <select id="findKeyWordsByKeyWords" resultMap="BaseResultMap">
+   		 select 
+        <include refid="Base_Column_List" />
+        from zn_key_words
+        where key_words LIKE CONCAT(CONCAT('%', #{keyWords}), '%') and flag = 1
+    </select>
+</mapper>

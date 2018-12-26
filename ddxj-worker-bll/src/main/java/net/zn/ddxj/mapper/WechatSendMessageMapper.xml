@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.WechatSendMessageMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.WechatSendMessage" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="send_type" property="sendType" jdbcType="INTEGER" />
+        <result column="mass_type" property="massType" jdbcType="INTEGER" />
+        <result column="mass_platform" property="massPlatform" jdbcType="INTEGER" />
+        <result column="mass_title" property="massTitle" jdbcType="VARCHAR" />
+        <result column="mass_content" property="massContent" jdbcType="VARCHAR" />
+        <result column="mass_link" property="massLink" jdbcType="VARCHAR" />
+        <result column="mass_object" property="massObject" jdbcType="INTEGER" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="INTEGER" />
+        <result column="start_age" property="startAge" jdbcType="TIMESTAMP" />
+        <result column="end_age" property="endAge" jdbcType="TIMESTAMP" />
+        <result column="timing_time" property="timingTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, send_type, mass_type, mass_platform, mass_title, mass_content, mass_link, mass_object, 
+        province, city, sex, start_age, end_age, timing_time, create_time, update_time, flag
+    </sql>
+    
+    <!-- 多条件查询群发记录 -->
+    <select id="queryWechatSendMessageList" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_wechat_send_message
+        where flag = 1
+        <if test="sendType != null and sendType != ''">
+        	and send_type = #{sendType}
+        </if>
+        <if test="massType != null and massType != ''">
+        	and mass_type = #{massType}
+        </if>
+        <if test="createTime != null and createTime !=''">
+			and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(#{createTime} , '%Y-%m-%d')
+		</if>
+		order by create_time desc 
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_wechat_send_message
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_wechat_send_message
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.WechatSendMessage" >
+        insert into zn_wechat_send_message (id, send_type, mass_type, 
+            mass_platform, mass_title, mass_content, 
+            mass_link, mass_object, province, 
+            city, sex, start_age, 
+            end_age, timing_time, create_time, 
+            update_time, flag)
+        values (#{id,jdbcType=INTEGER}, #{sendType,jdbcType=INTEGER}, #{massType,jdbcType=INTEGER}, 
+            #{massPlatform,jdbcType=INTEGER}, #{massTitle,jdbcType=VARCHAR}, #{massContent,jdbcType=VARCHAR}, 
+            #{massLink,jdbcType=VARCHAR}, #{massObject,jdbcType=INTEGER}, #{province,jdbcType=VARCHAR}, 
+            #{city,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{startAge,jdbcType=INTEGER}, 
+            #{endAge,jdbcType=INTEGER}, #{timingTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+            #{updateTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.WechatSendMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into zn_wechat_send_message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="sendType != null" >
+                send_type,
+            </if>
+            <if test="massType != null" >
+                mass_type,
+            </if>
+            <if test="massPlatform != null" >
+                mass_platform,
+            </if>
+            <if test="massTitle != null" >
+                mass_title,
+            </if>
+            <if test="massContent != null" >
+                mass_content,
+            </if>
+            <if test="massLink != null" >
+                mass_link,
+            </if>
+            <if test="massObject != null" >
+                mass_object,
+            </if>
+            <if test="province != null" >
+                province,
+            </if>
+            <if test="city != null" >
+                city,
+            </if>
+            <if test="sex != null" >
+                sex,
+            </if>
+            <if test="startAge != null" >
+                start_age,
+            </if>
+            <if test="endAge != null" >
+                end_age,
+            </if>
+            <if test="timingTime != null" >
+                timing_time,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="sendType != null" >
+                #{sendType,jdbcType=INTEGER},
+            </if>
+            <if test="massType != null" >
+                #{massType,jdbcType=INTEGER},
+            </if>
+            <if test="massPlatform != null" >
+                #{massPlatform,jdbcType=INTEGER},
+            </if>
+            <if test="massTitle != null" >
+                #{massTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="massContent != null" >
+                #{massContent,jdbcType=VARCHAR},
+            </if>
+            <if test="massLink != null" >
+                #{massLink,jdbcType=VARCHAR},
+            </if>
+            <if test="massObject != null" >
+                #{massObject,jdbcType=INTEGER},
+            </if>
+            <if test="province != null" >
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null" >
+                #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="startAge != null" >
+                #{startAge,jdbcType=INTEGER},
+            </if>
+            <if test="endAge != null" >
+                #{endAge,jdbcType=INTEGER},
+            </if>
+            <if test="timingTime != null" >
+                #{timingTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.WechatSendMessage" >
+        update zn_wechat_send_message
+        <set >
+            <if test="sendType != null" >
+                send_type = #{sendType,jdbcType=INTEGER},
+            </if>
+            <if test="massType != null" >
+                mass_type = #{massType,jdbcType=INTEGER},
+            </if>
+            <if test="massPlatform != null" >
+                mass_platform = #{massPlatform,jdbcType=INTEGER},
+            </if>
+            <if test="massTitle != null" >
+                mass_title = #{massTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="massContent != null" >
+                mass_content = #{massContent,jdbcType=VARCHAR},
+            </if>
+            <if test="massLink != null" >
+                mass_link = #{massLink,jdbcType=VARCHAR},
+            </if>
+            <if test="massObject != null" >
+                mass_object = #{massObject,jdbcType=INTEGER},
+            </if>
+            <if test="province != null" >
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null" >
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null" >
+                sex = #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="startAge != null" >
+                start_age = #{startAge,jdbcType=INTEGER},
+            </if>
+            <if test="endAge != null" >
+                end_age = #{endAge,jdbcType=INTEGER},
+            </if>
+            <if test="timingTime != null" >
+                timing_time = #{timingTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.WechatSendMessage" >
+        update zn_wechat_send_message
+        set send_type = #{sendType,jdbcType=INTEGER},
+            mass_type = #{massType,jdbcType=INTEGER},
+            mass_platform = #{massPlatform,jdbcType=INTEGER},
+            mass_title = #{massTitle,jdbcType=VARCHAR},
+            mass_content = #{massContent,jdbcType=VARCHAR},
+            mass_link = #{massLink,jdbcType=VARCHAR},
+            mass_object = #{massObject,jdbcType=INTEGER},
+            province = #{province,jdbcType=VARCHAR},
+            city = #{city,jdbcType=VARCHAR},
+            sex = #{sex,jdbcType=INTEGER},
+            start_age = #{startAge,jdbcType=INTEGER},
+            end_age = #{endAge,jdbcType=INTEGER},
+            timing_time = #{timingTime,jdbcType=TIMESTAMP},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

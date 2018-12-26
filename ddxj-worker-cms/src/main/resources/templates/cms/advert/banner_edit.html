@@ -1,0 +1,190 @@
+<div class="cms-edit">
+	<form action="${base}/advert/banner/edit.htm"  method="post" id="banner_edit_form">
+		<input type="hidden" name="id" value="${(advertBanner.id)!""}" />
+		<div  class="item clear" >
+			<div class="title">
+				跳转链接：
+			</div>
+			<div class="content input-field clearfix">
+				<input type="text"  class="input textinput-main" id="bannerLink" name="bannerLink" isRequired="true" placeholder="请输入跳转链接" value="${(advertBanner.bannerLink)!""}" style="width: 300px;">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				上架时间：
+			</div>
+			<div class="content">
+				<input type="text" name="startTime" id="startTimeEdit" value="${(advertBanner.startTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+				onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:'%y-%M-%d %H:%i:%S',maxDate:document.getElementById('endTime').value})" placeholder="上架时间" autocomplete="off" isRequired="true">
+			</div>
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				下架时间：
+			</div>
+			<div class="content">
+				<input type="text" name="endTime" id="endTimeEdit" value="${(advertBanner.endTime?string('yyyy-MM-dd HH:mm:ss'))!''}" class="input textinput-main" 
+				onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',errDealMode:1,minDate:document.getElementById('startTime').value})" placeholder="下架时间" autocomplete="off" isRequired="true">
+			</div> 		
+		</div>
+		<div  class="item clear" >
+			<div class="title">
+				类型：
+			</div>
+			<div class="content">
+				<select class="form-control" id="bannerType" name="bannerType" [#if advertBanner??] disabled = 'disabled'[/#if]>
+					<option value="">请选择轮播图类型</option>
+					<option value="1" [#if advertBanner.bannerType == '1']selected="selected"[/#if]>图片</option>
+					<option value="2" [#if advertBanner.bannerType == '2']selected="selected"[/#if]>视频</option>
+				</select>
+				<script>
+					$("#bannerType").change(function(){
+						var select = $("#bannerType").val();
+						if(select == 1)
+						{
+							$("#content_uploadImage").show();
+							$("#content_uploadVideo").hide();
+						}
+						if(select == 2)
+						{
+							$("#content_uploadImage").hide();
+							$("#content_uploadVideo").show();
+						}
+					})
+				</script>
+			</div> 		
+		</div>
+		<div id="content_uploadImage" class="item clear[#if advertBanner?? && advertBanner.bannerType == '2'] none[/#if]">
+			<div class="title">
+			上传图片：
+			</div>
+			<div class="content">
+				<input type="hidden" id="bannerUrlEdit" name="bannerUrl" value="${(advertBanner.bannerUrl)!""}"/>
+				<iframe id="uploadFileFrame" class="fl" src="${base}/file/upload.htm?callback=creditLogoUpload_click" width="250" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				<a class="galpop-single upload-image openImage" href="${advertBanner.bannerUrl!""}">
+					<img  src="${advertBanner.bannerUrl!""}" width="100%" id="creditLogo_preview" height="100%"  [#if !advertBanner?? || !advertBanner.bannerUrl] style="display:none;"[/#if]/>
+				</a>
+			</div>
+		</div>
+		<div id="content_uploadVideo" class="item clear[#if advertBanner?? && advertBanner.bannerType == '2'][#else] none[/#if]">
+			<div class="title">
+			上传视频：
+			</div>
+			<div class="content">
+				<input type="hidden" id="videoUrlEdit" name="videoUrl" value="${(advertBanner.bannerUrl)!""}"/>
+				<iframe id="uploadVideoFrame" class="fl" src="${base}/video/upload.htm?callback=videoUpload_click" width="100" height="40" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+			</div>
+			[#include "/common/upload/video.html"]
+		</div>
+		<div class="item clear">
+			<div class="title">&nbsp;</div>
+			<div class="content">
+				<input type="submit" value="保存" class="btn btn-warning" />
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+$('#banner_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#banner_edit_form').validate())
+		{
+			if($("#bannerType").val() == 1)
+			{
+				if(!isNotNull($("#bannerUrlEdit").val()))
+				{
+					alertTip("请上传图片",2);
+					return false;
+				}
+			}
+			else if($("#bannerType").val() == 2)
+			{
+				if(!isNotNull($("#videoUrlEdit").val()))
+				{
+					alertTip("请上传视频",2);
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 if(data.responseCode == 1036)
+		 {
+			 linkLogin();
+		 }
+		 else
+		 {
+			 TINY.box.show("保存成功！",0,0,0,0,2);
+			 TB_remove();
+			 queryBannerList(1);
+		 }
+	}
+});
+function creditLogoUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	else if(data == "99")
+	{
+		alertTip("上传的文件不能大于500KB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	}
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#bannerUrlEdit").val("${storageUrl}" + data);
+		$("#creditLogo_preview").attr("src","${storageUrl}" + data).show();
+		$("#creditLogo_preview").parent().attr("href","${storageUrl}" + data);
+		removeErrorMessage("uploadFileFrame");
+		console.log($("#bannerUrlEdit").val());
+	}
+}
+function videoUpload_click(data)
+{
+	if(data == "start")
+	{
+		alyCms.base.showLoading("正在上传，请稍后。。。");
+	}
+	else if(data == "end")
+	{
+		alyCms.base.removeLoading();
+	}
+	 else if(data == "99")
+	{
+		alertTip("上传的文件不能大于100MB！",2);
+	}
+	else if(data == "98")
+	{
+		alertTip("文件格式错误！",2);
+	} 
+	else
+	{
+		alyCms.base.removeLoading();
+		$("#videoUrlEdit").val(data);
+		$(".upload-video .js-video .js-media").html(' <source src="'+data+'" />');
+		removeErrorMessage("uploadVideoFrame");
+	}
+}
+$(function(){
+	$('.openImage').galpop();
+	$('#banner_edit_form').configValidate();
+	[#if advertBanner?? && advertBanner.bannerUrl?? && advertBanner.bannerType == '2']
+	$(".js-media").html(" <source src='${advertBanner.bannerUrl}' />")
+	[/#if]
+});
+</script>

@@ -1,0 +1,102 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td class="cms-talbe-checkbox">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('userTransferId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>姓名<i class="question iconfont" data-toggle="tooltip" data-placement="bottom" title="类型为“收入”时为转账人，类型为“支出”时为收款人">&#xe61f;</i></td>
+   		<td>电话<i class="question iconfont" data-toggle="tooltip" data-placement="bottom" title="类型为“收入”时为转账人，类型为“支出”时为收款人">&#xe61f;</i></td>
+   		<td>订单号</td>
+   		<td>转账方式</td>
+   		<td>转账描述</td>
+   		<td>转账类型</td>
+   		<td>单位<i class="question iconfont" data-toggle="tooltip" data-placement="bottom" title="结算工资才有数据">&#xe61f;</i></td>
+		<td>数量<i class="question iconfont" data-toggle="tooltip" data-placement="bottom" title="结算工资才有数据">&#xe61f;</i></td>
+		<td>单价<i class="question iconfont" data-toggle="tooltip" data-placement="bottom" title="结算工资才有数据">&#xe61f;</i></td>
+		<td>金额</td>
+		<td>创建时间</td>
+   		<td>更新时间</td>
+   	</tr>
+   	[#if userTransferList?? && userTransferList?size > 0]
+	   	[#list userTransferList as userTransfer]
+	   	<tr>
+		   	<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="userTransferId" id="${userTransfer.id}" >
+					<label class="el-checkbox-style" for="${userTransfer.id}"></label>
+				</div>
+		   	</td>
+	   		<td>
+	   		[#if status == 1]
+		   		${userTransfer.toUser.realName!""}
+	   		[#elseif status == 2]
+		   		${userTransfer.fromUser.realName!""}
+	   		[/#if]
+	   		</td>
+	   		<td>
+	   		[#if status == 1]
+		   		${userTransfer.toUser.phone!""}
+	   		[#elseif status == 2]
+		   		${userTransfer.fromUser.phone!""}
+	   		[/#if]
+	   		</td>
+	   		<td>${userTransfer.orderNo!""}</td>
+	   		<td>
+		   			[#if userTransfer.transferWay  == '1']
+		   				授信支付
+		   			[#elseif userTransfer.transferWay == '2']
+		   				余额支付
+	   				[#elseif userTransfer.transferWay == '3']
+	   					银行卡支付
+	   				[#else]
+	   					余额支付
+		   			[/#if]
+		   			
+	   		</td>
+	   		<td>${userTransfer.transferDesc!""}</td>
+	   		<td>
+	   			[#if userTransfer.transferType   == '1']
+	   				<button type="button" class="btn btn-primary btn-xs">转账</button>
+	   			[#elseif userTransfer.transferType  == '2']
+	   				<button type="button" class="btn btn-danger btn-xs">结算</button>
+   				[#elseif userTransfer.transferType  == '3']
+   					<button type="button" class="btn btn-success btn-xs">充值</button>
+				[#elseif userTransfer.transferType  == '4']
+				<button type="button" class="btn btn-info btn-xs">提现</button>
+				[#elseif userTransfer.transferType  == '5']
+				<button type="button" class="btn btn-warning btn-xs">系统发放</button>
+	   			[/#if]
+	   		</td>
+	   		<td>${userTransfer.unit!""}</td>
+	   		<td>${userTransfer.count!""}</td>
+	   		<td>${(userTransfer.price?string('currency'))!""}</td>
+	   		<td>${(userTransfer.money?string('currency'))!""}</td>
+	   		<td>${(userTransfer.createTime?string("yyyy-MM-dd HH:mm:ss"))!""}</td>
+	   		<td>${(userTransfer.updateTime?string("yyyy-MM-dd HH:mm:ss"))!""}</td>
+	   	 </tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="14" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+
+<script type="text/javascript">
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryUserTransferDetails(pagination.pageNumber);
+		}
+	});
+}
+</script>

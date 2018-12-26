@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="../../css/layui.css"  media="all">
+<link href="../../css/bkg_ui.css" type="text/css"  rel="stylesheet" />
+<link href="../../font/css/font-awesome.min.css"  rel="stylesheet" type="text/css" />
+<link href="../../css/common/common.css"  rel="stylesheet" type="text/css" />
+<script src="../../js/common/common.js" type="text/javascript"></script>
+<script src="../../js/jquery-1.9.1.min.js" type="text/javascript" ></script>
+<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+<script src="../../js/shopFrame.js" type="text/javascript"></script>
+<script src="../../js/Sellerber.js" type="text/javascript"></script>
+<script src="../../js/angular.min.js" type="text/javascript"></script>
+<script src="../../js/lay/layui.js" charset="utf-8"></script>
+<script src="../../js/laydate/laydate.js" type="text/javascript"></script>
+<script src="../../js/common/initUtils.js" type="text/javascript"></script>
+<link rel="stylesheet" href="../../css//jquery.galpop.css">
+<script src="../../js/jquery.galpop.min.js"></script>
+<style>
+	.carBox {
+		position: fixed;
+		z-index: 10000;
+		width:500px !important;
+		height:500px !important;
+		top:50% !important;
+		left:50%;
+		margin-left:-250px;
+		margin-top:-250px;
+	}
+	
+</style>
+<title>投诉与建议</title>
+</head>
+<body ng-app="complain" ng-controller="userComplain">
+<div class="margin Competence_style" id="page_style">
+	<div class="operation clearfix same_module mb15">
+
+	  	<div class="order-search-item">
+	  	    <span class="search_title">投诉类型：</span>
+	        <select name=status ng-model="type" class="width160">
+    			<option value="">全部</option>
+				<option value="1">投诉</option>
+				<option value="2">建议</option>
+				<option value="3">其他</option>
+	       </select>
+   	 	</div>
+	  	<div class="order-search-item">
+	  	    <span class="search_title">处理状态：</span>
+	        <select name=status ng-model="status" class="width160">
+				<option value="">全部</option>
+				<option value="1">未处理</option>
+				<option value="2">已处理</option>
+	       </select>
+   	 	</div>
+   	 	<div class="order-search-item">
+		  <span class="search_title">用户电话：</span>
+		  <input type="text" name="phone" id="phone" ng-model="phone"   class="input textinput-main width160" > 
+	  	</div>
+	   	<div class="order-search-item">
+		  <span class="search_title">创建时间：</span>
+		  <input type="text" name="createTime" id="createTime" ng-model="createTime"   class="input textinput-main width160" > 
+	  	</div>
+   	 	<div class="order-search-item" >
+	  		<button class="btn button_btn bg-deep-blue " onclick=""  type="button" ng-click="queryComplainList('search')"><i class="fa  fa-search"></i>&nbsp;搜索</button>
+  		</div>
+
+	</div>
+
+	<div class="datalist_show">
+		<div class="datatable_height confirm gallery">
+			<table class="table table_list table_striped table-bordered " id="sample-table">
+				<thead>
+					<tr>
+						<th>用户姓名</th>
+						<th>用户电话</th>
+						<th>投诉类型</th>
+						<th style="width:400px">投诉内容</th>
+						<th>投诉图片</th>
+						<th>是否处理</th>
+						<th>创建时间</th>
+						<th>更新时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="complainList.length > 0 " ng-repeat="com in complainList track by $index">
+						<td ng-bind="com.user.realName"></td>
+						<td ng-bind="com.user.phone"></td>
+						<td class="td-status">
+					      <span class="layui-btn layui-btn-normal layui-btn-xs" ng-if="com.type == '1'">投诉</span>
+					      <span class="layui-btn layui-btn-warm layui-btn-xs" ng-if="com.type == '2'">建议</span>
+					      <span class="layui-btn layui-btn-danger layui-btn-xs" ng-if="com.type == '3'">其他</span>
+					      <span class="layui-btn layui-btn-danger layui-btn-xs" ng-if="com.type == ''">无</span>
+				      	</td>
+						<td ng-bind="com.complainContent"></td>
+						<!-- <td><a href="javascript:" ng-click="queryTitleDetails('投诉内容',com.complainContent)">查看投诉内容</a></td> -->
+						<td class="gallery-wrapper">
+							<button  ng-if="com.imgUrl != ''" type="button" class="btn btn-info "  ng-click="openImages(com.imgUrl)">打开图片</button>
+						</td>
+						
+						<td>
+							<span class="label btn-info radius" ng-if="com.status == 1">未受理</span>
+				      		<span class="label label-error radius" ng-if="com.status == 2">已受理</span>
+						</td>
+						<td ng-bind="com.createTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td ng-bind="com.updateTime.time | date:'yyyy-MM-dd HH:mm:ss'"></td>
+						<td class="td-manage">
+							<div class="btn_group">
+							 <button class="layui-btn layui-btn-warm btn_group_action " onclick="changeBtnGroup(this)" type="button" >编辑<i class="fa  fa-angle-down ml10"></i></button>
+							 <ul class="btn_group_item none">
+								<li><a title="处理成功" ng-click="updateComPlainStatus(com.id);"  ng-if="com.status == 1">处理成功</a></li> 
+								<li><a title="删除" ng-click="deleteComPlain(com.id)" href="javascript:;" >删除</a></li>
+							</ul>
+							</div>
+						</td>
+					</tr>
+					<tr ng-if="complainList == null || complainList.length <= 0 ">
+						<td class="center" colspan="11">暂无数据<b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="list-page" class="clearfix col-xs-12 col-lg-12 align"></div>
+</div>
+
+<div class="userinfo_style" id="content_detail" style="display: none">
+	<div class="member_show" >
+		<div class="member_content"></div>
+	</div>
+</div>
+<!-- <div id="show_credit_image" class="addOrUpdate_credit  layui-form-item" style="display:none">
+	<a class="close" ng-click="hideBigImage()"></a>
+	<a href="#previous" class="previous"></a>
+	<a href="#next" class="next"></a>
+	<div class="hide-layer" ng-click="hideBigImage()"></div>
+	<div class="add_style add_administrator_style">
+		<img ng-src="{{image}}" ng-model="image" class="big-img" src="" />
+	</div>
+	 <div class="layui-carousel carBox"  id="test1" lay-filter="test1">
+	  <div >
+	    <div ng-repeat="img in image" >
+	    <img  style="width:100%;height:100%;background-size:100%"  ng-src="{{img}}" >
+	    </div>
+	  </div>
+	</div> 
+</div> -->
+
+</body>
+</html>
+<script>
+var createTime = {
+		elem: '#createTime',
+		format: 'YYYY-MM-DD',
+		// min: laydate.now(), //设定最小日期为当前日期
+		max: '2099-06-16', //最大日期
+		istime: true,
+		istoday: false,
+		choose: function(datas){
+		}
+	};
+laydate(createTime)
+
+var complain = angular.module('complain',[]);
+complain.controller('userComplain',function($scope,$timeout)
+{
+	$scope.type = "";
+	$scope.status = "";
+	$scope.phone = "";
+	$scope.createTime = "";
+	$scope.pageNum = 1;
+	$scope.pageSize = 20;	
+	$scope.queryComplainList = function(type)//查询列表
+	{
+		if(isNotNull(type))
+		 {
+			 $scope.initPageFlag = false;
+		 }
+		layui.use(['layer'], function(){
+		 var index =  layui.layer.load(3, {
+			  shade: [0.1,'#888'] //0.1透明度的白色背景
+			}); 
+			Ajax.post({
+				url: getRoot + '/user/comPlain/list.ddxj',
+				data: {type:$scope.type,status:$scope.status,phone:$scope.phone,createTime:$("#createTime").val(),pageNum:$scope.pageNum,pageSize:$scope.pageSize},
+				async: true,
+				success: function(data) {
+					layer.close(index);
+					if(data.response == true)
+					{
+						$scope.total = data.data.complainList.total;
+						$scope.complainList = data.data.complainList.list;
+						$scope.$apply();
+						if(!$scope.initPageFlag)
+						{
+		               		$scope.initPage();
+						}
+					}
+				}
+			}); 
+		}); 
+	}
+	$scope.initPage = function()
+	{
+		$scope.initPageFlag = true;
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage
+			,layer = layui.layer;
+			laypage.render({
+				elem: 'list-page'
+				,count: $scope.total //数据总数
+				,limit:	20
+				,jump: function(obj,first)
+				{
+					$scope.pageNum = obj.curr;
+					$scope.pageSize = obj.limit;
+					if(!first)//一定要加此判断，否则初始时会无限刷新
+					{
+						$scope.queryComplainList();
+					}
+	      	    }
+			});
+		});
+	}
+	$scope.queryComplainList();
+	$scope.deleteComPlain = function (id)
+	{
+		layer.confirm("确定要删除吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/user/comPlain/delete.ddxj',
+				data: {id:id},
+				async: true,
+				success: function(data) {
+					if(data.response == true)
+					{
+						layer.msg('已删除!',{icon: 6,time:1000});
+						$scope.queryComplainList();
+					}
+				}
+			}); 
+		});
+	}
+/* 	$scope.showBigImage = function(url){
+		$scope.image = [];
+		$("#show_credit_image").show();
+		//初始化轮播图组件
+		layui.use('carousel', function(){
+			  carousel = layui.carousel;
+			  //建造实例
+			  carousel.render({
+			    elem: '#test1'
+			    ,width: '100%' //设置容器宽度
+			    ,arrow: 'always' //始终显示箭头
+			    //,anim: 'updown' //切换动画方式
+			  });
+	    });
+		if(url.indexOf("###")>=-1)
+		{
+			var sts = [];
+			sts = url.split("###");
+			for(var i=0;i<sts.length;i++)
+			{
+				$scope.image.push(sts[i]);
+			}
+			console.log($scope.image);
+		}
+		else
+		{
+			$scope.image.push(url);
+		}
+		//初始化轮播图组件
+		layui.use('carousel', function(){
+			  carousel = layui.carousel;
+			//建造实例
+			  carousel.render({
+			    elem: '#test1'
+			    ,width: '100%' //设置容器宽度
+			    ,arrow: 'always' //始终显示箭头
+			    //,anim: 'updown' //切换动画方式
+			  });
+	    });
+		
+		
+	} */
+	
+/* 	$scope.hideBigImage = function(){
+		$scope.image = "";
+		$("#show_credit_image").hide();
+	} */
+	
+	$scope.updateComPlainStatus = function(id)
+	{
+		layer.confirm("确定要审核成功吗？",function(index){
+			Ajax.post({
+				url: getRoot+'/user/comPlain/handle.ddxj',
+				data: {id:id},
+				async: true,
+				success: function(data) {
+					if(data.response)
+					{
+						layer.msg("处理成功");
+						$scope.queryComplainList();
+					}
+				}
+			}); 
+		});
+	}
+	
+	$scope.queryTitleDetails = function(title,content)
+	{
+		layer.open({
+			type: 1,
+			title: title,
+			maxmin: true, 
+			shadeClose: true, //点击遮罩关闭层
+			area : ['700px' , '700px'],
+			content:$('#content_detail'),
+		})
+		
+		$(".member_content").html(content);
+	}
+	$scope.openImages = function(data)
+	{
+		var images = [];
+		if(data.indexOf("###") > -1)
+		{
+			var imagesSplit = data.split("###");
+			for(var d = 0;d<imagesSplit.length;d++)
+			{
+				images.push(imagesSplit[d]);
+			}
+		}
+		else
+		{
+			images.push(data);
+		}
+		multiGraphShow(images);
+	}
+	
+});
+</script>

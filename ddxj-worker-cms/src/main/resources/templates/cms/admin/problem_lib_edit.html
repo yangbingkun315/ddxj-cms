@@ -1,0 +1,119 @@
+[#assign title="点点小匠-问题编辑"]
+[#include "/common/cms_header.html"]
+<link rel="stylesheet" href="[@resUrl /]/assets/cms/css/common/star/star-rating.css?[@cmsVersion /]">
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/js/common/star/star-rating.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="[@resUrl /]/assets/cms/ueditor/ueditor.all.js"></script>
+<div class="cms-content" id=problemLibList>
+<div class="alert alert-warning" >注：问题库编辑 </div>
+	<form method="post" id="problem_lib_edit_form" action="${base}/problem/lib/edit.htm">
+		<input id="id" type="hidden" name="libId" value="${(problemLib.id)!0}"/>
+		<div class="bootstrap-widget-content">
+			<div class="order-search-item">
+				<label>资讯标题</label>
+				<div class="input-field clearfix">
+					<input type="text" id="problemTitle" name="problemTitle" value="${(problemLib.problemTitle)!''}" isRequired="true" style="width:60%;" maxLength="50" class="input textinput-main" showrightmsg="false" placeholder="标题必填，50个字以内" >
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>问题难度等级</label>
+				<i class="question iconfont" data-toggle="popover" data-content="级别代表着问题的重要性">&#xe61f;</i>
+				<div class="input-field clearfix">
+			        <input id="rating-input" type="text"  name="problemDifficulty" value="${(problemLib.problemDifficulty)!''}"/>
+					<!-- <input type="text" id="problemDifficulty" name="problemDifficulty" value="${(problemLib.problemDifficulty)!''}" isRequired="true" fieldType="number" maxValue="5" class="input textinput-main" showrightmsg="false" placeholder="1-5，必填" > -->
+				</div>
+			</div>
+			<div class="order-search-item">
+				<label>作者</label>
+				<i class="question iconfont" data-toggle="popover" data-content="默认为“点点小匠”">&#xe61f;</i>
+				<div class="input-field clearfix">
+					<input type="text" id="author" name="author" value="${(problemLib.author)!''}"   class="input textinput-main" showrightmsg="false" placeholder="作者非必填，5字以内" >
+				</div>
+			</div>
+			<div class="order-search-item" style="width: 100%">
+				<label>资讯内容</label>
+				<div class="input-field clearfix">
+				<input name="problemContent" id="problemContent" type="hidden"/>
+		 		 <script id="editor" type="text/plain" style="width:100%;"></script>
+				</div>
+			</div>
+			<div style="clear:both;padding-top:20px;"> <button class="btn btn-warning" id="yw9" type="button" onclick="submitInformartion()"  name="yt0">保存信息</button> </div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+//实例化编辑器
+//建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+// 自定义的编辑器配置项,此处定义的配置项将覆盖editor_config.js中的同名配置
+var editorOption = {
+    //focus时自动清空初始化时的内容
+    autoClearinitialContent: true,
+     //关闭elementPath
+     elementPathEnabled: true,
+     initialFrameHeight:500,//设置编辑器高度
+     scaleEnabled:true//设置不自动调整高度
+};
+var editor_a = new baidu.editor.ui.Editor(editorOption);
+editor_a.render('editor');
+editor_a.ready(function() {
+[#if problemLib??]
+    editor_a.setContent('${problemLib.infoContent}');
+[/#if]
+});
+function submitInformartion()//提交form表单
+{
+	$("#problemContent").val(UE.getEditor('editor').getContent());
+	$("#problem_lib_edit_form").submit();
+}
+$('#problem_lib_edit_form').ajaxForm({
+	beforeSubmit:function(){
+		if($('#problem_lib_edit_form').validate())
+		{
+			if(!UE.getEditor('editor').hasContents())
+			{
+				alertTip("请输入问题内容",2);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	},
+	warningMessage:"正在保存,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		if(data.responseCode == 1036)
+		{
+			linkLogin();
+		}
+		else
+		{
+			TINY.box.show("保存成功！",0,0,0,0,2);
+			TB_remove();
+			setTimeout(function(){
+				window.location.href="${base}/query/problemLib/list.htm"
+			},1000)
+		}
+	}
+});
+ 
+setTimeout(function(){
+	$('#problem_lib_edit_form').configValidate();
+},100);
+jQuery(document).ready(function () {
+    var $inp = $('#rating-input');
+    $inp.rating({
+        min: 0,
+        max: 5,
+        step: 1,
+        size: 'lg',
+        showClear: false,
+        showCaption:false,
+        theme: 'krajee-fa',
+        filledStar: '<i class="fa fa-star"></i>',
+        emptyStar: '<i class="fa fa-star-o"></i>'
+    });
+});
+</script>
+[#include "/common/cms_footer.html"]

@@ -1,0 +1,79 @@
+<div class="table-responsive  cms-table">
+  <table class="table">
+   	<tr>
+   		<td style="width: 30px">
+   			<div class="el-checkbox el-checkbox-green ">
+				<input type="checkbox" name="check"  id="selectAllOrder" onclick="selectAllOrders('libId')">
+				<label class="el-checkbox-style" for="selectAllOrder"></label>
+			</div>
+   		</td>
+   		<td>问题标题</td>
+   		<td>问题内容</td>
+   		<td>问题难度</td>
+   		<td>作者</td>
+   		<td>创建时间</td>
+   		<td>更新时间</td>
+   		<td>操作</td>
+   	</tr>
+   	[#if problemLibList?? && problemLibList?size > 0]
+	   	[#list problemLibList as lib]
+	   	<tr>
+	   		<td>
+				<div class="el-checkbox el-checkbox-green">
+					<input type="checkbox" name="libId" id="${lib.id}" >
+					<label class="el-checkbox-style" for="${lib.id}"></label>
+				</div>
+		   	</td>
+		   	<td>${(lib.problemTitle)!""}</td>
+	   		<td>
+	   			<a href="javascript:;" onclick="queryDetails(${lib.id});">点击查看</button>
+	   		</td>
+	   		<td><input id="rating-input" class="rating-input" type="text"  name="problemDifficulty" value="${(lib.problemDifficulty)!''}" disabled="disabled"/></td>
+	   		<td>${(lib.author)!''}</td>
+	   		<td>${lib.createTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   		<td>${lib.updateTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+	   		<td>
+	   			[@shiro.hasPermission name="system:site:slide:edit"]
+		  			<a class="btn btn-warning" href="${base}/problem/lib/edit.htm?id=${lib.id}">编辑</a>
+			  	[/@shiro.hasPermission]
+			  	[@shiro.hasPermission name="system:site:slide:delete"]
+			   		<button type="button" class="btn btn-danger" onclick="confirmSlideRecord(${lib.id})">删除</button>
+			   	[/@shiro.hasPermission]
+	   		</td>
+	   	</tr>
+	   	[/#list]
+	[#else]
+	  	<tr>
+	   		<td colspan="10" class="center">暂无数据 <b class="red">&nbsp;&nbsp;提示：请确认您的查询条件是否正确，或者减少一些筛选条件</b></td>
+	   	</tr>
+   	[/#if]
+  </table>
+</div>
+<script>
+var page = "${currentPage}" * 1;
+$("#currentPageNumber").text(page);
+$("#currentTotalCount").text("${currentTotalCount!'0'}");
+if(!isInitPage)
+{
+	window.parent.initCmsPagehelp(${currentTotalCount!'0'},function(response, pagination){
+		if(isInitPage)
+		{
+			queryProblemLibList(pagination.pageNumber);
+		}
+	});
+}
+jQuery(document).ready(function () {
+    var $inp = $('.rating-input');
+    $inp.rating({
+    	 theme: 'krajee-fa',
+         filledStar: '<i class="fa fa-star"></i>',
+         emptyStar: '<i class="fa fa-star-o"></i>',
+        min: 0,
+        max: 5,
+        step: 1,
+        size: 'lg',
+        showClear: false,
+        showCaption:false
+    });
+});
+</script>

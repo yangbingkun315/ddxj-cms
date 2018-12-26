@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.zn.ddxj.mapper.UserWithdrawMapper" >
+
+    <resultMap id="BaseResultMap" type="net.zn.ddxj.entity.UserWithdraw" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="money" property="money" jdbcType="DECIMAL" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="bank_on" property="bankOn" jdbcType="VARCHAR" />
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+        <result column="bank_type" property="bankType" jdbcType="VARCHAR" />
+        <result column="withdraw_status" property="withdrawStatus" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="flag" property="flag" jdbcType="INTEGER" />
+        <result column="withdraw_process" property="withdrawProcess" jdbcType="INTEGER" />
+        <!-- 一对一 是否认证配置 -->
+        <association property="user" column="user_id" select="net.zn.ddxj.mapper.UserMapper.queryCutUserDetail"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, money, user_id, bank_on, bank_name, bank_type, withdraw_status, create_time, 
+        update_time, flag, withdraw_process
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from zn_user_withdraw
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from zn_user_withdraw
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="net.zn.ddxj.entity.UserWithdraw" >
+        insert into zn_user_withdraw (id, money, user_id, 
+            bank_on, bank_name, bank_type, 
+            withdraw_status, create_time, update_time, 
+            flag, withdraw_process)
+        values (#{id,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, #{userId,jdbcType=INTEGER}, 
+            #{bankOn,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR}, #{bankType,jdbcType=VARCHAR}, 
+            #{withdrawStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+            #{flag,jdbcType=INTEGER}, #{withdrawProcess,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="net.zn.ddxj.entity.UserWithdraw" useGeneratedKeys="true" keyProperty="id">
+        insert into zn_user_withdraw
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="money != null" >
+                money,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="bankOn != null" >
+                bank_on,
+            </if>
+            <if test="bankName != null" >
+                bank_name,
+            </if>
+            <if test="bankType != null" >
+                bank_type,
+            </if>
+            <if test="withdrawStatus != null" >
+                withdraw_status,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="withdrawProcess != null" >
+                withdraw_process,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="money != null" >
+                #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="bankOn != null" >
+                #{bankOn,jdbcType=VARCHAR},
+            </if>
+            <if test="bankName != null" >
+                #{bankName,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="withdrawStatus != null" >
+                #{withdrawStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="withdrawProcess != null" >
+                #{withdrawProcess,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="net.zn.ddxj.entity.UserWithdraw" >
+        update zn_user_withdraw
+        <set >
+            <if test="money != null" >
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="bankOn != null" >
+                bank_on = #{bankOn,jdbcType=VARCHAR},
+            </if>
+            <if test="bankName != null" >
+                bank_name = #{bankName,jdbcType=VARCHAR},
+            </if>
+            <if test="bankType != null" >
+                bank_type = #{bankType,jdbcType=VARCHAR},
+            </if>
+            <if test="withdrawStatus != null" >
+                withdraw_status = #{withdrawStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="withdrawProcess != null" >
+                withdraw_process = #{withdrawProcess,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="net.zn.ddxj.entity.UserWithdraw" >
+        update zn_user_withdraw
+        set money = #{money,jdbcType=DECIMAL},
+            user_id = #{userId,jdbcType=INTEGER},
+            bank_on = #{bankOn,jdbcType=VARCHAR},
+            bank_name = #{bankName,jdbcType=VARCHAR},
+            bank_type = #{bankType,jdbcType=VARCHAR},
+            withdraw_status = #{withdrawStatus,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            flag = #{flag,jdbcType=INTEGER},
+            withdraw_process = #{withdrawProcess,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 查询提现记录 -->
+    <select id="queryWithdrawRecord" resultMap="BaseResultMap" parameterType="net.zn.ddxj.vo.RequestVo">
+		SELECT
+		w.*,u.real_name,
+		u.phone
+		FROM
+		zn_user_withdraw AS w
+		INNER JOIN zn_user AS u ON w.user_id = u.id
+		WHERE w.flag=1 and u.flag = 1
+		
+		<if test="withdrawStatus != null" >
+            and    w.withdraw_status = #{withdrawStatus,jdbcType=INTEGER}
+        </if>
+		<if test="withdrawProcess != null" >
+            and    w.withdraw_process = #{withdrawProcess,jdbcType=INTEGER}
+        </if>
+    	<if test="bankName != null" >
+             and   w.bank_name =#{bankName}
+            </if>
+        <if test="bankType != null" >
+           and     w.bank_type =#{bankType}
+        </if>
+        <if test="realName != null" >
+              and  u.real_name LIKE CONCAT(CONCAT('%', #{realName}), '%')
+         </if>
+         <if test="phone != null" >
+           and     u.phone  LIKE CONCAT(CONCAT('%', #{phone}), '%')
+        </if>
+        <if test="status != null and status != ''">
+        	<if test="status == 1">
+        		and w.withdraw_status = 0
+        	</if>
+        	<if test="status == 2">
+        		and w.withdraw_status = 9
+        	</if>
+        	<if test="status == 3">
+        		and (w.withdraw_status = 2 or w.withdraw_status = 4 or w.withdraw_status = 6 or w.withdraw_status = 8)
+        	</if>
+        </if>
+        <if test="startTime != null and startTime !=''">
+			and DATE_FORMAT(w.create_time, '%Y-%m-%d') &gt;= DATE_FORMAT(#{startTime} , '%Y-%m-%d')
+		</if>
+        <if test="endTime != null and endTime !=''">
+			and DATE_FORMAT(w.create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(#{endTime} , '%Y-%m-%d')
+		</if>
+        ORDER BY update_time DESC , withdraw_status DESC
+    </select>
+    <!-- 更新提现状态 -->
+    <update id="updateStatus"  >
+    	update zn_user_withdraw 
+    	set withdraw_status = #{withdrawStatus},
+    	    withdraw_process = #{withdrawProcess}
+    	where id=#{id}
+    </update>
+    <!-- 删除提现记录 -->
+    <delete id="delUserWithdrawRecord" parameterType="java.lang.Integer" >
+        delete from zn_user_withdraw
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+     <select id="findWithdrawSuccessCount" resultType="java.math.BigDecimal" >
+    	select sum(money) from zn_user_withdraw where withdraw_status = 9 and flag = 1
+    </select>
+    <!-- 统计冻结资金 -->
+    <select id="totlaFrozenAmount" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+    	<!-- SELECT
+			SUM(money)
+		FROM
+			zn_user_withdraw
+		WHERE
+			user_id =#{userId}
+		AND (
+		 (
+				withdraw_status = 0
+				AND withdraw_process = 1
+			)
+			OR
+		(
+				withdraw_status = 1
+				AND withdraw_process = 2
+			)
+			OR
+		(
+				withdraw_status = 3
+				AND withdraw_process = 3
+			)
+			OR
+		(
+				withdraw_status = 5
+				AND withdraw_process = 5
+			)
+				OR
+		(
+				withdraw_status = 5
+				AND withdraw_process = 4
+			)
+			OR
+		(
+				withdraw_status = 7
+				AND withdraw_process = 5
+			)
+		) -->
+		
+		SELECT
+			SUM(money)
+		FROM
+			zn_user_withdraw
+		WHERE
+			user_id =#{userId}
+		AND withdraw_status  in(0,1,3,5,7 ) AND withdraw_process in (1,2,3,4,5)
+    </select>
+</mapper>

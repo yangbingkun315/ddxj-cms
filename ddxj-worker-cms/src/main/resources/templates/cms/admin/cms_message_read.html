@@ -1,0 +1,41 @@
+[#assign title="点点小匠-消息记录"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="messageList">
+<div class="alert alert-warning" >注：此列表记录您所有消息记录 </div>
+	<ul class="nav nav-tabs">
+		<li><a href="${base}/cms/message/list.htm">未读消息</a></li>
+		<li class="active"><a>已读消息</a></li>
+	</ul>
+	<form method="post" id="cms_logs_form" action="${base}/cms/message/read.htm">
+	<input id="currentPage" type="hidden" name="currentPage"/>
+	<input id="type" type="hidden" name="type" value='2'/>
+	</form>
+	<div class="cms-table-tpl">
+	  [#include "/admin/cms_message_tpl_read.html"]
+	</div>
+	 [#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_logs_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+			 $(".cms-table-tpl").html(data);
+	}
+});
+function queryMessageList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_logs_form').submit();
+}
+queryMessageList(1);
+</script>
+[#include "/common/cms_footer.html"]

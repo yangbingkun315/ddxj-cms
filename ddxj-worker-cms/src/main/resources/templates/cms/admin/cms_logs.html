@@ -1,0 +1,55 @@
+[#assign title="点点小匠-日志记录"]
+[#include "/common/cms_header.html"]
+<script src="[@resUrl /]/assets/cms/js/common/WdatePicker.js?[@cmsVersion /]"></script>
+<div class="cms-content" id="cmsLogs">
+<div class="alert alert-warning" >注：此列表记录您每次操作的记录，无法删除 </div>
+	<form method="post" id="cms_logs_form" action="${base}/cms/logs/list.htm">
+	<input id="currentPage" type="hidden" name="currentPage"/>
+	<div class="cms-search">
+	  <div class="search-item">
+	  	<label class="search-title">操作内容</label>
+	    <input type="text" id="logContent"  name="logContent"  class="form-control search-input" placeholder="请输入关键字">
+	  </div>
+	  <div class="search-item">
+	  	<label class="search-title">开始时间</label>
+	   <input type="text" name="startTime" id="startTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="开始时间" autocomplete="off" >
+	  </div>
+	  <div class="search-item">
+	  	<label class="search-title">结束时间</label>
+	    <input type="text" name="endTime" id="endTime" class="form-control search-input"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',errDealMode:1})" 
+								placeholder="结束时间" autocomplete="off" >
+	  </div>
+	  <div class="search-button">
+	     <button type="button" onclick="queryLogsList(1)" class="btn btn-warning">查询</button>
+	  </div>
+	</div>
+	</form>
+	<div class="cms-table-tpl">
+	  [#include "/admin/cms_logs_tpl.html"]
+	</div>
+	 [#include "/common/cms_page.html"]
+</div>
+<script type="text/javascript">
+$('#cms_logs_form').ajaxForm({
+	beforeSubmit:function(){
+			
+		return true;
+	},
+	warningMessage:"正在查询,请稍后...",
+	success:function(data){
+		$.removeFormOverLay(data);
+	},
+	closeFormOverLayCallBack:function(data){
+		 $(".cms-table-tpl").html(data);
+	}
+});
+function queryLogsList(page)
+{
+	if(page == 1){isInitPage = false;}
+	$("#currentPage").val(page);
+	$('#cms_logs_form').submit();
+}
+queryLogsList(1);
+</script>
+[#include "/common/cms_footer.html"]
